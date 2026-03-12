@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Trip } from '@org/util-types';
 
-const API = 'http://localhost:3000/api';
+const API = '/api';
 
 export interface CreateTripPayload {
   title: string;

@@ -10,7 +10,7 @@ export interface User {
 }
 
 const TOKEN_KEY = 'triphub_token';
-const API_BASE = 'http://localhost:3000/api';
+const API_BASE = '/api';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
