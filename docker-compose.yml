@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: triphub
+    ports:
+      - '5433:5432'
+    volumes:
+      - triphub_db:/var/lib/postgresql/data
+
+volumes:
+  triphub_db:

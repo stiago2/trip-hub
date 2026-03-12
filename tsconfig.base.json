@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "composite": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,
@@ -16,6 +17,42 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "es2022",
-    "customConditions": ["@org/source"]
+    "customConditions": ["@org/source"],
+    "paths": {
+      "@org/ui": ["libs/frontend/ui/src/index.ts"],
+      "@org/data-access": ["libs/frontend/data-access/src/index.ts"],
+      "@org/util": ["libs/frontend/util/src/index.ts"],
+      "@org/feature-auth": ["libs/frontend/features/feature-auth/src/index.ts"],
+      "@org/feature-trips": [
+        "libs/frontend/features/feature-trips/src/index.ts"
+      ],
+      "@org/feature-trip-details": [
+        "libs/frontend/features/feature-trip-details/src/index.ts"
+      ],
+      "@org/feature-destinations": [
+        "libs/frontend/features/feature-destinations/src/index.ts"
+      ],
+      "@org/feature-inventory": [
+        "libs/frontend/features/feature-inventory/src/index.ts"
+      ],
+      "@org/feature-budget": [
+        "libs/frontend/features/feature-budget/src/index.ts"
+      ],
+      "@org/feature-trip-overview": [
+        "libs/frontend/features/feature-trip-overview/src/index.ts"
+      ],
+      "@org/feature-trip-members": [
+        "libs/frontend/features/feature-trip-members/src/index.ts"
+      ],
+      "@org/util-types": ["libs/frontend/util/util-types/src/index.ts"],
+      "@org/data-access-auth": [
+        "libs/frontend/data-access/data-access-auth/src/index.ts"
+      ],
+      "@org/data-access-trips": [
+        "libs/frontend/data-access/data-access-trips/src/index.ts"
+      ],
+      "@org/ui-layout": ["libs/frontend/ui/ui-layout/src/index.ts"],
+      "@org/ui-components": ["libs/frontend/ui/ui-components/src/index.ts"]
+    }
   }
 }

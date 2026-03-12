@@ -1,0 +1,38 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../../../dist/out-tsc",
+    "declaration": true,
+    "declarationMap": true,
+    "inlineSources": true,
+    "types": []
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"],
+  "references": [
+    {
+      "path": "../../data-access/tsconfig.lib.json"
+    },
+    {
+      "path": "../../data-access/data-access-trips/tsconfig.lib.json"
+    },
+    {
+      "path": "../../util/util-types/tsconfig.lib.json"
+    },
+    {
+      "path": "../feature-trip-members/tsconfig.lib.json"
+    },
+    {
+      "path": "../feature-trip-overview/tsconfig.lib.json"
+    },
+    {
+      "path": "../feature-budget/tsconfig.lib.json"
+    },
+    {
+      "path": "../feature-inventory/tsconfig.lib.json"
+    },
+    {
+      "path": "../feature-destinations/tsconfig.lib.json"
+    }
+  ]
+}

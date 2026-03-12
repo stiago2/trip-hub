@@ -2,5 +2,75 @@
   "extends": "./tsconfig.base.json",
   "compileOnSave": false,
   "files": [],
-  "references": []
+  "references": [
+    {
+      "path": "./apps/frontend-e2e"
+    },
+    {
+      "path": "./apps/backend/api-e2e"
+    },
+    {
+      "path": "./apps/backend/api"
+    },
+    {
+      "path": "./libs/backend/common/prisma"
+    },
+    {
+      "path": "./libs/backend/features/auth"
+    },
+    {
+      "path": "./libs/frontend/features/feature-destinations"
+    },
+    {
+      "path": "./libs/frontend/features/feature-trip-details"
+    },
+    {
+      "path": "./libs/frontend/features/feature-inventory"
+    },
+    {
+      "path": "./libs/frontend/features/feature-budget"
+    },
+    {
+      "path": "./libs/frontend/features/feature-trips"
+    },
+    {
+      "path": "./libs/backend/common/decorators"
+    },
+    {
+      "path": "./libs/backend/features/trips"
+    },
+    {
+      "path": "./libs/backend/common/guards"
+    },
+    {
+      "path": "./libs/frontend/data-access"
+    },
+    {
+      "path": "./libs/frontend/util"
+    },
+    {
+      "path": "./libs/frontend/ui"
+    },
+    {
+      "path": "./libs/frontend/features/feature-trip-overview"
+    },
+    {
+      "path": "./libs/frontend/data-access/data-access-trips"
+    },
+    {
+      "path": "./libs/frontend/features/feature-trip-members"
+    },
+    {
+      "path": "./libs/frontend/data-access/data-access-auth"
+    },
+    {
+      "path": "./libs/frontend/ui/ui-components"
+    },
+    {
+      "path": "./libs/frontend/util/util-types"
+    },
+    {
+      "path": "./libs/frontend/ui/ui-layout"
+    }
+  ]
 }

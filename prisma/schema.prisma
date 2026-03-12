@@ -1,0 +1,204 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum MemberRole {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
+enum TransportType {
+  FLIGHT
+  BUS
+  TRAIN
+  CAR
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+enum InventoryCategory {
+  CLOTHING
+  TECH
+  TOILETRIES
+  DOCUMENTS
+  OTHER
+}
+
+// ─── Models ───────────────────────────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(cuid())
+  googleId  String   @unique
+  email     String   @unique
+  name      String?
+  avatarUrl String?
+  createdAt DateTime @default(now())
+
+  ownedTrips  Trip[]
+  members     TripMember[]
+  paidItems   BudgetItem[]
+  activities  Activity[]
+}
+
+model Trip {
+  id          String   @id @default(cuid())
+  title       String
+  destination String?
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  ownerId     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  owner          User            @relation(fields: [ownerId], references: [id])
+  members        TripMember[]
+  destinations   Destination[]
+  accommodations Accommodation[]
+  transports     Transport[]
+  inventoryItems InventoryItem[]
+  budgetItems    BudgetItem[]
+  invitations    Invitation[]
+  activities     Activity[]
+
+  @@index([ownerId])
+}
+
+model TripMember {
+  id       String     @id @default(cuid())
+  tripId   String
+  userId   String
+  role     MemberRole
+  joinedAt DateTime   @default(now())
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([tripId, userId])
+  @@index([tripId])
+  @@index([userId])
+}
+
+model Destination {
+  id        String   @id @default(cuid())
+  tripId    String
+  country   String
+  city      String
+  startDate DateTime
+  endDate   DateTime
+  notes     String?
+  order     Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  trip           Trip            @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  accommodations Accommodation[]
+
+  @@unique([tripId, city, startDate])
+  @@index([tripId])
+}
+
+model Accommodation {
+  id            String   @id @default(cuid())
+  tripId        String
+  destinationId String
+  name          String
+  address       String?
+  checkIn       DateTime
+  checkOut      DateTime
+  price         Decimal? @db.Decimal(10, 2)
+  updatedAt     DateTime @updatedAt
+
+  trip        Trip        @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  destination Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+
+  @@index([tripId])
+  @@index([destinationId])
+}
+
+model Transport {
+  id            String        @id @default(cuid())
+  tripId        String
+  type          TransportType
+  fromLocation  String
+  toLocation    String
+  departureTime DateTime
+  arrivalTime   DateTime
+  price         Decimal?      @db.Decimal(10, 2)
+  updatedAt     DateTime      @updatedAt
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  @@index([tripId])
+}
+
+model InventoryItem {
+  id        String            @id @default(cuid())
+  tripId    String
+  name      String
+  category  InventoryCategory
+  packed    Boolean           @default(false)
+  quantity  Int
+  updatedAt DateTime          @updatedAt
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  @@index([tripId])
+}
+
+model BudgetItem {
+  id           String   @id @default(cuid())
+  tripId       String
+  title        String
+  amount       Decimal  @db.Decimal(10, 2)
+  category     String
+  paidByUserId String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  trip       Trip  @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  paidByUser User? @relation(fields: [paidByUserId], references: [id])
+
+  @@index([tripId])
+  @@index([paidByUserId])
+}
+
+model Invitation {
+  id        String           @id @default(cuid())
+  tripId    String
+  email     String
+  role      MemberRole
+  status    InvitationStatus @default(PENDING)
+  invitedAt DateTime         @default(now())
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  @@unique([tripId, email])
+  @@index([email])
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  tripId    String
+  userId    String
+  type      String
+  message   String
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  trip Trip @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([tripId])
+  @@index([userId])
+}
