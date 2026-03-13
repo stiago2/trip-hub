@@ -46,20 +46,33 @@ const TABS: { id: TripTab; label: string; icon: string }[] = [
   standalone: true,
   imports: [RouterLink, RouterLinkActive],
   template: `
+    <!-- Sidebar nav (desktop) -->
     <nav class="trip-nav">
       @for (tab of tabs; track tab.id) {
-        <a
-          class="nav-item"
-          [routerLink]="['/trips', tripId, tab.id]"
-          routerLinkActive="active"
-        >
+        <a class="nav-item" [routerLink]="['/trips', tripId, tab.id]" routerLinkActive="active">
           <span class="nav-icon" [innerHTML]="tab.icon"></span>
           <span class="nav-label">{{ tab.label }}</span>
         </a>
       }
     </nav>
+
+    <!-- Bottom nav (mobile) -->
+    <nav class="bottom-nav">
+      <a class="bottom-back" routerLink="/trips">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
+        <span>Back</span>
+      </a>
+      @for (tab of tabs; track tab.id) {
+        <a class="bottom-item" [routerLink]="['/trips', tripId, tab.id]" routerLinkActive="active">
+          <span class="b-icon" [innerHTML]="tab.icon"></span>
+          <span class="b-label">{{ tab.label }}</span>
+        </a>
+      }
+    </nav>
   `,
   styles: [`
+    /* Desktop sidebar nav */
+    .bottom-nav { display: none; }
     .trip-nav { display: flex; flex-direction: column; gap: 2px; }
 
     .nav-item {
@@ -70,13 +83,39 @@ const TABS: { id: TripTab; label: string; icon: string }[] = [
       transition: background 0.15s, color 0.15s;
     }
     .nav-item:hover { background: rgba(255,255,255,0.10); color: #f1f5f9; }
-    .nav-item.active {
-      background: rgba(59,130,246,0.18); color: #93c5fd; font-weight: 600;
-    }
+    .nav-item.active { background: rgba(59,130,246,0.18); color: #93c5fd; font-weight: 600; }
     .nav-item.active .nav-icon { color: #60a5fa; }
-
     .nav-icon { display: flex; align-items: center; flex-shrink: 0; }
     .nav-label { white-space: nowrap; }
+
+    /* Mobile bottom nav */
+    @media (max-width: 700px) {
+      .trip-nav { display: none; }
+      .bottom-nav {
+        display: flex; align-items: stretch;
+        width: 100%; overflow-x: auto; scrollbar-width: none;
+      }
+      .bottom-nav::-webkit-scrollbar { display: none; }
+
+      .bottom-back {
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 3px; padding: 6px 12px; min-width: 52px; flex-shrink: 0;
+        text-decoration: none; color: #93c5fd;
+        font-size: 0.58rem; font-weight: 700;
+        border-right: 1px solid rgba(255,255,255,0.1);
+      }
+
+      .bottom-item {
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 3px; padding: 6px 6px; flex: 1; min-width: 52px;
+        text-decoration: none; color: #64748b;
+        font-size: 0.56rem; font-weight: 500;
+        transition: color 0.15s; white-space: nowrap;
+      }
+      .bottom-item.active { color: #60a5fa; }
+      .b-icon { display: flex; align-items: center; }
+      .b-label { letter-spacing: 0.01em; }
+    }
   `],
 })
 export class TripTabsComponent {

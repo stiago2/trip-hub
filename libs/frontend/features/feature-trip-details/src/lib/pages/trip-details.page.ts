@@ -96,7 +96,7 @@ const THUMB_GRADIENTS = [
             <div class="header-right">
               <button class="btn-share">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-                Share
+                <span class="btn-share-label">Share</span>
               </button>
               <button class="btn-bell" title="Notifications">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -109,6 +109,9 @@ const THUMB_GRADIENTS = [
         <div class="content">
           <router-outlet />
         </div>
+
+        <!-- Mobile bottom nav (hidden on desktop) -->
+        <lib-trip-tabs class="mobile-nav-bar" />
       </div>
     </div>
   `,
@@ -259,17 +262,36 @@ const THUMB_GRADIENTS = [
 
     .content { flex: 1; overflow-y: auto; padding: 28px; }
 
+    /* Mobile bottom nav — hidden on desktop */
+    .mobile-nav-bar { display: none; }
+
     /* ── Responsive ── */
     @media (max-width: 900px) {
       .sidebar { width: 200px; }
     }
     @media (max-width: 700px) {
       .sidebar { display: none; }
-      .content { padding: 16px; }
-      .header-body { padding: 12px 16px; }
-      .header-title { font-size: 1.1rem; }
-      .header-thumb { width: 40px; height: 40px; }
-      .btn-share span { display: none; }
+      .content { padding: 16px; padding-bottom: 80px; }
+
+      /* Header: make thumb smaller, hide Share label */
+      .header-body { padding: 10px 14px; gap: 8px; }
+      .header-thumb { width: 38px; height: 38px; border-radius: 10px; }
+      .header-thumb svg { width: 16px; height: 16px; }
+      .header-title { font-size: 1rem; }
+      .header-dates { font-size: 0.72rem; }
+      .header-duration { display: none; }
+      .btn-share-label { display: none; }
+      .btn-share { padding: 7px 10px; }
+
+      /* Mobile bottom nav */
+      .mobile-nav-bar {
+        display: flex;
+        position: fixed; bottom: 0; left: 0; right: 0;
+        background: #0f172a;
+        border-top: 1px solid rgba(255,255,255,0.08);
+        padding: 8px 4px env(safe-area-inset-bottom, 8px);
+        z-index: 100;
+      }
     }
   `],
 })
