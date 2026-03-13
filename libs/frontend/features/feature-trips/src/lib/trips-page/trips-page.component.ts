@@ -387,6 +387,29 @@ type FilterTab = 'all' | 'upcoming' | 'active' | 'past';
     @media (max-width: 1100px) { .trips-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 700px)  { .trips-grid { grid-template-columns: 1fr; } }
 
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .sidebar { width: 200px; }
+    }
+    @media (max-width: 700px) {
+      .sidebar { display: none; }
+      .page-header {
+        flex-direction: column; align-items: flex-start;
+        gap: 12px; padding: 14px 16px 12px;
+      }
+      .header-right { width: 100%; }
+      .search-wrap { flex: 1; }
+      .search-input { width: 100%; box-sizing: border-box; }
+      .btn-create { flex-shrink: 0; }
+      .filter-bar { padding: 10px 16px; overflow-x: auto; scrollbar-width: none; }
+      .filter-bar::-webkit-scrollbar { display: none; }
+      .filter-tabs { flex-wrap: nowrap; }
+      .filter-tab { white-space: nowrap; }
+      .content { padding: 16px; }
+      .invitations-banner { padding: 12px 14px; }
+      .invitation-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+    }
+
     /* Trip card */
     .trip-card {
       background: white; border-radius: 16px;
