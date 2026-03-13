@@ -283,13 +283,13 @@ const THUMB_GRADIENTS = [
       .btn-share-label { display: none; }
       .btn-share { padding: 7px 10px; }
 
-      /* Mobile bottom nav */
+      /* Mobile bottom bar + drawer trigger */
       .mobile-nav-bar {
-        display: flex;
+        display: block;
         position: fixed; bottom: 0; left: 0; right: 0;
         background: #0f172a;
         border-top: 1px solid rgba(255,255,255,0.08);
-        padding: 8px 4px env(safe-area-inset-bottom, 8px);
+        padding: 6px 8px env(safe-area-inset-bottom, 8px);
         z-index: 100;
       }
     }

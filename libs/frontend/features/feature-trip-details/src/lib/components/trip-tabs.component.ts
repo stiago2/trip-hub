@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 
@@ -57,23 +57,49 @@ const TABS: { id: TripTab; label: string; icon: string }[] = [
       }
     </nav>
 
-    <!-- Bottom nav (mobile) -->
-    <nav class="bottom-nav">
-      <a class="bottom-back" routerLink="/trips">
+    <!-- Mobile: compact bottom bar -->
+    <div class="mobile-bar">
+      <a class="bar-back" routerLink="/trips">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
-        <span>Back</span>
+        <span>All Trips</span>
       </a>
-      @for (tab of tabs; track tab.id) {
-        <a class="bottom-item" [routerLink]="['/trips', tripId, tab.id]" routerLinkActive="active">
-          <span class="b-icon" [innerHTML]="tab.icon"></span>
-          <span class="b-label">{{ tab.label }}</span>
-        </a>
-      }
-    </nav>
+      <span class="bar-title">Menu</span>
+      <button class="bar-hamburger" (click)="drawerOpen.set(true)" aria-label="Open navigation">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile: slide-up drawer -->
+    @if (drawerOpen()) {
+      <div class="drawer-overlay" (click)="drawerOpen.set(false)">
+        <div class="drawer" (click)="$event.stopPropagation()">
+          <div class="drawer-handle"></div>
+          <div class="drawer-header">
+            <span class="drawer-title">Navigation</span>
+            <button class="drawer-close" (click)="drawerOpen.set(false)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <nav class="drawer-nav">
+            @for (tab of tabs; track tab.id) {
+              <a class="drawer-item" [routerLink]="['/trips', tripId, tab.id]" routerLinkActive="active" (click)="drawerOpen.set(false)">
+                <span class="drawer-icon" [innerHTML]="tab.icon"></span>
+                <span class="drawer-label">{{ tab.label }}</span>
+              </a>
+            }
+          </nav>
+        </div>
+      </div>
+    }
   `,
   styles: [`
     /* Desktop sidebar nav */
-    .bottom-nav { display: none; }
+    .mobile-bar { display: none; }
+    .drawer-overlay { display: none; }
     .trip-nav { display: flex; flex-direction: column; gap: 2px; }
 
     .nav-item {
@@ -89,40 +115,92 @@ const TABS: { id: TripTab; label: string; icon: string }[] = [
     .nav-icon { display: flex; align-items: center; flex-shrink: 0; }
     .nav-label { white-space: nowrap; }
 
-    /* Mobile bottom nav */
+    /* Mobile */
     @media (max-width: 700px) {
       .trip-nav { display: none; }
-      .bottom-nav {
-        display: flex; align-items: stretch;
-        width: 100%; overflow-x: auto; scrollbar-width: none;
-      }
-      .bottom-nav::-webkit-scrollbar { display: none; }
 
-      .bottom-back {
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        gap: 3px; padding: 6px 12px; min-width: 52px; flex-shrink: 0;
+      /* Bottom bar */
+      .mobile-bar {
+        display: flex; align-items: center; justify-content: space-between;
+        width: 100%; padding: 0 4px;
+      }
+      .bar-back {
+        display: flex; align-items: center; gap: 6px;
         text-decoration: none; color: #93c5fd;
-        font-size: 0.58rem; font-weight: 700;
-        border-right: 1px solid rgba(255,255,255,0.1);
+        font-size: 0.78rem; font-weight: 600;
+        padding: 8px 10px; border-radius: 8px;
+        transition: background 0.15s;
+      }
+      .bar-back:hover { background: rgba(255,255,255,0.08); }
+      .bar-title {
+        font-size: 0.75rem; font-weight: 700; color: #94a3b8;
+        letter-spacing: 0.05em; text-transform: uppercase;
+      }
+      .bar-hamburger {
+        display: flex; align-items: center; justify-content: center;
+        width: 38px; height: 38px; border-radius: 10px;
+        background: rgba(255,255,255,0.08); border: none;
+        color: #e2e8f0; cursor: pointer;
+        transition: background 0.15s;
+      }
+      .bar-hamburger:hover { background: rgba(255,255,255,0.15); }
+
+      /* Drawer overlay */
+      .drawer-overlay {
+        display: flex; align-items: flex-end;
+        position: fixed; inset: 0; z-index: 300;
+        background: rgba(0,0,0,0.55);
+        backdrop-filter: blur(2px);
+        animation: fadein 180ms ease;
+      }
+      @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+
+      .drawer {
+        width: 100%; background: #0f172a;
+        border-radius: 20px 20px 0 0;
+        padding: 0 0 env(safe-area-inset-bottom, 12px);
+        animation: slideup 240ms cubic-bezier(0.32, 0.72, 0, 1);
+      }
+      @keyframes slideup {
+        from { transform: translateY(100%); }
+        to   { transform: translateY(0); }
       }
 
-      .bottom-item {
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        gap: 3px; padding: 6px 6px; flex: 1; min-width: 52px;
-        text-decoration: none; color: #94a3b8;
-        font-size: 0.56rem; font-weight: 500;
-        transition: color 0.15s; white-space: nowrap;
+      .drawer-handle {
+        width: 36px; height: 4px; border-radius: 2px;
+        background: rgba(255,255,255,0.2);
+        margin: 12px auto 0;
       }
-      .bottom-item.active { color: #60a5fa; }
-      .b-icon { display: flex; align-items: center; color: inherit; }
-      .b-label { display: none; }
-      .bottom-back span { display: none; }
+
+      .drawer-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 14px 20px 10px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+      }
+      .drawer-title { font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; }
+      .drawer-close {
+        width: 30px; height: 30px; border-radius: 8px;
+        background: rgba(255,255,255,0.08); border: none;
+        color: #94a3b8; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+      }
+
+      .drawer-nav { display: flex; flex-direction: column; padding: 8px 12px 16px; gap: 2px; }
+      .drawer-item {
+        display: flex; align-items: center; gap: 14px;
+        padding: 13px 14px; border-radius: 12px;
+        text-decoration: none; color: #cbd5e1;
+        font-size: 0.95rem; font-weight: 500;
+        transition: background 0.12s, color 0.12s;
+      }
+      .drawer-item:hover { background: rgba(255,255,255,0.08); color: #f1f5f9; }
+      .drawer-item.active { background: rgba(59,130,246,0.18); color: #93c5fd; font-weight: 600; }
+      .drawer-icon { display: flex; align-items: center; flex-shrink: 0; width: 20px; height: 20px; }
     }
 
-    /* Force SVG stroke color for innerHTML-injected icons (bypasses encapsulation) */
-    ::ng-deep .bottom-nav .b-icon svg { stroke: #94a3b8; }
-    ::ng-deep .bottom-nav .bottom-item.active .b-icon svg { stroke: #60a5fa; }
-    ::ng-deep .bottom-nav .bottom-back svg { stroke: #93c5fd; }
+    /* Force SVG stroke for innerHTML-injected icons */
+    ::ng-deep .drawer-icon svg { stroke: #94a3b8; }
+    ::ng-deep .drawer-item.active .drawer-icon svg { stroke: #60a5fa; }
   `],
 })
 export class TripTabsComponent {
@@ -130,6 +208,7 @@ export class TripTabsComponent {
   private readonly sanitizer = inject(DomSanitizer);
 
   readonly tripId = this.route.snapshot.paramMap.get('tripId') ?? '';
+  readonly drawerOpen = signal(false);
   readonly tabs: { id: TripTab; label: string; icon: SafeHtml }[] = TABS.map(t => ({
     ...t,
     icon: this.sanitizer.bypassSecurityTrustHtml(t.icon),
