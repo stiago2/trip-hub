@@ -8,7 +8,7 @@ COPY . .
 
 RUN npm ci --legacy-peer-deps
 
-RUN npx prisma generate --schema=prisma/schema.prisma
+RUN DATABASE_URL="postgresql://dummy:dummy@dummy:5432/dummy" npx prisma generate --schema=prisma/schema.prisma
 
 RUN npx nx build api --configuration=production
 
