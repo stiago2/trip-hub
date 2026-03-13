@@ -280,6 +280,12 @@ const AVATAR_COLORS: [string, string][] = [
     }
     .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .page-btn:not(:disabled):hover { background: #f1f5f9; }
+
+    @media (max-width: 600px) {
+      .page-title { font-size: 1.1rem; }
+      .toolbar { gap: 8px; }
+      .btn-invite { padding: 8px 12px; font-size: 0.8rem; gap: 5px; }
+    }
   `],
 })
 export class MembersPageComponent {
