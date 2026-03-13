@@ -108,12 +108,12 @@ const TABS: { id: TripTab; label: string; icon: string }[] = [
       .bottom-item {
         display: flex; flex-direction: column; align-items: center; justify-content: center;
         gap: 3px; padding: 6px 6px; flex: 1; min-width: 52px;
-        text-decoration: none; color: #64748b;
+        text-decoration: none; color: #94a3b8;
         font-size: 0.56rem; font-weight: 500;
         transition: color 0.15s; white-space: nowrap;
       }
       .bottom-item.active { color: #60a5fa; }
-      .b-icon { display: flex; align-items: center; }
+      .b-icon { display: flex; align-items: center; color: inherit; }
       .b-label { display: none; }
       .bottom-back span { display: none; }
     }

@@ -79,8 +79,8 @@ export class DocumentImportService {
       throw new BadRequestException('Unsupported file type. Use PDF, JPG, or PNG.');
     }
 
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const genAI = new GoogleGenerativeAI(apiKey, { apiVersion: 'v1' } as never);
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
     const base64 = fileBuffer.toString('base64');
 
