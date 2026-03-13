@@ -2,10 +2,10 @@ FROM node:22-slim
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY . .
+
 RUN npm ci --legacy-peer-deps
 
-COPY . .
 RUN npx nx build api --configuration=production
 
 EXPOSE 3000
