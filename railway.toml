@@ -1,9 +1,8 @@
 [build]
-builder = "nixpacks"
-buildCommand = "npm ci --legacy-peer-deps && npx nx build api --configuration=production"
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "DATABASE_URL=$DATABASE_URL npx prisma migrate deploy --schema=prisma/schema.prisma && node dist/apps/backend/api/main.js"
 healthcheckPath = "/api"
 healthcheckTimeout = 30
 restartPolicyType = "on_failure"
