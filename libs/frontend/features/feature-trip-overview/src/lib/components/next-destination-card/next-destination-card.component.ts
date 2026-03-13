@@ -16,8 +16,10 @@ const GRADIENTS = [
   standalone: true,
   imports: [DatePipe, RouterLink],
   template: `
-    <section class="section">
-      <h2 class="section-title">Next Destination</h2>
+    <div class="preview-card">
+      <div class="card-header">
+        <span class="card-title">Next Destination</span>
+      </div>
 
       @if (destination()) {
         <div class="hero-card" [style.background]="gradient()">
@@ -56,19 +58,20 @@ const GRADIENTS = [
           </a>
         </div>
       }
-    </section>
+    </div>
   `,
   styles: [`
-    .section { margin-bottom: 0; }
-    .section-title {
-      margin: 0 0 14px;
-      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.08em; color: #94a3b8;
-      display: flex; align-items: center; gap: 8px;
+    .preview-card {
+      background: white; border: 1px solid #e8edf3;
+      border-radius: 16px; padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.04);
     }
-    .section-title::after {
-      content: ''; flex: 1; height: 1px; background: #f1f5f9;
+    .card-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 16px; padding-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
     }
+    .card-title { font-size: 0.875rem; font-weight: 700; color: #0f172a; }
 
     .hero-card {
       position: relative;
