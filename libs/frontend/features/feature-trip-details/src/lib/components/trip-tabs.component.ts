@@ -117,6 +117,11 @@ const TABS: { id: TripTab; label: string; icon: string }[] = [
       .b-label { display: none; }
       .bottom-back span { display: none; }
     }
+
+    /* Force SVG stroke color for innerHTML-injected icons (bypasses encapsulation) */
+    ::ng-deep .bottom-nav .b-icon svg { stroke: #94a3b8; }
+    ::ng-deep .bottom-nav .bottom-item.active .b-icon svg { stroke: #60a5fa; }
+    ::ng-deep .bottom-nav .bottom-back svg { stroke: #93c5fd; }
   `],
 })
 export class TripTabsComponent {
