@@ -1,4 +1,5 @@
 {
+  "installCommand": "npm install --legacy-peer-deps",
   "buildCommand": "npx nx build web --configuration=production",
   "outputDirectory": "dist/apps/frontend/browser",
   "rewrites": [
