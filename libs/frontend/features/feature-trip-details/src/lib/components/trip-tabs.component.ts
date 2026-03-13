@@ -114,7 +114,8 @@ const TABS: { id: TripTab; label: string; icon: string }[] = [
       }
       .bottom-item.active { color: #60a5fa; }
       .b-icon { display: flex; align-items: center; }
-      .b-label { letter-spacing: 0.01em; }
+      .b-label { display: none; }
+      .bottom-back span { display: none; }
     }
   `],
 })
