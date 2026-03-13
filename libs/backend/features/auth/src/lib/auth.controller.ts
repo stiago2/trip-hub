@@ -4,7 +4,7 @@ import { AuthService, UserProfile } from './auth.service';
 import { JwtAuthGuard } from '@org/guards';
 import { CurrentUser } from './decorators/current-user.decorator';
 
-const FRONTEND_URL = 'http://localhost:4200';
+const FRONTEND_URL = process.env['FRONTEND_URL'] ?? 'http://localhost:4200';
 
 interface AuthenticatedUser {
   userId: string;
