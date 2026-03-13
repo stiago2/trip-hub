@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 
 export type TripTab = 'overview' | 'inventory' | 'destinations' | 'transport' | 'accommodations' | 'budget' | 'members';
@@ -126,7 +127,11 @@ const TABS: { id: TripTab; label: string; icon: string }[] = [
 })
 export class TripTabsComponent {
   private readonly route = inject(ActivatedRoute);
+  private readonly sanitizer = inject(DomSanitizer);
 
   readonly tripId = this.route.snapshot.paramMap.get('tripId') ?? '';
-  readonly tabs = TABS;
+  readonly tabs: { id: TripTab; label: string; icon: SafeHtml }[] = TABS.map(t => ({
+    ...t,
+    icon: this.sanitizer.bypassSecurityTrustHtml(t.icon),
+  }));
 }
