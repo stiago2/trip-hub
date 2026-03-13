@@ -36,12 +36,10 @@ export class InvitationsService {
     });
     if (!invitation) throw new NotFoundException('Invitation not found');
 
-    const member = await this.prisma.tripMember.create({
-      data: {
-        tripId: invitation.tripId,
-        userId,
-        role: invitation.role,
-      },
+    const member = await this.prisma.tripMember.upsert({
+      where: { tripId_userId: { tripId: invitation.tripId, userId } },
+      create: { tripId: invitation.tripId, userId, role: invitation.role },
+      update: { role: invitation.role },
     });
 
     await this.prisma.invitation.update({
