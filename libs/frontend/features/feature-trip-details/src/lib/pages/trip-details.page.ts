@@ -35,6 +35,7 @@ const THUMB_GRADIENTS = [
             </svg>
           </div>
           <span class="brand-name">TripHub</span>
+          <span class="beta-badge">BETA</span>
         </div>
 
         <!-- Nav tabs -->
@@ -144,6 +145,12 @@ const THUMB_GRADIENTS = [
     }
     .brand-name {
       font-size: 1rem; font-weight: 700; color: #f8fafc; letter-spacing: -0.01em;
+    }
+    .beta-badge {
+      font-size: 0.55rem; font-weight: 800; color: #a5b4fc;
+      background: rgba(99,102,241,0.18); border: 1px solid rgba(99,102,241,0.35);
+      padding: 2px 6px; border-radius: 6px; letter-spacing: 0.08em;
+      align-self: center;
     }
 
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
