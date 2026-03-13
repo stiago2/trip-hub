@@ -8,6 +8,8 @@ COPY . .
 
 RUN npm ci --legacy-peer-deps
 
+RUN npx prisma generate --schema=prisma/schema.prisma
+
 RUN npx nx build api --configuration=production
 
 EXPOSE 3000
