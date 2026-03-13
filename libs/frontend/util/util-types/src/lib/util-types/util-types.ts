@@ -65,3 +65,7 @@ export interface Invitation {
   status: 'PENDING' | 'ACCEPTED' | 'DECLINED';
   invitedAt: string;
 }
+
+export interface PendingInvitation extends Invitation {
+  trip: Pick<Trip, 'id' | 'title'>;
+}

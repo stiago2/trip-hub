@@ -2,8 +2,9 @@ import { DatePipe, SlicePipe, TitleCasePipe, UpperCasePipe } from '@angular/comm
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, AuthStore } from '@org/feature-auth';
-import { Trip } from '@org/util-types';
+import { PendingInvitation, Trip } from '@org/util-types';
 import { CreateTripModalComponent } from '../components/create-trip-modal/create-trip-modal.component';
+import { InvitationsApiService } from '@org/data-access-trips';
 import { TripsStore } from '../store/trips.store';
 import { getTripStatus, getTripTimeInfo } from '../utils/trip-status';
 import { getTripColor } from '../utils/trip-color';
@@ -95,6 +96,28 @@ type FilterTab = 'all' | 'upcoming' | 'active' | 'past';
 
         <!-- Content -->
         <div class="content">
+          @if (pendingInvitations().length > 0) {
+            <div class="invitations-banner">
+              <div class="invitations-banner-header">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.9 15.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.81 4.74h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 12a16 16 0 0 0 5.91 5.91l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.72 19z"/></svg>
+                <span>You have {{ pendingInvitations().length }} pending trip invitation{{ pendingInvitations().length > 1 ? 's' : '' }}</span>
+              </div>
+              <div class="invitations-list">
+                @for (inv of pendingInvitations(); track inv.id) {
+                  <div class="invitation-row">
+                    <div class="invitation-info">
+                      <span class="invitation-trip">{{ inv.trip.title }}</span>
+                      <span class="invitation-role">Invited as {{ inv.role | titlecase }}</span>
+                    </div>
+                    <div class="invitation-actions">
+                      <button class="btn-accept" (click)="acceptInvitation(inv.id)">Accept</button>
+                      <button class="btn-decline" (click)="declineInvitation(inv.id)">Decline</button>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
           @if (store.loading()) {
             <div class="trips-grid">
               @for (n of skeletons; track n) {
@@ -551,6 +574,38 @@ type FilterTab = 'all' | 'upcoming' | 'active' | 'past';
     }
     .btn-empty-create:hover { background: #1d4ed8; }
 
+    /* Pending invitations banner */
+    .invitations-banner {
+      background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px;
+      padding: 16px 20px; margin-bottom: 24px;
+    }
+    .invitations-banner-header {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.875rem; font-weight: 600; color: #1d4ed8; margin-bottom: 12px;
+    }
+    .invitations-list { display: flex; flex-direction: column; gap: 8px; }
+    .invitation-row {
+      display: flex; align-items: center; justify-content: space-between;
+      background: white; border-radius: 8px; padding: 10px 14px;
+      border: 1px solid #dbeafe;
+    }
+    .invitation-info { display: flex; flex-direction: column; gap: 2px; }
+    .invitation-trip { font-size: 0.875rem; font-weight: 600; color: #0f172a; }
+    .invitation-role { font-size: 0.75rem; color: #64748b; }
+    .invitation-actions { display: flex; gap: 8px; }
+    .btn-accept {
+      background: #2563eb; color: white; border: none;
+      padding: 6px 14px; border-radius: 7px; cursor: pointer;
+      font-size: 0.8rem; font-weight: 600; transition: background 0.15s;
+    }
+    .btn-accept:hover { background: #1d4ed8; }
+    .btn-decline {
+      background: none; border: 1px solid #d1d5db; color: #64748b;
+      padding: 6px 14px; border-radius: 7px; cursor: pointer;
+      font-size: 0.8rem; font-weight: 500; transition: background 0.15s;
+    }
+    .btn-decline:hover { background: #f1f5f9; }
+
     /* Filtered empty */
     .filtered-empty {
       display: flex; flex-direction: column; align-items: center;
@@ -570,6 +625,9 @@ export class TripsPageComponent implements OnInit {
   readonly store = inject(TripsStore);
   readonly authStore = inject(AuthStore);
   private readonly authService = inject(AuthService);
+  private readonly invitationsApi = inject(InvitationsApiService);
+
+  readonly pendingInvitations = signal<PendingInvitation[]>([]);
   private readonly router = inject(Router);
 
   readonly getStatus = getTripStatus;
@@ -619,6 +677,27 @@ export class TripsPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.loadTrips();
+    this.invitationsApi.getPendingInvitations().subscribe({
+      next: (inv) => this.pendingInvitations.set(inv),
+      error: () => {},
+    });
+  }
+
+  acceptInvitation(invitationId: string): void {
+    this.invitationsApi.acceptInvitation(invitationId).subscribe({
+      next: () => {
+        this.pendingInvitations.set(this.pendingInvitations().filter((i) => i.id !== invitationId));
+        this.store.loadTrips();
+      },
+      error: () => {},
+    });
+  }
+
+  declineInvitation(invitationId: string): void {
+    this.invitationsApi.declineInvitation(invitationId).subscribe({
+      next: () => this.pendingInvitations.set(this.pendingInvitations().filter((i) => i.id !== invitationId)),
+      error: () => {},
+    });
   }
 
   onTripClick(tripId: string): void {

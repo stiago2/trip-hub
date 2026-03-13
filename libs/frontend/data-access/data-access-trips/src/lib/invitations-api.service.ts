@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Invitation, TripMember } from '@org/util-types';
+import { Invitation, PendingInvitation, TripMember } from '@org/util-types';
 
 const API = '/api';
 
@@ -20,6 +20,10 @@ export class InvitationsApiService {
 
   inviteUser(tripId: string, payload: InviteUserPayload): Observable<Invitation> {
     return this.http.post<Invitation>(`${API}/trips/${tripId}/invitations`, payload);
+  }
+
+  getPendingInvitations(): Observable<PendingInvitation[]> {
+    return this.http.get<PendingInvitation[]>(`${API}/invitations/pending`);
   }
 
   acceptInvitation(invitationId: string): Observable<TripMember> {

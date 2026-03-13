@@ -24,6 +24,11 @@ export class InvitationsController {
     return this.invitationsService.findTripInvitations(tripId);
   }
 
+  @Get('invitations/pending')
+  findPendingForMe(@CurrentUser() user: AuthenticatedUser) {
+    return this.invitationsService.findPendingForUser(user.email);
+  }
+
   @Patch('invitations/:invitationId/accept')
   accept(
     @Param('invitationId') invitationId: string,
