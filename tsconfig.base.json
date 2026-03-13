@@ -52,7 +52,12 @@
         "libs/frontend/data-access/data-access-trips/src/index.ts"
       ],
       "@org/ui-layout": ["libs/frontend/ui/ui-layout/src/index.ts"],
-      "@org/ui-components": ["libs/frontend/ui/ui-components/src/index.ts"]
+      "@org/ui-components": ["libs/frontend/ui/ui-components/src/index.ts"],
+      "@org/prisma": ["libs/backend/common/prisma/src/index.ts"],
+      "@org/auth": ["libs/backend/features/auth/src/index.ts"],
+      "@org/trips": ["libs/backend/features/trips/src/index.ts"],
+      "@org/guards": ["libs/backend/common/guards/src/index.ts"],
+      "@org/decorators": ["libs/backend/common/decorators/src/index.ts"]
     }
   }
 }
