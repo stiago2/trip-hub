@@ -184,6 +184,13 @@ const GRADIENTS = [
       transition: background 0.15s, transform 0.15s;
     }
     .btn-add-destination:hover { background: #2563eb; transform: translateY(-1px); }
+
+    @media (max-width: 600px) {
+      .hero-card { height: 190px; }
+      .hero-content { padding: 14px 16px; }
+      .destination-name { font-size: 1.25rem; }
+      .btn-itinerary { padding: 8px 12px; font-size: 0.8rem; }
+    }
   `],
 })
 export class NextDestinationCardComponent {
