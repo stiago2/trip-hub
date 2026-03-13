@@ -41,23 +41,18 @@ import { ImportDocumentModalComponent } from '../components/import-document-moda
         [memberCount]="members().length"
       />
 
-      <div class="dashboard-grid">
-        <div class="main-col">
-          <lib-next-destination-card
-            [destination]="firstDestination()"
-            [tripId]="tripId"
-          />
+      <div class="top-row">
+        <lib-next-destination-card
+          [destination]="firstDestination()"
+          [tripId]="tripId"
+        />
+        <lib-activity-feed [tripId]="tripId" />
+      </div>
 
-          <div class="preview-row">
-            <lib-upcoming-transport-preview [tripId]="tripId" />
-            <lib-accommodations-preview [tripId]="tripId" />
-          </div>
-        </div>
-
-        <div class="sidebar-col">
-          <lib-activity-feed [tripId]="tripId" />
-          <lib-inventory-preview [items]="inventoryItems()" [tripId]="tripId" />
-        </div>
+      <div class="bottom-row">
+        <lib-upcoming-transport-preview [tripId]="tripId" />
+        <lib-accommodations-preview [tripId]="tripId" />
+        <lib-inventory-preview [items]="inventoryItems()" [tripId]="tripId" />
       </div>
 
     </div>
@@ -73,32 +68,32 @@ import { ImportDocumentModalComponent } from '../components/import-document-moda
   styles: [`
     .dashboard { padding: 4px 0 24px; }
 
-    .dashboard-grid {
+    .top-row {
       display: grid;
       grid-template-columns: 1fr 340px;
       gap: 20px;
       align-items: start;
+      margin-bottom: 16px;
     }
     @media (max-width: 1100px) {
-      .dashboard-grid { grid-template-columns: 1fr 300px; }
+      .top-row { grid-template-columns: 1fr 300px; }
     }
     @media (max-width: 860px) {
-      .dashboard-grid { grid-template-columns: 1fr; }
+      .top-row { grid-template-columns: 1fr; }
     }
 
-    .main-col { display: flex; flex-direction: column; }
-
-    .preview-row {
+    .bottom-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 16px;
-      margin-top: 16px;
+      align-items: start;
     }
-    @media (max-width: 600px) {
-      .preview-row { grid-template-columns: 1fr; }
+    @media (max-width: 860px) {
+      .bottom-row { grid-template-columns: 1fr 1fr; }
     }
-
-    .sidebar-col { display: flex; flex-direction: column; gap: 16px; }
+    @media (max-width: 560px) {
+      .bottom-row { grid-template-columns: 1fr; }
+    }
   `],
 })
 export class TripOverviewPage {
