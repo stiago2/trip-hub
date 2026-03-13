@@ -418,6 +418,24 @@ const CARD_GRADIENTS = [
     @media (max-width: 600px) {
       .page { padding: 8px 0; }
       .drag-handle { display: none; }
+
+      /* Compact header */
+      .page-header { margin-bottom: 18px; align-items: center; }
+      .page-title { font-size: 1.15rem; }
+      .trip-stats { gap: 6px; }
+      .btn-add { padding: 8px 12px; font-size: 0.8rem; gap: 5px; }
+
+      /* Narrower gradient panel */
+      .card-panel { width: 70px; padding: 16px 6px; }
+      .card-body { padding: 14px 40px 14px 14px; gap: 4px; }
+      .card-title { font-size: 0.95rem; }
+      .card-dates { font-size: 0.78rem; }
+
+      /* Always show overflow menu on touch (no hover) */
+      .card-menu-wrap { opacity: 1; }
+
+      /* Route connector alignment */
+      .route-connector { margin-left: 34px; }
     }
   `],
 })
