@@ -408,6 +408,14 @@ type Step = 'upload' | 'analyzing' | 'preview' | 'success';
     }
     .btn-primary:hover:not(:disabled) { opacity: 0.88; }
     .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    @media (max-width: 480px) {
+      .backdrop { align-items: flex-end; padding: 0; }
+      .modal { border-radius: 20px 20px 0 0; width: 100%; max-height: 90vh; overflow-y: auto; }
+      .modal-header { padding: 16px 16px 12px; }
+      .modal-body { padding: 16px; }
+      .modal-footer { padding: 12px 16px 16px; }
+    }
   `],
 })
 export class ImportDocumentModalComponent {

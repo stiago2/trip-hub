@@ -308,6 +308,13 @@ import { CreateAccommodationPayload } from '@org/data-access-trips';
     }
     .btn-cancel:hover { background: #f9fafb; border-color: #d1d5db; }
 
+    @media (max-width: 480px) {
+      .backdrop { align-items: flex-end; padding: 0; }
+      .modal { border-radius: 20px 20px 0 0; width: 100%; max-height: 90vh; overflow-y: auto; padding: 20px 16px; }
+      .modal-header { margin-bottom: 16px; }
+      .modal-footer { margin-top: 16px; }
+    }
+
     .btn-submit {
       flex: 1;
       display: flex; align-items: center; justify-content: center; gap: 6px;

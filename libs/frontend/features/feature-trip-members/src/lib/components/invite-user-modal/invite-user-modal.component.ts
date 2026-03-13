@@ -67,6 +67,12 @@ import { TripMembersStore } from '../../store/trip-members.store';
     }
     .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-submit:not(:disabled):hover { background: #3367d6; }
+
+    @media (max-width: 480px) {
+      .modal-backdrop { align-items: flex-end; padding: 0; }
+      .modal { border-radius: 20px 20px 0 0; width: 100%; max-height: 90vh; overflow-y: auto; padding: 20px 16px; }
+      .modal-actions { margin-top: 16px; }
+    }
   `],
 })
 export class InviteUserModalComponent {

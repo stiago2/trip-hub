@@ -355,6 +355,14 @@ const TYPE_OPTIONS: TypeOption[] = [
     }
     .btn-submit:hover:not(:disabled) { background: #2563eb; transform: translateY(-1px); }
     .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    @media (max-width: 480px) {
+      .modal-backdrop { align-items: flex-end; padding: 0; }
+      .modal { border-radius: 20px 20px 0 0; width: 100%; max-height: 90vh; overflow-y: auto; }
+      .modal-header { padding: 16px 16px 0; }
+      .modal-body { padding: 16px; }
+      .modal-footer { padding: 12px 16px 16px; }
+    }
   `],
 })
 export class AddTransportModalComponent {

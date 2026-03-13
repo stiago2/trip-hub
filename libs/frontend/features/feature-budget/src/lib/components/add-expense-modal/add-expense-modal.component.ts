@@ -277,6 +277,12 @@ const CATEGORIES = [
     }
     .btn-cancel:hover { background: #f3f4f6; }
 
+    @media (max-width: 480px) {
+      .backdrop { align-items: flex-end; padding: 0; }
+      .modal { border-radius: 20px 20px 0 0; width: 100%; max-height: 90vh; overflow-y: auto; padding: 20px 16px; }
+      .modal-footer { margin-top: 16px; }
+    }
+
     .btn-submit {
       display: flex; align-items: center; gap: 6px;
       padding: 10px 22px;
