@@ -65,11 +65,11 @@ const TABS: { id: TripTab; label: string; icon: string }[] = [
     .nav-item {
       display: flex; align-items: center; gap: 11px;
       padding: 9px 12px; border-radius: 8px;
-      text-decoration: none; color: #94a3b8;
+      text-decoration: none; color: #cbd5e1;
       font-size: 0.875rem; font-weight: 500;
       transition: background 0.15s, color 0.15s;
     }
-    .nav-item:hover { background: rgba(255,255,255,0.07); color: #e2e8f0; }
+    .nav-item:hover { background: rgba(255,255,255,0.10); color: #f1f5f9; }
     .nav-item.active {
       background: rgba(59,130,246,0.18); color: #93c5fd; font-weight: 600;
     }

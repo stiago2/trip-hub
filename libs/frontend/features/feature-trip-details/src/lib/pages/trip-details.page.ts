@@ -258,6 +258,19 @@ const THUMB_GRADIENTS = [
     .btn-bell:hover { background: #f8fafc; }
 
     .content { flex: 1; overflow-y: auto; padding: 28px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .sidebar { width: 200px; }
+    }
+    @media (max-width: 700px) {
+      .sidebar { display: none; }
+      .content { padding: 16px; }
+      .header-body { padding: 12px 16px; }
+      .header-title { font-size: 1.1rem; }
+      .header-thumb { width: 40px; height: 40px; }
+      .btn-share span { display: none; }
+    }
   `],
 })
 export class TripDetailsPage implements OnInit {

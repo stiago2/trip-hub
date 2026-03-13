@@ -82,11 +82,14 @@ import { ImportDocumentModalComponent } from '../components/import-document-moda
 
     .dashboard-grid {
       display: grid;
-      grid-template-columns: 1fr 360px;
+      grid-template-columns: 1fr 340px;
       gap: 20px;
       align-items: start;
     }
-    @media (max-width: 900px) {
+    @media (max-width: 1100px) {
+      .dashboard-grid { grid-template-columns: 1fr 300px; }
+    }
+    @media (max-width: 860px) {
       .dashboard-grid { grid-template-columns: 1fr; }
     }
 

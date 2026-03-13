@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export interface ExtractedTransport {
@@ -64,25 +64,37 @@ Rules:
 
 @Injectable()
 export class DocumentImportService {
-  private readonly genAI = new GoogleGenerativeAI(process.env['GEMINI_API_KEY'] ?? '');
-
   async extractFromDocument(
     fileBuffer: Buffer,
     mimetype: string,
     _originalName: string,
   ): Promise<ExtractionResult> {
+    const apiKey = process.env['GEMINI_API_KEY'];
+    if (!apiKey) {
+      throw new InternalServerErrorException('AI service is not configured. Please set GEMINI_API_KEY.');
+    }
+
     const supported = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
     if (!supported.includes(mimetype)) {
       throw new BadRequestException('Unsupported file type. Use PDF, JPG, or PNG.');
     }
 
-    const model = this.genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
     const base64 = fileBuffer.toString('base64');
-    const inlineData = { inlineData: { data: base64, mimeType: mimetype } };
 
-    const result = await model.generateContent([EXTRACTION_PROMPT, inlineData]);
-    const raw = result.response.text().trim();
+    let raw: string;
+    try {
+      const result = await model.generateContent([
+        { text: EXTRACTION_PROMPT },
+        { inlineData: { data: base64, mimeType: mimetype } },
+      ]);
+      raw = result.response.text().trim();
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new InternalServerErrorException(`AI analysis failed: ${msg}`);
+    }
 
     const jsonStr = raw.startsWith('```')
       ? raw.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '')

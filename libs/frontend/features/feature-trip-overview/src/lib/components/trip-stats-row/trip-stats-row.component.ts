@@ -79,7 +79,7 @@ import { RouterLink } from '@angular/router';
         @if (memberCount() === 0) {
           <span class="stat-hint">Invite travelers</span>
         } @else {
-          <span class="stat-hint stat-hint--positive">{{ memberCount() }} traveler{{ memberCount() !== 1 ? 's' : '' }}</span>
+          <span class="stat-hint stat-hint--positive">on this trip</span>
         }
       </a>
 
