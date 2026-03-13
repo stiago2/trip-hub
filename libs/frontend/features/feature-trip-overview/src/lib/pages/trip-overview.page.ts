@@ -1,4 +1,4 @@
-import { computed, Component, inject } from '@angular/core';
+import { computed, Component, inject, signal } from '@angular/core';
 import { TripStore } from '@org/data-access-trips';
 import { BudgetStore } from '@org/feature-budget';
 import { DestinationsStore } from '@org/feature-destinations';
@@ -12,6 +12,7 @@ import { UpcomingTransportPreviewComponent } from '../components/upcoming-transp
 import { AccommodationsPreviewComponent } from '../components/accommodations-preview/accommodations-preview.component';
 import { InventoryPreviewComponent } from '../components/inventory-preview/inventory-preview.component';
 import { ActivityFeedComponent } from '../components/activity-feed/activity-feed.component';
+import { ImportDocumentModalComponent } from '../components/import-document-modal/import-document-modal.component';
 
 @Component({
   selector: 'lib-trip-overview',
@@ -24,6 +25,7 @@ import { ActivityFeedComponent } from '../components/activity-feed/activity-feed
     AccommodationsPreviewComponent,
     InventoryPreviewComponent,
     ActivityFeedComponent,
+    ImportDocumentModalComponent,
   ],
   template: `
     <div class="dashboard">
@@ -38,6 +40,13 @@ import { ActivityFeedComponent } from '../components/activity-feed/activity-feed
         [totalItems]="totalItems()"
         [memberCount]="members().length"
       />
+
+      <div class="import-bar">
+        <button class="import-btn" (click)="showImportModal.set(true)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          Import Travel Document
+        </button>
+      </div>
 
       <div class="dashboard-grid">
         <div class="main-col">
@@ -59,6 +68,14 @@ import { ActivityFeedComponent } from '../components/activity-feed/activity-feed
       </div>
 
     </div>
+
+    @if (showImportModal()) {
+      <lib-import-document-modal
+        [tripId]="tripId"
+        (closed)="showImportModal.set(false)"
+        (imported)="showImportModal.set(false)"
+      />
+    }
   `,
   styles: [`
     .dashboard { padding: 4px 0 24px; }
@@ -86,6 +103,25 @@ import { ActivityFeedComponent } from '../components/activity-feed/activity-feed
     }
 
     .sidebar-col { display: flex; flex-direction: column; gap: 16px; }
+
+    .import-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 16px;
+    }
+
+    .import-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 16px; border-radius: 10px;
+      background: white; border: 1.5px solid #e2e8f0;
+      font-size: 0.85rem; font-weight: 600; color: #475569;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .import-btn:hover {
+      border-color: #6366f1; color: #6366f1;
+      background: #f5f3ff;
+    }
+    .import-btn svg { color: currentColor; }
   `],
 })
 export class TripOverviewPage {
@@ -96,6 +132,8 @@ export class TripOverviewPage {
   private readonly membersStore = inject(TripMembersStore);
 
   get tripId(): string { return this.tripStore.activeTripId() ?? ''; }
+
+  readonly showImportModal = signal(false);
 
   readonly members = computed((): TripMember[] => this.membersStore.members());
   readonly destinationCount = computed(() => this.destinationsStore.destinations().length);
