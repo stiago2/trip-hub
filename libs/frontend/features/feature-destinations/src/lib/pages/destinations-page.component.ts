@@ -127,7 +127,7 @@ const CARD_GRADIENTS = [
                 </div>
                 <div class="card-dates">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                  {{ dest.startDate | date:'MMM d' }} – {{ dest.endDate | date:'MMM d, y' }}
+                  {{ dest.startDate | date:'MMM d':'UTC' }} – {{ dest.endDate | date:'MMM d, y':'UTC' }}
                 </div>
                 @if (dest.notes) {
                   <p class="card-notes">{{ dest.notes }}</p>
