@@ -183,6 +183,38 @@ const CATEGORY_META: Record<string, { label: string; color: string; bg: string }
       transition: color 0.15s, background 0.15s;
     }
     .btn-action:hover { color: #ef4444; background: #fef2f2; }
+
+    /* ── Mobile: card layout ── */
+    @media (max-width: 600px) {
+      .page-title { font-size: 1.1rem; }
+      .table-header { padding: 14px 16px; }
+
+      /* Hide table entirely, render rows as cards */
+      .expense-table thead { display: none; }
+      .expense-table, .expense-table tbody { display: block; }
+
+      .expense-row {
+        display: grid;
+        grid-template-areas:
+          "name   name   action"
+          "cat    amount amount"
+          "date   date   date";
+        grid-template-columns: auto 1fr auto;
+        column-gap: 10px; row-gap: 4px;
+        padding: 14px 16px;
+        border-bottom: 1px solid #f1f5f9;
+      }
+      .expense-row:hover td { background: none; }
+
+      .col-name   { grid-area: name;   font-size: 0.88rem; font-weight: 600; padding: 0; border: 0; align-self: center; }
+      .col-category { grid-area: cat;  padding: 0; border: 0; align-self: center; }
+      .col-amount { grid-area: amount; padding: 0; border: 0; text-align: right; align-self: center; font-size: 1rem; }
+      .col-date   { grid-area: date;   padding: 0; border: 0; font-size: 0.75rem; color: #94a3b8; }
+      .col-paidby { display: none; }
+      .col-action { grid-area: action; padding: 0; border: 0; align-self: center; width: auto; }
+
+      .btn-action { color: #e2e8f0; opacity: 1; }
+    }
   `],
 })
 export class BudgetPageComponent  {
