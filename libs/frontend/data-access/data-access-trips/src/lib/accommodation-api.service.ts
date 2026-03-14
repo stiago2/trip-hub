@@ -23,6 +23,14 @@ export interface CreateAccommodationPayload {
   price?: number;
 }
 
+export interface UpdateAccommodationPayload {
+  name?: string;
+  checkIn?: string;
+  checkOut?: string;
+  address?: string;
+  price?: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AccommodationApiService {
   private readonly http = inject(HttpClient);
@@ -33,6 +41,10 @@ export class AccommodationApiService {
 
   createAccommodation(destinationId: string, payload: CreateAccommodationPayload): Observable<Accommodation> {
     return this.http.post<Accommodation>(`${API}/destinations/${destinationId}/accommodations`, payload);
+  }
+
+  updateAccommodation(id: string, payload: UpdateAccommodationPayload): Observable<Accommodation> {
+    return this.http.put<Accommodation>(`${API}/accommodations/${id}`, payload);
   }
 
   deleteAccommodation(id: string): Observable<void> {

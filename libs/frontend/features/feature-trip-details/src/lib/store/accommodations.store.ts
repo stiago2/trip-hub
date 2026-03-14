@@ -1,6 +1,6 @@
 import { computed, effect, inject } from '@angular/core';
 import { signalStore, withComputed, withHooks, withMethods, withState, patchState } from '@ngrx/signals';
-import { AccommodationApiService, Accommodation, CreateAccommodationPayload, TripStore } from '@org/data-access-trips';
+import { AccommodationApiService, Accommodation, CreateAccommodationPayload, UpdateAccommodationPayload, TripStore } from '@org/data-access-trips';
 
 function nights(item: Accommodation): number {
   if (!item.checkIn || !item.checkOut) return 0;
@@ -48,6 +48,20 @@ export const AccommodationsStore = signalStore(
             onSuccess?.();
           },
           error: (err) => console.error('[AccommodationsStore] createAccommodation failed:', err),
+        });
+      },
+
+      updateAccommodation(
+        id: string,
+        payload: UpdateAccommodationPayload,
+        onSuccess?: () => void,
+      ): void {
+        api.updateAccommodation(id, payload).subscribe({
+          next: (updated) => {
+            patchState(store, { items: store.items().map((i) => (i.id === id ? updated : i)) });
+            onSuccess?.();
+          },
+          error: (err) => console.error('[AccommodationsStore] updateAccommodation failed:', err),
         });
       },
 

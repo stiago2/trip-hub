@@ -1,6 +1,6 @@
 import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { CreateAccommodationPayload } from '@org/data-access-trips';
+import { Accommodation } from '@org/data-access-trips';
 import { DestinationsStore } from '@org/feature-destinations';
 import { AddAccommodationModalComponent } from '../components/add-accommodation-modal/add-accommodation-modal.component';
 import { AccommodationsStore } from '../store/accommodations.store';
@@ -136,13 +136,21 @@ const CITY_GRADIENTS: Record<string, string> = {
                 </div>
               </div>
 
-              <!-- Remove button -->
-              <button class="btn-delete" (click)="store.removeItem(item.id)" title="Remove">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
-                  <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
-                </svg>
-              </button>
+              <!-- Card actions -->
+              <div class="card-actions">
+                <button class="btn-edit" (click)="openEdit(item)" title="Edit">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  </svg>
+                </button>
+                <button class="btn-delete" (click)="store.removeItem(item.id)" title="Remove">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+                    <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+                  </svg>
+                </button>
+              </div>
             </div>
           }
         </div>
@@ -188,8 +196,8 @@ const CITY_GRADIENTS: Record<string, string> = {
     @if (showModal()) {
       <lib-add-accommodation-modal
         [destinations]="destinationsStore.destinations()"
-        (closed)="showModal.set(false)"
-        (submitted)="onAccommodationSubmitted($event)"
+        [accommodation]="editingAccommodation()"
+        (closed)="showModal.set(false); editingAccommodation.set(null)"
       />
     }
   `,
@@ -300,16 +308,22 @@ const CITY_GRADIENTS: Record<string, string> = {
     .date-value { font-size: 0.82rem; font-weight: 700; color: #334155; }
     .date-arrow { display: flex; align-items: center; flex-shrink: 0; padding-top: 12px; }
 
-    /* Remove button */
-    .btn-delete {
+    /* Action buttons */
+    .card-actions {
       position: absolute; top: 12px; right: 12px;
+      display: flex; flex-direction: column; gap: 5px;
+      opacity: 0; transition: opacity 0.15s;
+    }
+    .acc-card:hover .card-actions { opacity: 1; }
+
+    .btn-edit, .btn-delete {
       width: 28px; height: 28px; border-radius: 7px;
       background: #f1f5f9; border: none;
       display: flex; align-items: center; justify-content: center;
       color: #cbd5e1; cursor: pointer;
-      opacity: 0; transition: opacity 0.15s, background 0.15s, color 0.15s;
+      transition: background 0.15s, color 0.15s;
     }
-    .acc-card:hover .btn-delete { opacity: 1; }
+    .btn-edit:hover { background: #eff6ff; color: #3b82f6; }
     .btn-delete:hover { background: #fef2f2; color: #ef4444; }
 
     /* ── Skeleton ── */
@@ -358,6 +372,12 @@ export class AccommodationsTabComponent {
   readonly destinationsStore = inject(DestinationsStore);
 
   readonly showModal = signal(false);
+  readonly editingAccommodation = signal<Accommodation | null>(null);
+
+  openEdit(item: Accommodation): void {
+    this.editingAccommodation.set(item);
+    this.showModal.set(true);
+  }
 
   nights(item: import('@org/data-access-trips').Accommodation): number {
     if (!item.checkIn || !item.checkOut) return 0;
@@ -379,7 +399,4 @@ export class AccommodationsTabComponent {
     return CITY_GRADIENTS[key] ?? CITY_GRADIENTS['default'];
   }
 
-  onAccommodationSubmitted(event: { destinationId: string; payload: CreateAccommodationPayload }): void {
-    this.store.createAccommodation(event.destinationId, event.payload, () => this.showModal.set(false));
-  }
 }
