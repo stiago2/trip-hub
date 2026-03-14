@@ -1,6 +1,7 @@
 import { Component, computed, inject, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CreateTransportPayload, TransportType } from '@org/data-access-trips';
+import { LocationAutocompleteInputComponent } from '@org/ui-components';
 
 interface TypeOption {
   value: TransportType;
@@ -34,7 +35,7 @@ const TYPE_OPTIONS: TypeOption[] = [
 @Component({
   selector: 'lib-add-transport-modal',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, LocationAutocompleteInputComponent],
   template: `
     <div class="modal-backdrop" (click)="onClose()">
       <div class="modal" (click)="$event.stopPropagation()">
@@ -73,40 +74,24 @@ const TYPE_OPTIONS: TypeOption[] = [
             <!-- From / To -->
             <div class="form-row">
               <div class="field-group">
-                <label class="field-label" for="fromLocation">From</label>
-                <div class="input-wrap">
-                  <svg class="input-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="9"/>
-                  </svg>
-                  <input
-                    id="fromLocation"
-                    class="field-input field-input--icon"
-                    [class.field-input--error]="isInvalid('fromLocation')"
-                    formControlName="fromLocation"
-                    placeholder="Origin city"
-                    autocomplete="off"
-                  />
-                </div>
+                <lib-location-autocomplete-input
+                  label="From"
+                  placeholder="Origin city"
+                  formControlName="fromLocation"
+                  [showError]="isInvalid('fromLocation')"
+                />
                 @if (isInvalid('fromLocation')) {
                   <span class="field-error">Origin is required</span>
                 }
               </div>
 
               <div class="field-group">
-                <label class="field-label" for="toLocation">To</label>
-                <div class="input-wrap">
-                  <svg class="input-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="3 11 22 2 13 21 11 13 3 11"/>
-                  </svg>
-                  <input
-                    id="toLocation"
-                    class="field-input field-input--icon"
-                    [class.field-input--error]="isInvalid('toLocation')"
-                    formControlName="toLocation"
-                    placeholder="Destination city"
-                    autocomplete="off"
-                  />
-                </div>
+                <lib-location-autocomplete-input
+                  label="To"
+                  placeholder="Destination city"
+                  formControlName="toLocation"
+                  [showError]="isInvalid('toLocation')"
+                />
                 @if (isInvalid('toLocation')) {
                   <span class="field-error">Destination is required</span>
                 }

@@ -2,6 +2,7 @@ import { Component, computed, inject, input, OnInit, output, signal } from '@ang
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Destination } from '@org/util-types';
 import { DestinationsStore } from '../../store/destinations.store';
+import { LocationAutocompleteInputComponent, LocationResult } from '@org/ui-components';
 
 
 const DOW = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -11,7 +12,7 @@ interface CalDay { day: number | null; date: Date | null; }
 @Component({
   selector: 'lib-add-destination-modal',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, LocationAutocompleteInputComponent],
   template: `
     <div class="modal-backdrop" (click)="onClose()">
       <div class="modal" (click)="$event.stopPropagation()">
@@ -32,17 +33,13 @@ interface CalDay { day: number | null; date: Date | null; }
             <!-- City / Country -->
             <div class="form-row">
               <div class="field-group">
-                <label class="field-label" for="city">City</label>
-                <div class="input-wrap">
-                  <svg class="input-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-                  </svg>
-                  <input
-                    id="city" class="field-input field-input--icon" formControlName="city"
-                    [class.field-input--error]="isInvalid('city')"
-                    placeholder="e.g. Paris" autocomplete="off"
-                  />
-                </div>
+                <lib-location-autocomplete-input
+                  label="City"
+                  placeholder="Search city..."
+                  formControlName="city"
+                  [showError]="isInvalid('city')"
+                  (locationSelected)="onCitySelected($event)"
+                />
                 @if (isInvalid('city')) {
                   <span class="field-error">City is required</span>
                 }
@@ -503,6 +500,10 @@ export class AddDestinationModalComponent implements OnInit {
   }
 
   // ── Submit / Close ────────────────────────────────────────────
+
+  onCitySelected(result: LocationResult): void {
+    this.form.patchValue({ country: result.country });
+  }
 
   onClose(): void { this.closed.emit(); }
 

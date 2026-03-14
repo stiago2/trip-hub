@@ -1,4 +1,5 @@
 import { Injectable, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import Anthropic from '@anthropic-ai/sdk';
 
 export interface ExtractedTransport {
   type: 'transport';
@@ -63,14 +64,17 @@ Rules:
 
 @Injectable()
 export class DocumentImportService {
+  private readonly anthropic = new Anthropic({
+    apiKey: process.env['ANTHROPIC_API_KEY'],
+  });
+
   async extractFromDocument(
     fileBuffer: Buffer,
     mimetype: string,
     _originalName: string,
   ): Promise<ExtractionResult> {
-    const apiKey = process.env['GEMINI_API_KEY'];
-    if (!apiKey) {
-      throw new InternalServerErrorException('AI service is not configured. Please set GEMINI_API_KEY.');
+    if (!process.env['ANTHROPIC_API_KEY']) {
+      throw new InternalServerErrorException('AI service is not configured. Please set ANTHROPIC_API_KEY.');
     }
 
     const supported = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
@@ -79,28 +83,40 @@ export class DocumentImportService {
     }
 
     const base64 = fileBuffer.toString('base64');
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+    const isPdf = mimetype === 'application/pdf';
+
+    const fileBlock = isPdf
+      ? ({
+          type: 'document' as const,
+          source: { type: 'base64' as const, media_type: 'application/pdf' as const, data: base64 },
+        })
+      : ({
+          type: 'image' as const,
+          source: {
+            type: 'base64' as const,
+            media_type: (mimetype === 'image/png' ? 'image/png' : 'image/jpeg') as 'image/jpeg' | 'image/png',
+            data: base64,
+          },
+        });
 
     let raw: string;
     try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [
-              { text: EXTRACTION_PROMPT },
-              { inline_data: { mime_type: mimetype, data: base64 } },
+      const message = await this.anthropic.messages.create({
+        model: 'claude-opus-4-6',
+        max_tokens: 1024,
+        messages: [
+          {
+            role: 'user',
+            content: [
+              { type: 'text', text: EXTRACTION_PROMPT },
+              fileBlock,
             ],
-          }],
-        }),
+          },
+        ],
       });
-      if (!response.ok) {
-        const err = await response.text();
-        throw new Error(`${response.status} ${response.statusText}: ${err}`);
-      }
-      const json = await response.json() as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
-      raw = json.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? '';
+
+      const block = message.content[0];
+      raw = block.type === 'text' ? block.text.trim() : '';
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       throw new InternalServerErrorException(`AI analysis failed: ${msg}`);
