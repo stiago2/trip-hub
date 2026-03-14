@@ -78,6 +78,13 @@ const TABS: { id: TripTab; label: string; icon: string }[] = [
             </button>
           </div>
           <nav class="drawer-nav">
+            <a class="drawer-item drawer-item--back" routerLink="/trips" (click)="drawerOpen.set(false)">
+              <span class="drawer-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
+              </span>
+              <span class="drawer-label">All Trips</span>
+            </a>
+            <div class="drawer-section-divider"></div>
             @for (tab of tabs; track tab.id) {
               <a class="drawer-item" [routerLink]="['/trips', tripId, tab.id]" routerLinkActive="active" (click)="drawerOpen.set(false)">
                 <span class="drawer-icon" [innerHTML]="tab.icon"></span>
@@ -174,6 +181,9 @@ const TABS: { id: TripTab; label: string; icon: string }[] = [
       }
       .drawer-item:hover { background: rgba(255,255,255,0.08); color: #f1f5f9; }
       .drawer-item.active { background: rgba(59,130,246,0.18); color: #93c5fd; font-weight: 600; }
+      .drawer-item--back { color: #93c5fd; }
+      .drawer-item--back:hover { background: rgba(59,130,246,0.12); color: #bfdbfe; }
+      .drawer-section-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 6px 0; }
       .drawer-icon { display: flex; align-items: center; flex-shrink: 0; width: 20px; height: 20px; }
     }
 
