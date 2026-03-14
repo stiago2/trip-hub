@@ -331,17 +331,27 @@ const TYPE_SVG: Record<TransportType, string> = {
 
     @media (max-width: 600px) {
       .card-panel { width: 60px; }
-      .location { max-width: 90px; }
 
-      /* Summary bar: stack into 2-column grid */
+      /* Allow route row to wrap so full city names are visible */
+      .route-row { flex-wrap: wrap; row-gap: 2px; }
+      .location { max-width: none; flex: 1 1 auto; min-width: 0; }
+      .route-arrow { flex-shrink: 0; }
+
+      /* Summary bar: icon+title inline, stats grid below */
       .summary-bar {
-        flex-direction: column; gap: 14px; padding: 18px 16px;
+        flex-direction: column; gap: 12px; padding: 16px;
       }
       .summary-divider { display: none; }
+      .summary-icon-wrap { width: 36px; height: 36px; }
+      .summary-main { flex-direction: row; align-items: center; gap: 10px; width: 100%; }
+      .summary-eyebrow { display: none; }
+      .summary-count { font-size: 0.95rem; }
       .summary-stats {
         display: grid; grid-template-columns: 1fr 1fr;
-        gap: 12px; margin: 0;
+        gap: 10px; margin: 0; width: 100%;
+        border-top: 1px solid #1e293b; padding-top: 12px;
       }
+      .summary-stat-value { font-size: 1rem; }
 
       .page-header { margin-bottom: 18px; align-items: center; gap: 10px; }
       .page-title { font-size: 1.1rem; }
