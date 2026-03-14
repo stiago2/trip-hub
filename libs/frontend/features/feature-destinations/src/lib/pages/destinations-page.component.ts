@@ -116,7 +116,6 @@ const CARD_GRADIENTS = [
                   <h3 class="card-title">{{ dest.city | titlecase }}</h3>
                   <div class="card-title-right">
                     <span class="card-days-badge">{{ dayCount(dest) }} day{{ dayCount(dest) !== 1 ? 's' : '' }}</span>
-                    <span class="order-badge">{{ i + 1 }}</span>
                   </div>
                 </div>
                 <div class="card-country">
@@ -319,12 +318,6 @@ const CARD_GRADIENTS = [
     }
     .card-title-right { display: flex; align-items: center; gap: 8px; }
 
-    .order-badge {
-      flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
-      background: #0f172a; color: white;
-      font-size: 0.7rem; font-weight: 800;
-      display: flex; align-items: center; justify-content: center;
-    }
     .card-days-badge {
       display: inline-flex; align-items: center;
       font-size: 0.72rem; font-weight: 700;
@@ -424,9 +417,6 @@ const CARD_GRADIENTS = [
       .page-title { font-size: 1.15rem; }
       .trip-stats { gap: 6px; }
       .btn-add { padding: 8px 12px; font-size: 0.8rem; gap: 5px; }
-
-      /* Hide order number to free space for days badge */
-      .order-badge { display: none; }
 
       /* Narrower gradient panel */
       .card-panel { width: 70px; padding: 16px 6px; }

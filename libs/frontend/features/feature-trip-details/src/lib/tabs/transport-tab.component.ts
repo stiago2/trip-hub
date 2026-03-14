@@ -81,15 +81,9 @@ const TYPE_SVG: Record<TransportType, string> = {
       <!-- Timeline list -->
       } @else {
         <div class="timeline">
-          @for (item of sorted(); track item.id; let last = $last) {
+          @for (item of sorted(); track item.id) {
 
             <div class="timeline-entry">
-              <!-- Vertical track -->
-              <div class="track-col">
-                <div class="track-dot" [class]="'track-dot--' + item.type.toLowerCase()"></div>
-                @if (!last) { <div class="track-line"></div> }
-              </div>
-
               <!-- Card (boarding-pass style) -->
               <div class="transport-card">
                 <!-- Left gradient panel -->
@@ -222,27 +216,7 @@ const TYPE_SVG: Record<TransportType, string> = {
     .cards-list { display: flex; flex-direction: column; gap: 0; }
     .timeline { display: flex; flex-direction: column; }
 
-    .timeline-entry { display: flex; gap: 14px; align-items: stretch; }
-
-    /* Track (dot + line) */
-    .track-col {
-      display: flex; flex-direction: column; align-items: center;
-      flex-shrink: 0; padding-top: 22px;
-    }
-    .track-dot {
-      width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
-      border: 2px solid white;
-      box-shadow: 0 0 0 2px currentColor;
-    }
-    .track-dot--flight { color: #2563eb; background: #2563eb; }
-    .track-dot--train  { color: #059669; background: #059669; }
-    .track-dot--bus    { color: #7c3aed; background: #7c3aed; }
-    .track-dot--car    { color: #d97706; background: #d97706; }
-
-    .track-line {
-      flex: 1; width: 2px; background: #e2e8f0;
-      margin: 6px 0 0; min-height: 16px;
-    }
+    .timeline-entry { display: flex; align-items: stretch; }
 
     /* ── Transport card ── */
     .transport-card {
@@ -356,10 +330,6 @@ const TYPE_SVG: Record<TransportType, string> = {
     .summary-stat-value--blue { color: #3b82f6; }
 
     @media (max-width: 600px) {
-      /* Hide timeline dot column — card takes full width */
-      .track-col { display: none; }
-      .timeline-entry { gap: 0; }
-
       .card-panel { width: 60px; }
       .location { max-width: 90px; }
 
