@@ -55,6 +55,61 @@ type FilterTab = 'all' | 'upcoming' | 'active' | 'past';
         </div>
       </aside>
 
+      <!-- Mobile top bar -->
+      <div class="mobile-topbar">
+        <div class="brand">
+          <div class="brand-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2">
+              <circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+            </svg>
+          </div>
+          <span class="brand-name">TripHub</span>
+          <span class="beta-badge">BETA</span>
+        </div>
+        <button class="mobile-hamburger" (click)="mobileMenuOpen.set(true)" aria-label="Open menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile drawer -->
+      @if (mobileMenuOpen()) {
+        <div class="mobile-drawer-overlay" (click)="mobileMenuOpen.set(false)">
+          <div class="mobile-drawer" (click)="$event.stopPropagation()">
+            <div class="drawer-handle"></div>
+            <div class="drawer-header">
+              <span class="drawer-title">Menu</span>
+              <button class="drawer-close" (click)="mobileMenuOpen.set(false)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+            <nav class="drawer-nav">
+              <a class="drawer-item active" (click)="mobileMenuOpen.set(false)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="7" height="7" rx="1"/><rect x="15" y="3" width="7" height="7" rx="1"/><rect x="2" y="14" width="7" height="7" rx="1"/><rect x="15" y="14" width="7" height="7" rx="1"/></svg>
+                My Trips
+              </a>
+            </nav>
+            @if (authStore.user()) {
+              <div class="drawer-footer">
+                <div class="drawer-user-row">
+                  <div class="user-avatar">
+                    {{ (authStore.user()!.name || authStore.user()!.email) | slice:0:1 | uppercase }}
+                  </div>
+                  <div class="user-info">
+                    <span class="user-name">{{ authStore.user()!.name || authStore.user()!.email }}</span>
+                    <span class="user-plan">Premium Member</span>
+                  </div>
+                  <button class="logout-icon-btn" title="Sign out" (click)="logout()">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
       <!-- Main -->
       <div class="main">
 
@@ -264,6 +319,9 @@ type FilterTab = 'all' | 'upcoming' | 'active' | 'past';
     .trips-shell {
       display: flex; height: 100vh; overflow: hidden; background: #f1f5f9;
     }
+    @media (max-width: 700px) {
+      .trips-shell { flex-direction: column; }
+    }
 
     /* Sidebar */
     .sidebar {
@@ -394,12 +452,87 @@ type FilterTab = 'all' | 'upcoming' | 'active' | 'past';
     @media (max-width: 1100px) { .trips-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 700px)  { .trips-grid { grid-template-columns: 1fr; } }
 
+    /* Mobile top bar */
+    .mobile-topbar {
+      display: none;
+    }
+
+    /* Mobile drawer overlay */
+    .mobile-drawer-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.55);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      animation: fadeInOverlay 0.18s ease;
+    }
+    @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+
+    .mobile-drawer {
+      background: #0f172a; border-radius: 20px 20px 0 0;
+      padding: 0 16px 20px;
+      padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
+      max-height: 80vh; overflow-y: auto;
+      animation: slideUpDrawer 0.22s cubic-bezier(0.4,0,0.2,1);
+    }
+    @keyframes slideUpDrawer { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+    .drawer-handle {
+      width: 36px; height: 4px; border-radius: 99px;
+      background: rgba(255,255,255,0.2); margin: 10px auto 16px; flex-shrink: 0;
+    }
+
+    .drawer-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 12px;
+    }
+    .drawer-title { font-size: 0.95rem; font-weight: 700; color: #f1f5f9; }
+    .drawer-close {
+      background: rgba(255,255,255,0.08); border: none; border-radius: 8px;
+      width: 30px; height: 30px; cursor: pointer; color: #94a3b8;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .drawer-nav { display: flex; flex-direction: column; gap: 4px; }
+    .drawer-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px; border-radius: 10px;
+      font-size: 0.9rem; font-weight: 500; color: #94a3b8;
+      text-decoration: none; cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .drawer-item:hover { background: rgba(255,255,255,0.07); color: #e2e8f0; }
+    .drawer-item.active { background: rgba(59,130,246,0.18); color: #93c5fd; font-weight: 600; }
+
+    .drawer-footer {
+      margin-top: 16px; padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .drawer-user-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 10px;
+      background: rgba(255,255,255,0.06);
+    }
+
     /* ── Responsive ── */
     @media (max-width: 900px) {
       .sidebar { width: 200px; }
     }
     @media (max-width: 700px) {
       .sidebar { display: none; }
+      .mobile-topbar {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 10px 16px; background: #0f172a;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        position: sticky; top: 0; z-index: 50; flex-shrink: 0;
+      }
+      .mobile-topbar .brand { padding: 0; border: none; margin: 0; }
+      .mobile-hamburger {
+        background: rgba(255,255,255,0.08); border: none; border-radius: 8px;
+        width: 36px; height: 36px; cursor: pointer; color: #94a3b8;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+      }
+      .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
       .page-header {
         flex-direction: column; align-items: flex-start;
         gap: 12px; padding: 14px 16px 12px;
@@ -663,6 +796,7 @@ export class TripsPageComponent implements OnInit {
   readonly getStatus = getTripStatus;
   readonly getTimeInfo = getTripTimeInfo;
 
+  readonly mobileMenuOpen = signal(false);
   readonly showModal = signal(false);
   readonly editingTrip = signal<Trip | null>(null);
   readonly searchQuery = signal('');

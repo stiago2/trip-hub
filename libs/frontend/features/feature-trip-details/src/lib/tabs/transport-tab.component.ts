@@ -356,9 +356,23 @@ const TYPE_SVG: Record<TransportType, string> = {
     .summary-stat-value--blue { color: #3b82f6; }
 
     @media (max-width: 600px) {
+      /* Hide timeline dot column — card takes full width */
+      .track-col { display: none; }
+      .timeline-entry { gap: 0; }
+
       .card-panel { width: 60px; }
-      .location { max-width: 100px; }
-      .summary-bar { flex-wrap: wrap; gap: 14px; }
+      .location { max-width: 90px; }
+
+      /* Summary bar: stack into 2-column grid */
+      .summary-bar {
+        flex-direction: column; gap: 14px; padding: 18px 16px;
+      }
+      .summary-divider { display: none; }
+      .summary-stats {
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: 12px; margin: 0;
+      }
+
       .page-header { margin-bottom: 18px; align-items: center; gap: 10px; }
       .page-title { font-size: 1.1rem; }
       .btn-add { padding: 8px 12px; font-size: 0.8rem; gap: 5px; }

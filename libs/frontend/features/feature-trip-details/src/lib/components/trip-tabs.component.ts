@@ -57,21 +57,14 @@ const TABS: { id: TripTab; label: string; icon: string }[] = [
       }
     </nav>
 
-    <!-- Mobile: compact bottom bar -->
-    <div class="mobile-bar">
-      <a class="bar-back" routerLink="/trips">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 18 9 12 15 6"/></svg>
-        <span>All Trips</span>
-      </a>
-      <span class="bar-title">Menu</span>
-      <button class="bar-hamburger" (click)="drawerOpen.set(true)" aria-label="Open navigation">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <line x1="3" y1="6" x2="21" y2="6"/>
-          <line x1="3" y1="12" x2="21" y2="12"/>
-          <line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-      </button>
-    </div>
+    <!-- Mobile: hamburger button only -->
+    <button class="mobile-hamburger" (click)="drawerOpen.set(true)" aria-label="Open navigation">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
 
     <!-- Mobile: slide-up drawer -->
     @if (drawerOpen()) {
@@ -116,34 +109,20 @@ const TABS: { id: TripTab; label: string; icon: string }[] = [
     .nav-label { white-space: nowrap; }
 
     /* Mobile */
+    .mobile-hamburger { display: none; }
+
     @media (max-width: 700px) {
       .trip-nav { display: none; }
 
-      /* Bottom bar */
-      .mobile-bar {
-        display: flex; align-items: center; justify-content: space-between;
-        width: 100%; padding: 0 4px;
-      }
-      .bar-back {
-        display: flex; align-items: center; gap: 6px;
-        text-decoration: none; color: #93c5fd;
-        font-size: 0.78rem; font-weight: 600;
-        padding: 8px 10px; border-radius: 8px;
-        transition: background 0.15s;
-      }
-      .bar-back:hover { background: rgba(255,255,255,0.08); }
-      .bar-title {
-        font-size: 0.75rem; font-weight: 700; color: #94a3b8;
-        letter-spacing: 0.05em; text-transform: uppercase;
-      }
-      .bar-hamburger {
+      .mobile-hamburger {
         display: flex; align-items: center; justify-content: center;
         width: 38px; height: 38px; border-radius: 10px;
         background: rgba(255,255,255,0.08); border: none;
         color: #e2e8f0; cursor: pointer;
         transition: background 0.15s;
+        flex-shrink: 0;
       }
-      .bar-hamburger:hover { background: rgba(255,255,255,0.15); }
+      .mobile-hamburger:hover { background: rgba(255,255,255,0.15); }
 
       /* Drawer overlay */
       .drawer-overlay {

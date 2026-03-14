@@ -308,8 +308,10 @@ export class MembersPageComponent {
 
   readonly filteredInvitations = computed(() => {
     const q = this.searchQuery().toLowerCase();
-    if (!q) return this.store.invitations();
-    return this.store.invitations().filter((i) => i.email.toLowerCase().includes(q));
+    // Only show PENDING/DECLINED invitations — ACCEPTED users already appear in members list
+    const pending = this.store.invitations().filter((i) => i.status !== 'ACCEPTED');
+    if (!q) return pending;
+    return pending.filter((i) => i.email.toLowerCase().includes(q));
   });
 
   readonly totalShown = computed(() => this.filteredMembers().length + this.filteredInvitations().length);

@@ -95,13 +95,15 @@ const THUMB_GRADIENTS = [
               }
             </div>
             <div class="header-right">
-              <button class="btn-share">
+              <button class="btn-share header-desktop-only">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
                 <span class="btn-share-label">Share</span>
               </button>
-              <button class="btn-bell" title="Notifications">
+              <button class="btn-bell header-desktop-only" title="Notifications">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
               </button>
+              <!-- Mobile hamburger trigger -->
+              <lib-trip-tabs class="mobile-hamburger-slot" />
             </div>
           </div>
         </header>
@@ -110,9 +112,6 @@ const THUMB_GRADIENTS = [
         <div class="content">
           <router-outlet />
         </div>
-
-        <!-- Mobile bottom nav (hidden on desktop) -->
-        <lib-trip-tabs class="mobile-nav-bar" />
       </div>
     </div>
   `,
@@ -269,8 +268,10 @@ const THUMB_GRADIENTS = [
 
     .content { flex: 1; overflow-y: auto; padding: 28px; }
 
-    /* Mobile bottom nav — hidden on desktop */
-    .mobile-nav-bar { display: none; }
+    /* Desktop-only header actions */
+    .header-desktop-only { display: flex; }
+    /* Mobile hamburger slot — hidden on desktop */
+    .mobile-hamburger-slot { display: none; }
 
     /* ── Responsive ── */
     @media (max-width: 900px) {
@@ -278,27 +279,21 @@ const THUMB_GRADIENTS = [
     }
     @media (max-width: 700px) {
       .sidebar { display: none; }
-      .content { padding: 16px; padding-bottom: 80px; }
+      .content { padding: 16px; }
 
-      /* Header: make thumb smaller, hide Share label */
+      /* Header */
       .header-body { padding: 10px 14px; gap: 8px; }
       .header-thumb { width: 38px; height: 38px; border-radius: 10px; }
       .header-thumb svg { width: 16px; height: 16px; }
       .header-title { font-size: 1rem; }
       .header-dates { font-size: 0.72rem; }
       .header-duration { display: none; }
-      .btn-share-label { display: none; }
-      .btn-share { padding: 7px 10px; }
 
-      /* Mobile bottom bar + drawer trigger */
-      .mobile-nav-bar {
-        display: block;
-        position: fixed; bottom: 0; left: 0; right: 0;
-        background: #0f172a;
-        border-top: 1px solid rgba(255,255,255,0.08);
-        padding: 6px 8px env(safe-area-inset-bottom, 8px);
-        z-index: 100;
-      }
+      /* Hide share/bell on mobile */
+      .header-desktop-only { display: none !important; }
+
+      /* Show hamburger in header-right on mobile */
+      .mobile-hamburger-slot { display: flex; align-items: center; }
     }
   `],
 })
