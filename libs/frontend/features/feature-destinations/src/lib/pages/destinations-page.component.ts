@@ -425,6 +425,9 @@ const CARD_GRADIENTS = [
       .trip-stats { gap: 6px; }
       .btn-add { padding: 8px 12px; font-size: 0.8rem; gap: 5px; }
 
+      /* Hide order number to free space for days badge */
+      .order-badge { display: none; }
+
       /* Narrower gradient panel */
       .card-panel { width: 70px; padding: 16px 6px; }
       .card-body { padding: 14px 40px 14px 14px; gap: 4px; }
