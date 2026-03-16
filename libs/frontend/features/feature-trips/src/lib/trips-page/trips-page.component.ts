@@ -5,6 +5,7 @@ import { AuthService, AuthStore } from '@org/feature-auth';
 import { PendingInvitation, Trip } from '@org/util-types';
 import { CreateTripModalComponent } from '../components/create-trip-modal/create-trip-modal.component';
 import { InvitationsApiService } from '@org/data-access-trips';
+import { ToastService } from '@org/ui-components';
 import { TripsStore } from '../store/trips.store';
 import { getTripStatus, getTripTimeInfo } from '../utils/trip-status';
 import { getTripColor } from '../utils/trip-color';
@@ -835,6 +836,7 @@ export class TripsPageComponent implements OnInit {
   readonly authStore = inject(AuthStore);
   private readonly authService = inject(AuthService);
   private readonly invitationsApi = inject(InvitationsApiService);
+  private readonly toast = inject(ToastService);
 
   readonly pendingInvitations = signal<PendingInvitation[]>([]);
   private readonly router = inject(Router);
@@ -900,14 +902,14 @@ export class TripsPageComponent implements OnInit {
         this.pendingInvitations.set(this.pendingInvitations().filter((i) => i.id !== invitationId));
         this.store.loadTrips();
       },
-      error: () => {},
+      error: () => this.toast.error('Failed to accept invitation. Please try again.'),
     });
   }
 
   declineInvitation(invitationId: string): void {
     this.invitationsApi.declineInvitation(invitationId).subscribe({
       next: () => this.pendingInvitations.set(this.pendingInvitations().filter((i) => i.id !== invitationId)),
-      error: () => {},
+      error: () => this.toast.error('Failed to decline invitation. Please try again.'),
     });
   }
 
