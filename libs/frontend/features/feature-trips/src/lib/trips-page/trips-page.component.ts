@@ -259,15 +259,11 @@ type FilterTab = 'all' | 'upcoming' | 'active' | 'past';
                     <div class="card-meta">
                       <span class="meta-item">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                        0 destinations
-                      </span>
-                      <span class="meta-item">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                        0 stays
+                        {{ trip._count?.destinations ?? 0 }} destination{{ (trip._count?.destinations ?? 0) !== 1 ? 's' : '' }}
                       </span>
                       <span class="meta-item">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/><rect x="9" y="11" width="14" height="10" rx="1"/><circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
-                        0 transports
+                        {{ trip._count?.transports ?? 0 }} transport{{ (trip._count?.transports ?? 0) !== 1 ? 's' : '' }}
                       </span>
                     </div>
                   </div>

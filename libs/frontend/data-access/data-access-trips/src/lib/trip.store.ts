@@ -22,14 +22,6 @@ export const TripStore = signalStore(
         });
       },
 
-      loadTrip(tripId: string): void {
-        patchState(store, { activeTripId: tripId, loading: true });
-        api.getTrip(tripId).subscribe({
-          next: (trip) => patchState(store, { trip, loading: false }),
-          error: () => patchState(store, { loading: false }),
-        });
-      },
-
       updateTrip(partial: Partial<Trip>): void {
         const current = store.trip();
         if (current) {

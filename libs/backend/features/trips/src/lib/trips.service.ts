@@ -32,7 +32,10 @@ export class TripsService {
   getTrips(userId: string) {
     return this.prisma.trip.findMany({
       where: { members: { some: { userId } } },
-      include: { members: true },
+      include: {
+        members: true,
+        _count: { select: { destinations: true, transports: true } },
+      },
     });
   }
 

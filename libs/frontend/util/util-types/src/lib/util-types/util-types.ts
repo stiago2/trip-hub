@@ -16,6 +16,7 @@ export interface Trip {
   ownerId: string;
   createdAt: string;
   updatedAt: string;
+  _count?: { destinations: number; transports: number };
 }
 
 export interface Destination {
