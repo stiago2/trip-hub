@@ -193,7 +193,6 @@ export class ActivityFeedComponent {
     toObservable(this.tripId).pipe(
       filter(id => !!id),
       switchMap(id => {
-        console.log('[ActivityFeed] loading for tripId:', id);
         this.loading.set(true);
         return timer(0, 30_000).pipe(
           switchMap(() => this.api.getActivityByTrip(id)),
@@ -201,8 +200,8 @@ export class ActivityFeedComponent {
       }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: (data) => { console.log('[ActivityFeed] got items:', data.length); this._items.set(data); this.loading.set(false); },
-      error: (err) => { console.error('[ActivityFeed] fetch failed:', err); this.loading.set(false); },
+      next: (data) => { this._items.set(data); this.loading.set(false); },
+      error: () => { this.loading.set(false); },
     });
   }
 }

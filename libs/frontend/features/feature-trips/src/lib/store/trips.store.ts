@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { signalStore, withMethods, withState, patchState } from '@ngrx/signals';
 import { Trip } from '@org/util-types';
 import { TripsApiService, CreateTripPayload, UpdateTripPayload } from '@org/data-access-trips';
+import { ToastService } from '@org/ui-components';
 
 export const TripsStore = signalStore(
   { providedIn: 'root' },
@@ -11,6 +12,7 @@ export const TripsStore = signalStore(
   }),
   withMethods((store) => {
     const api = inject(TripsApiService);
+    const toast = inject(ToastService);
 
     return {
       loadTrips(): void {
@@ -21,23 +23,33 @@ export const TripsStore = signalStore(
         });
       },
 
-      createTrip(payload: CreateTripPayload, onSuccess?: (trip: Trip) => void): void {
+      createTrip(payload: CreateTripPayload, onSuccess?: (trip: Trip) => void, onError?: () => void): void {
         api.createTrip(payload).subscribe({
           next: (trip) => {
             patchState(store, { trips: [...store.trips(), trip] });
             onSuccess?.(trip);
           },
-          error: (err) => console.error('[TripsStore] createTrip failed:', err),
+          error: () => { toast.error('Failed to create trip. Please try again.'); onError?.(); },
         });
       },
 
-      updateTrip(id: string, payload: UpdateTripPayload, onSuccess?: () => void): void {
+      updateTrip(id: string, payload: UpdateTripPayload, onSuccess?: () => void, onError?: () => void): void {
         api.updateTrip(id, payload).subscribe({
           next: (updated) => {
             patchState(store, { trips: store.trips().map((t) => (t.id === id ? updated : t)) });
             onSuccess?.();
           },
-          error: (err) => console.error('[TripsStore] updateTrip failed:', err),
+          error: () => { toast.error('Failed to update trip. Please try again.'); onError?.(); },
+        });
+      },
+
+      deleteTrip(id: string, onSuccess?: () => void): void {
+        api.deleteTrip(id).subscribe({
+          next: () => {
+            patchState(store, { trips: store.trips().filter((t) => t.id !== id) });
+            onSuccess?.();
+          },
+          error: () => toast.error('Failed to delete trip. Please try again.'),
         });
       },
     };

@@ -59,6 +59,7 @@ export const TripMembersStore = signalStore(
             if (tripId) {
               membersApi.getMembers(tripId).subscribe({
                 next: (members) => patchState(store, { members }),
+                error: () => {},
               });
             }
           },

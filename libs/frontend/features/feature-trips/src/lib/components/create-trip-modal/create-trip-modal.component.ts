@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, inject, input, OnInit, output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, inject, input, OnInit, output, signal, ViewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Trip } from '@org/util-types';
@@ -93,14 +93,15 @@ import { TripsStore } from '../../store/trips.store';
 
           <div class="modal-footer">
             <button type="button" class="btn-cancel" (click)="onClose()">Cancel</button>
-            <button type="submit" class="btn-submit">
-              @if (trip()) {
+            <button type="submit" class="btn-submit" [disabled]="form.invalid || submitting()">
+              @if (submitting()) {
+                <svg class="spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+              } @else if (trip()) {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                Save Changes
               } @else {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Create Trip
               }
+              {{ trip() ? 'Save Changes' : 'Create Trip' }}
             </button>
           </div>
 
@@ -256,7 +257,10 @@ import { TripsStore } from '../../store/trips.store';
       cursor: pointer;
       transition: background 150ms;
     }
-    .btn-submit:hover { background: #1d4ed8; }
+    .btn-submit:hover:not(:disabled) { background: #1d4ed8; }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin { animation: spin 0.7s linear infinite; }
   `],
 })
 export class CreateTripModalComponent implements OnInit, AfterViewInit {
@@ -266,6 +270,7 @@ export class CreateTripModalComponent implements OnInit, AfterViewInit {
 
   readonly trip = input<Trip | null>(null);
   readonly closed = output<void>();
+  readonly submitting = signal(false);
 
   @ViewChild('titleInput') private readonly titleInputRef!: ElementRef<HTMLInputElement>;
 
@@ -314,6 +319,7 @@ export class CreateTripModalComponent implements OnInit, AfterViewInit {
     const { title, startDate, endDate, description } = this.form.value;
     const t = this.trip();
 
+    this.submitting.set(true);
     if (t) {
       this.store.updateTrip(
         t.id,
@@ -324,6 +330,7 @@ export class CreateTripModalComponent implements OnInit, AfterViewInit {
           description: description || undefined,
         },
         () => this.closed.emit(),
+        () => this.submitting.set(false),
       );
     } else {
       this.store.createTrip(
@@ -337,6 +344,7 @@ export class CreateTripModalComponent implements OnInit, AfterViewInit {
           this.closed.emit();
           this.router.navigate(['/trips', trip.id, 'dashboard']);
         },
+        () => this.submitting.set(false),
       );
     }
   }
