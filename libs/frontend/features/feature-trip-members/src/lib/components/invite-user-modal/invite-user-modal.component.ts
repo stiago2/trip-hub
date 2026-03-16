@@ -1,11 +1,11 @@
 import { Component, inject, output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { TripMembersStore } from '../../store/trip-members.store';
 
 @Component({
   selector: 'lib-invite-user-modal',
   standalone: true,
-  imports: [FormsModule],
+  imports: [ReactiveFormsModule],
   template: `
     <div class="modal-backdrop" (click)="onClose()">
       <div class="modal" (click)="$event.stopPropagation()">
@@ -13,28 +13,26 @@ import { TripMembersStore } from '../../store/trip-members.store';
           <h2>Invite Member</h2>
           <button class="close-btn" (click)="onClose()">✕</button>
         </div>
-        <form (ngSubmit)="onSubmit()">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
           <div class="field">
             <label for="email">Email *</label>
             <input
               id="email"
-              [(ngModel)]="email"
-              name="email"
+              formControlName="email"
               type="email"
-              required
               placeholder="e.g. friend@email.com"
             />
           </div>
           <div class="field">
             <label for="role">Role *</label>
-            <select id="role" [(ngModel)]="role" name="role">
+            <select id="role" formControlName="role">
               <option value="EDITOR">Editor</option>
               <option value="VIEWER">Viewer</option>
             </select>
           </div>
           <div class="modal-actions">
             <button type="button" class="btn-cancel" (click)="onClose()">Cancel</button>
-            <button type="submit" class="btn-submit" [disabled]="!email">Send Invite</button>
+            <button type="submit" class="btn-submit" [disabled]="form.invalid">Send Invite</button>
           </div>
         </form>
       </div>
@@ -77,18 +75,22 @@ import { TripMembersStore } from '../../store/trip-members.store';
 })
 export class InviteUserModalComponent {
   private readonly store = inject(TripMembersStore);
+  private readonly fb = inject(FormBuilder);
 
   readonly closed = output<void>();
 
-  email = '';
-  role: 'EDITOR' | 'VIEWER' = 'EDITOR';
+  readonly form = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    role: ['EDITOR' as 'EDITOR' | 'VIEWER', Validators.required],
+  });
 
   onClose(): void {
     this.closed.emit();
   }
 
   onSubmit(): void {
-    if (!this.email) return;
-    this.store.inviteUser({ email: this.email, role: this.role }, () => this.closed.emit());
+    if (this.form.invalid) return;
+    const { email, role } = this.form.getRawValue();
+    this.store.inviteUser({ email: email!, role: role! }, () => this.closed.emit());
   }
 }

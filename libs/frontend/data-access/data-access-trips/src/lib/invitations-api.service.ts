@@ -1,14 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Invitation, PendingInvitation, TripMember } from '@org/util-types';
+import { Invitation, PendingInvitation, TripMember, InviteUserPayload } from '@org/util-types';
 
 const API = '/api';
 
-export interface InviteUserPayload {
-  email: string;
-  role: 'EDITOR' | 'VIEWER';
-}
+export type { InviteUserPayload };
 
 @Injectable({ providedIn: 'root' })
 export class InvitationsApiService {

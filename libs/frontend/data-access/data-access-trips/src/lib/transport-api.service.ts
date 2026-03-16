@@ -1,30 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Transport, CreateTransportPayload, TransportType } from '@org/util-types';
 
 const API = '/api';
 
-export type TransportType = 'FLIGHT' | 'TRAIN' | 'BUS' | 'CAR';
-
-export interface Transport {
-  id: string;
-  tripId: string;
-  type: TransportType;
-  fromLocation: string;
-  toLocation: string;
-  departureTime: string;
-  arrivalTime: string;
-  price: number | null;
-}
-
-export interface CreateTransportPayload {
-  type: TransportType;
-  fromLocation: string;
-  toLocation: string;
-  departureTime: string;
-  arrivalTime: string;
-  price?: number;
-}
+export type { Transport, CreateTransportPayload, TransportType };
 
 @Injectable({ providedIn: 'root' })
 export class TransportApiService {

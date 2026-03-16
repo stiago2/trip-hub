@@ -1,23 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Trip } from '@org/util-types';
+import { Trip, CreateTripPayload, UpdateTripPayload } from '@org/util-types';
 
 const API = '/api';
 
-export interface CreateTripPayload {
-  title: string;
-  description?: string;
-  startDate: string;
-  endDate: string;
-}
-
-export interface UpdateTripPayload {
-  title?: string;
-  description?: string;
-  startDate?: string;
-  endDate?: string;
-}
+export type { CreateTripPayload, UpdateTripPayload };
 
 @Injectable({ providedIn: 'root' })
 export class TripsApiService {

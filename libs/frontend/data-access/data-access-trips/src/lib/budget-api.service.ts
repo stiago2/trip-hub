@@ -1,16 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { BudgetItem } from '@org/util-types';
+import { BudgetItem, CreateBudgetItemPayload } from '@org/util-types';
 
 const API = '/api';
 
-export interface CreateBudgetItemPayload {
-  title: string;
-  amount: number;
-  category: string;
-  paidByUserId?: string;
-}
+export type { CreateBudgetItemPayload };
 
 @Injectable({ providedIn: 'root' })
 export class BudgetApiService {

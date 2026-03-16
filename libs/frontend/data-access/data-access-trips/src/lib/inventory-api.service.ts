@@ -1,15 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { InventoryItem } from '@org/util-types';
+import { InventoryItem, CreateInventoryItemPayload } from '@org/util-types';
 
 const API = '/api';
 
-export interface CreateInventoryItemPayload {
-  name: string;
-  category: InventoryItem['category'];
-  quantity: number;
-}
+export type { CreateInventoryItemPayload };
 
 @Injectable({ providedIn: 'root' })
 export class InventoryApiService {

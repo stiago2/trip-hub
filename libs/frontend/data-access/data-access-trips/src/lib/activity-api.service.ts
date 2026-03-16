@@ -1,22 +1,17 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ActivityItem } from '@org/util-types';
 
-export interface ActivityItem {
-  id: string;
-  type: string;
-  message: string;
-  createdAt: string;
-  userId: string;
-  userName: string;
-  userAvatar: string | null;
-}
+const API = '/api';
+
+export type { ActivityItem };
 
 @Injectable({ providedIn: 'root' })
 export class ActivityApiService {
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
 
   getActivityByTrip(tripId: string, limit = 10): Observable<ActivityItem[]> {
-    return this.http.get<ActivityItem[]>(`/api/trips/${tripId}/activity?limit=${limit}`);
+    return this.http.get<ActivityItem[]>(`${API}/trips/${tripId}/activity?limit=${limit}`);
   }
 }

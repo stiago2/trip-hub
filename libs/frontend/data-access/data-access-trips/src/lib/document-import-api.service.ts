@@ -1,37 +1,23 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import {
+  DocumentExtractionResult,
+  ExtractedTransportData,
+  ExtractedAccommodationData,
+  TransportExtractionResult,
+  AccommodationExtractionResult,
+} from '@org/util-types';
 
 const API = '/api';
 
-export interface ExtractedTransportData {
-  type: 'FLIGHT' | 'TRAIN' | 'BUS' | 'CAR';
-  fromLocation: string;
-  toLocation: string;
-  departureTime: string;
-  arrivalTime: string;
-  price?: number | null;
-}
-
-export interface ExtractedAccommodationData {
-  name: string;
-  checkIn: string;
-  checkOut: string;
-  address?: string | null;
-  price?: number | null;
-}
-
-export interface TransportExtractionResult {
-  type: 'transport';
-  data: ExtractedTransportData;
-}
-
-export interface AccommodationExtractionResult {
-  type: 'accommodation';
-  data: ExtractedAccommodationData;
-}
-
-export type DocumentExtractionResult = TransportExtractionResult | AccommodationExtractionResult;
+export type {
+  DocumentExtractionResult,
+  ExtractedTransportData,
+  ExtractedAccommodationData,
+  TransportExtractionResult,
+  AccommodationExtractionResult,
+};
 
 @Injectable({ providedIn: 'root' })
 export class DocumentImportApiService {
