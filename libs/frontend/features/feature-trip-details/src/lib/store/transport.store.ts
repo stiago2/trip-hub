@@ -1,6 +1,7 @@
 import { effect, inject } from '@angular/core';
 import { signalStore, withHooks, withMethods, withState, patchState } from '@ngrx/signals';
 import { CreateTransportPayload, Transport, TransportApiService, TripStore } from '@org/data-access-trips';
+import { ToastService } from '@org/ui-components';
 
 export const TransportStore = signalStore(
   { providedIn: 'root' },
@@ -11,6 +12,7 @@ export const TransportStore = signalStore(
   withMethods((store) => {
     const api = inject(TransportApiService);
     const tripStore = inject(TripStore);
+    const toast = inject(ToastService);
 
     return {
       loadTransports(): void {
@@ -31,14 +33,14 @@ export const TransportStore = signalStore(
             patchState(store, { transports: [...store.transports(), item] });
             onSuccess?.();
           },
-          error: (err) => console.error('[TransportStore] createTransport failed:', err),
+          error: () => toast.error('Failed to add transport. Please try again.'),
         });
       },
 
       deleteTransport(id: string): void {
         api.deleteTransport(id).subscribe({
           next: () => patchState(store, { transports: store.transports().filter((t) => t.id !== id) }),
-          error: (err) => console.error('[TransportStore] deleteTransport failed:', err),
+          error: () => toast.error('Failed to delete transport. Please try again.'),
         });
       },
     };

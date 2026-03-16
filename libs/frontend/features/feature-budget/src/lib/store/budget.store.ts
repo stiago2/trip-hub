@@ -2,6 +2,7 @@ import { computed, effect, inject } from '@angular/core';
 import { signalStore, withComputed, withHooks, withMethods, withState, patchState } from '@ngrx/signals';
 import { BudgetItem } from '@org/util-types';
 import { BudgetApiService, CreateBudgetItemPayload, TripStore } from '@org/data-access-trips';
+import { ToastService } from '@org/ui-components';
 
 export const BudgetStore = signalStore(
   { providedIn: 'root' },
@@ -17,6 +18,7 @@ export const BudgetStore = signalStore(
   withMethods((store) => {
     const api = inject(BudgetApiService);
     const tripStore = inject(TripStore);
+    const toast = inject(ToastService);
 
     return {
       loadBudget(): void {
@@ -37,7 +39,7 @@ export const BudgetStore = signalStore(
             patchState(store, { items: [...store.items(), item] });
             onSuccess?.();
           },
-          error: (err) => console.error('[BudgetStore] createItem failed:', err),
+          error: () => toast.error('Failed to add expense. Please try again.'),
         });
       },
 
@@ -46,7 +48,7 @@ export const BudgetStore = signalStore(
         if (!tripId) return;
         api.deleteItem(tripId, id).subscribe({
           next: () => patchState(store, { items: store.items().filter((i) => i.id !== id) }),
-          error: (err) => console.error('[BudgetStore] deleteItem failed:', err),
+          error: () => toast.error('Failed to delete expense. Please try again.'),
         });
       },
     };

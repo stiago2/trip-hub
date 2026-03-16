@@ -1,6 +1,7 @@
 import { computed, effect, inject } from '@angular/core';
 import { signalStore, withComputed, withHooks, withMethods, withState, patchState } from '@ngrx/signals';
 import { AccommodationApiService, Accommodation, CreateAccommodationPayload, UpdateAccommodationPayload, TripStore } from '@org/data-access-trips';
+import { ToastService } from '@org/ui-components';
 
 function nights(item: Accommodation): number {
   if (!item.checkIn || !item.checkOut) return 0;
@@ -25,6 +26,7 @@ export const AccommodationsStore = signalStore(
   withMethods((store) => {
     const api = inject(AccommodationApiService);
     const tripStore = inject(TripStore);
+    const toast = inject(ToastService);
 
     return {
       loadAccommodations(): void {
@@ -47,7 +49,7 @@ export const AccommodationsStore = signalStore(
             patchState(store, { items: [...store.items(), created] });
             onSuccess?.();
           },
-          error: (err) => console.error('[AccommodationsStore] createAccommodation failed:', err),
+          error: () => toast.error('Failed to add accommodation. Please try again.'),
         });
       },
 
@@ -61,14 +63,14 @@ export const AccommodationsStore = signalStore(
             patchState(store, { items: store.items().map((i) => (i.id === id ? updated : i)) });
             onSuccess?.();
           },
-          error: (err) => console.error('[AccommodationsStore] updateAccommodation failed:', err),
+          error: () => toast.error('Failed to update accommodation. Please try again.'),
         });
       },
 
       removeItem(id: string): void {
         api.deleteAccommodation(id).subscribe({
           next: () => patchState(store, { items: store.items().filter((i) => i.id !== id) }),
-          error: (err) => console.error('[AccommodationsStore] removeItem failed:', err),
+          error: () => toast.error('Failed to remove accommodation. Please try again.'),
         });
       },
     };

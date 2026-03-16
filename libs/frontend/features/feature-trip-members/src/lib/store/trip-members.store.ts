@@ -3,6 +3,7 @@ import { signalStore, withHooks, withMethods, withState, patchState } from '@ngr
 import { Invitation, TripMember } from '@org/util-types';
 import { InvitationsApiService, InviteUserPayload, TripStore } from '@org/data-access-trips';
 import { TripMembersApiService } from '../services/trip-members-api.service';
+import { ToastService } from '@org/ui-components';
 
 export const TripMembersStore = signalStore(
   { providedIn: 'root' },
@@ -15,6 +16,7 @@ export const TripMembersStore = signalStore(
     const membersApi = inject(TripMembersApiService);
     const invitationsApi = inject(InvitationsApiService);
     const tripStore = inject(TripStore);
+    const toast = inject(ToastService);
 
     return {
       load(): void {
@@ -29,7 +31,7 @@ export const TripMembersStore = signalStore(
 
         invitationsApi.getTripInvitations(tripId).subscribe({
           next: (invitations) => patchState(store, { invitations }),
-          error: (err) => console.error('[TripMembersStore] loadInvitations failed:', err),
+          error: () => toast.error('Failed to load invitations.'),
         });
       },
 
@@ -41,7 +43,7 @@ export const TripMembersStore = signalStore(
             patchState(store, { invitations: [invitation, ...store.invitations()] });
             onSuccess?.();
           },
-          error: (err) => console.error('[TripMembersStore] inviteUser failed:', err),
+          error: () => toast.error('Failed to send invitation. Please try again.'),
         });
       },
 
@@ -60,7 +62,7 @@ export const TripMembersStore = signalStore(
               });
             }
           },
-          error: (err) => console.error('[TripMembersStore] acceptInvitation failed:', err),
+          error: () => toast.error('Failed to accept invitation. Please try again.'),
         });
       },
 
@@ -72,7 +74,7 @@ export const TripMembersStore = signalStore(
                 i.id === invitationId ? { ...i, status: 'DECLINED' as const } : i,
               ),
             }),
-          error: (err) => console.error('[TripMembersStore] declineInvitation failed:', err),
+          error: () => toast.error('Failed to decline invitation. Please try again.'),
         });
       },
     };

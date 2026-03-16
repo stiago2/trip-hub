@@ -2,6 +2,7 @@ import { computed, effect, inject } from '@angular/core';
 import { signalStore, withComputed, withHooks, withMethods, withState, patchState } from '@ngrx/signals';
 import { InventoryItem } from '@org/util-types';
 import { CreateInventoryItemPayload, InventoryApiService, TripStore } from '@org/data-access-trips';
+import { ToastService } from '@org/ui-components';
 
 const CATEGORIES: InventoryItem['category'][] = [
   'CLOTHING',
@@ -28,6 +29,7 @@ export const InventoryStore = signalStore(
   withMethods((store) => {
     const api = inject(InventoryApiService);
     const tripStore = inject(TripStore);
+    const toast = inject(ToastService);
 
     return {
       loadInventory(): void {
@@ -48,7 +50,7 @@ export const InventoryStore = signalStore(
             patchState(store, { items: [...store.items(), item] });
             onSuccess?.();
           },
-          error: (err) => console.error('[InventoryStore] createItem failed:', err),
+          error: () => toast.error('Failed to add item. Please try again.'),
         });
       },
 
@@ -58,7 +60,7 @@ export const InventoryStore = signalStore(
         api.togglePacked(tripId, item.id).subscribe({
           next: (updated) =>
             patchState(store, { items: store.items().map((i) => (i.id === updated.id ? updated : i)) }),
-          error: (err) => console.error('[InventoryStore] togglePacked failed:', err),
+          error: () => toast.error('Failed to update item. Please try again.'),
         });
       },
 
@@ -67,7 +69,7 @@ export const InventoryStore = signalStore(
         if (!tripId) return;
         api.deleteItem(tripId, id).subscribe({
           next: () => patchState(store, { items: store.items().filter((i) => i.id !== id) }),
-          error: (err) => console.error('[InventoryStore] deleteItem failed:', err),
+          error: () => toast.error('Failed to delete item. Please try again.'),
         });
       },
     };

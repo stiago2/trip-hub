@@ -2,6 +2,7 @@ import { computed, effect, inject } from '@angular/core';
 import { signalStore, withComputed, withHooks, withMethods, withState, patchState } from '@ngrx/signals';
 import { Destination } from '@org/util-types';
 import { CreateDestinationPayload, DestinationsApiService, TripStore, UpdateDestinationPayload } from '@org/data-access-trips';
+import { ToastService } from '@org/ui-components';
 
 export const DestinationsStore = signalStore(
   { providedIn: 'root' },
@@ -17,6 +18,7 @@ export const DestinationsStore = signalStore(
   withMethods((store) => {
     const api = inject(DestinationsApiService);
     const tripStore = inject(TripStore);
+    const toast = inject(ToastService);
 
     return {
       loadDestinations(): void {
@@ -37,7 +39,7 @@ export const DestinationsStore = signalStore(
             patchState(store, { rawDestinations: [...store.rawDestinations(), dest] });
             onSuccess?.();
           },
-          error: (err) => console.error('[DestinationsStore] createDestination failed:', err),
+          error: () => toast.error('Failed to add destination. Please try again.'),
         });
       },
 
@@ -49,7 +51,7 @@ export const DestinationsStore = signalStore(
             });
             onSuccess?.();
           },
-          error: (err) => console.error('[DestinationsStore] updateDestination failed:', err),
+          error: () => toast.error('Failed to update destination. Please try again.'),
         });
       },
 
@@ -57,7 +59,7 @@ export const DestinationsStore = signalStore(
         api.deleteDestination(id).subscribe({
           next: () =>
             patchState(store, { rawDestinations: store.rawDestinations().filter((d) => d.id !== id) }),
-          error: (err) => console.error('[DestinationsStore] deleteDestination failed:', err),
+          error: () => toast.error('Failed to delete destination. Please try again.'),
         });
       },
     };
