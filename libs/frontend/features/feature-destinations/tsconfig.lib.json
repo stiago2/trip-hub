@@ -4,7 +4,8 @@
     "outDir": "../../../../dist/out-tsc",
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true, "inlineSources": true,
+    "sourceMap": true,
+    "inlineSources": true,
     "types": []
   },
   "include": ["src/**/*.ts"],
@@ -12,6 +13,9 @@
   "references": [
     {
       "path": "../../data-access/data-access-trips/tsconfig.lib.json"
+    },
+    {
+      "path": "../../ui/ui-components/tsconfig.lib.json"
     },
     {
       "path": "../../util/util-types/tsconfig.lib.json"

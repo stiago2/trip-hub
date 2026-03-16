@@ -61,7 +61,7 @@ Rules:
 - price should be the total amount (number only, no currency symbol)
 - Return ONLY the JSON, nothing else`;
 
-const GEMINI_MODEL = 'gemini-2.0-flash';
+const GEMINI_MODEL = 'gemini-2.0-flash-lite';
 
 @Injectable()
 export class DocumentImportService {
