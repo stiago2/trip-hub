@@ -42,7 +42,7 @@ export const InventoryStore = signalStore(
         });
       },
 
-      createItem(payload: CreateInventoryItemPayload, onSuccess?: () => void): void {
+      createItem(payload: CreateInventoryItemPayload, onSuccess?: () => void, onError?: () => void): void {
         const tripId = tripStore.activeTripId();
         if (!tripId) return;
         api.createItem(tripId, payload).subscribe({
@@ -50,7 +50,7 @@ export const InventoryStore = signalStore(
             patchState(store, { items: [...store.items(), item] });
             onSuccess?.();
           },
-          error: () => toast.error('Failed to add item. Please try again.'),
+          error: () => { toast.error('Failed to add item. Please try again.'); onError?.(); },
         });
       },
 

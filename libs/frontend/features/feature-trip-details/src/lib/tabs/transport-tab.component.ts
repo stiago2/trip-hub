@@ -1,6 +1,6 @@
 import { DatePipe, DecimalPipe, TitleCasePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { CreateTransportPayload, TransportType } from '@org/data-access-trips';
+import { TransportType } from '@org/data-access-trips';
 import { AddTransportModalComponent } from '../components/add-transport-modal/add-transport-modal.component';
 import { TransportStore } from '../store/transport.store';
 
@@ -166,7 +166,6 @@ const TYPE_SVG: Record<TransportType, string> = {
     @if (showModal()) {
       <lib-add-transport-modal
         (closed)="showModal.set(false)"
-        (submitted)="onTransportSubmitted($event)"
       />
     }
   `,
@@ -382,10 +381,6 @@ export class TransportTabComponent {
     }
     return Object.entries(counts).map(([type, count]) => ({ type, count }));
   });
-
-  onTransportSubmitted(payload: CreateTransportPayload): void {
-    this.store.createTransport(payload, () => this.showModal.set(false));
-  }
 
   typeGradient(type: TransportType): string {
     return TYPE_GRADIENT[type] ?? TYPE_GRADIENT['CAR'];

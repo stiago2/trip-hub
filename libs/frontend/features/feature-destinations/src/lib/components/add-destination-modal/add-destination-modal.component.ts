@@ -157,18 +157,19 @@ interface CalDay { day: number | null; date: Date | null; }
             <button
               type="submit"
               class="btn-submit"
-              [disabled]="form.invalid || !startDate() || !endDate()"
+              [disabled]="form.invalid || !startDate() || !endDate() || submitting()"
             >
-              @if (destination()) {
+              @if (submitting()) {
+                <svg class="spin" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+              } @else if (destination()) {
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7L9 18l-5-5"/></svg>
-                Save Changes
               } @else {
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                   <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
                   <circle cx="12" cy="9" r="2" fill="currentColor" stroke="none"/>
                 </svg>
-                Add Destination
               }
+              {{ destination() ? 'Save Changes' : 'Add Destination' }}
             </button>
           </div>
         </form>
@@ -357,7 +358,9 @@ interface CalDay { day: number | null; date: Date | null; }
       transition: background 0.15s, transform 0.15s;
     }
     .btn-submit:hover:not(:disabled) { background: #1d4ed8; transform: translateY(-1px); }
-    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin { animation: spin 0.7s linear infinite; }
 
     @media (max-width: 480px) {
       .modal-backdrop { align-items: flex-end; padding: 0; }
@@ -384,6 +387,7 @@ export class AddDestinationModalComponent implements OnInit {
   readonly endDate = signal<Date | null>(null);
   readonly hoverDate = signal<Date | null>(null);
   readonly dateError = signal(false);
+  readonly submitting = signal(false);
 
   // Form
   readonly form = this.fb.group({
@@ -517,6 +521,7 @@ export class AddDestinationModalComponent implements OnInit {
 
     const v = this.form.getRawValue();
     const dest = this.destination();
+    this.submitting.set(true);
     if (dest) {
       this.store.updateDestination(
         dest.id,
@@ -528,6 +533,7 @@ export class AddDestinationModalComponent implements OnInit {
           notes: v.notes || undefined,
         },
         () => this.closed.emit(),
+        () => this.submitting.set(false),
       );
     } else {
       this.store.createDestination(
@@ -539,6 +545,7 @@ export class AddDestinationModalComponent implements OnInit {
           notes: v.notes || undefined,
         },
         () => this.closed.emit(),
+        () => this.submitting.set(false),
       );
     }
   }

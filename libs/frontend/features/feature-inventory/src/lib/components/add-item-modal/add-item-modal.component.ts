@@ -88,7 +88,12 @@ const CATEGORIES: CategoryOption[] = [
 
           <div class="modal-footer">
             <button type="button" class="btn-cancel" (click)="onClose()">Cancel</button>
-            <button type="submit" class="btn-submit">Add Item</button>
+            <button type="submit" class="btn-submit" [disabled]="submitting()">
+              @if (submitting()) {
+                <svg class="spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+              }
+              Add Item
+            </button>
           </div>
         </form>
 
@@ -278,7 +283,10 @@ const CATEGORIES: CategoryOption[] = [
       cursor: pointer;
       transition: background 150ms;
     }
-    .btn-submit:hover { background: #4338ca; }
+    .btn-submit:hover:not(:disabled) { background: #4338ca; }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin { animation: spin 0.7s linear infinite; }
   `],
 })
 export class AddItemModalComponent implements AfterViewInit {
@@ -288,6 +296,7 @@ export class AddItemModalComponent implements AfterViewInit {
   readonly closed = output<void>();
   readonly categories = CATEGORIES;
   readonly quantity = signal(1);
+  readonly submitting = signal(false);
 
   @ViewChild('nameInput') private readonly nameInputRef!: ElementRef<HTMLInputElement>;
 
@@ -319,6 +328,7 @@ export class AddItemModalComponent implements AfterViewInit {
   onSubmit(): void {
     const name = this.form.get('name')!.value?.trim() ?? '';
     if (!name) { this.form.markAllAsTouched(); return; }
+    this.submitting.set(true);
     this.store.createItem(
       {
         name,
@@ -326,6 +336,7 @@ export class AddItemModalComponent implements AfterViewInit {
         quantity: this.quantity(),
       },
       () => this.closed.emit(),
+      () => this.submitting.set(false),
     );
   }
 }

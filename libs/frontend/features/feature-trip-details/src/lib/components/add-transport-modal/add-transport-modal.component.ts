@@ -1,7 +1,8 @@
-import { Component, computed, inject, output } from '@angular/core';
+import { Component, computed, inject, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CreateTransportPayload, TransportType } from '@org/data-access-trips';
 import { LocationAutocompleteInputComponent } from '@org/ui-components';
+import { TransportStore } from '../../store/transport.store';
 
 interface TypeOption {
   value: TransportType;
@@ -195,11 +196,15 @@ const TYPE_OPTIONS: TypeOption[] = [
             <button
               type="submit"
               class="btn-submit"
-              [disabled]="form.invalid"
+              [disabled]="form.invalid || submitting()"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
+              @if (submitting()) {
+                <svg class="spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+              } @else {
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+              }
               Add Transport
             </button>
           </div>
@@ -339,7 +344,9 @@ const TYPE_OPTIONS: TypeOption[] = [
       transition: background 0.15s, transform 0.15s;
     }
     .btn-submit:hover:not(:disabled) { background: #2563eb; transform: translateY(-1px); }
-    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin { animation: spin 0.7s linear infinite; }
 
     @media (max-width: 480px) {
       .modal-backdrop { align-items: flex-end; padding: 0; }
@@ -352,9 +359,11 @@ const TYPE_OPTIONS: TypeOption[] = [
 })
 export class AddTransportModalComponent {
   readonly closed = output<void>();
-  readonly submitted = output<CreateTransportPayload>();
 
   private readonly fb = inject(FormBuilder);
+  private readonly store = inject(TransportStore);
+
+  readonly submitting = signal(false);
 
   readonly typeOptions = TYPE_OPTIONS;
 
@@ -437,6 +446,11 @@ export class AddTransportModalComponent {
       ...(v.price != null && v.price > 0 && { price: v.price }),
     };
 
-    this.submitted.emit(payload);
+    this.submitting.set(true);
+    this.store.createTransport(
+      payload,
+      () => this.closed.emit(),
+      () => this.submitting.set(false),
+    );
   }
 }

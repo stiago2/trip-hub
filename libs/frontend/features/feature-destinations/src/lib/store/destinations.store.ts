@@ -31,7 +31,7 @@ export const DestinationsStore = signalStore(
         });
       },
 
-      createDestination(payload: CreateDestinationPayload, onSuccess?: () => void): void {
+      createDestination(payload: CreateDestinationPayload, onSuccess?: () => void, onError?: () => void): void {
         const tripId = tripStore.activeTripId();
         if (!tripId) return;
         api.createDestination(tripId, payload).subscribe({
@@ -39,11 +39,11 @@ export const DestinationsStore = signalStore(
             patchState(store, { rawDestinations: [...store.rawDestinations(), dest] });
             onSuccess?.();
           },
-          error: () => toast.error('Failed to add destination. Please try again.'),
+          error: () => { toast.error('Failed to add destination. Please try again.'); onError?.(); },
         });
       },
 
-      updateDestination(id: string, payload: UpdateDestinationPayload, onSuccess?: () => void): void {
+      updateDestination(id: string, payload: UpdateDestinationPayload, onSuccess?: () => void, onError?: () => void): void {
         api.updateDestination(id, payload).subscribe({
           next: (updated) => {
             patchState(store, {
@@ -51,7 +51,7 @@ export const DestinationsStore = signalStore(
             });
             onSuccess?.();
           },
-          error: () => toast.error('Failed to update destination. Please try again.'),
+          error: () => { toast.error('Failed to update destination. Please try again.'); onError?.(); },
         });
       },
 

@@ -31,7 +31,7 @@ export const BudgetStore = signalStore(
         });
       },
 
-      createItem(payload: CreateBudgetItemPayload, onSuccess?: () => void): void {
+      createItem(payload: CreateBudgetItemPayload, onSuccess?: () => void, onError?: () => void): void {
         const tripId = tripStore.activeTripId();
         if (!tripId) return;
         api.createItem(tripId, payload).subscribe({
@@ -39,7 +39,7 @@ export const BudgetStore = signalStore(
             patchState(store, { items: [...store.items(), item] });
             onSuccess?.();
           },
-          error: () => toast.error('Failed to add expense. Please try again.'),
+          error: () => { toast.error('Failed to add expense. Please try again.'); onError?.(); },
         });
       },
 

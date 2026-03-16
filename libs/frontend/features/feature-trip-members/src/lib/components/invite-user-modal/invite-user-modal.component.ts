@@ -1,4 +1,4 @@
-import { Component, inject, output } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { TripMembersStore } from '../../store/trip-members.store';
 
@@ -32,7 +32,12 @@ import { TripMembersStore } from '../../store/trip-members.store';
           </div>
           <div class="modal-actions">
             <button type="button" class="btn-cancel" (click)="onClose()">Cancel</button>
-            <button type="submit" class="btn-submit" [disabled]="form.invalid">Send Invite</button>
+            <button type="submit" class="btn-submit" [disabled]="form.invalid || submitting()">
+              @if (submitting()) {
+                <svg class="spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+              }
+              Send Invite
+            </button>
           </div>
         </form>
       </div>
@@ -63,8 +68,10 @@ import { TripMembersStore } from '../../store/trip-members.store';
       background: #4285f4; color: white; border: none;
       padding: 8px 20px; border-radius: 6px; cursor: pointer; font-size: 0.95rem;
     }
-    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
     .btn-submit:not(:disabled):hover { background: #3367d6; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin { animation: spin 0.7s linear infinite; }
 
     @media (max-width: 480px) {
       .modal-backdrop { align-items: flex-end; padding: 0; }
@@ -78,6 +85,7 @@ export class InviteUserModalComponent {
   private readonly fb = inject(FormBuilder);
 
   readonly closed = output<void>();
+  readonly submitting = signal(false);
 
   readonly form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -91,6 +99,11 @@ export class InviteUserModalComponent {
   onSubmit(): void {
     if (this.form.invalid) return;
     const { email, role } = this.form.getRawValue();
-    this.store.inviteUser({ email: email!, role: role! }, () => this.closed.emit());
+    this.submitting.set(true);
+    this.store.inviteUser(
+      { email: email!, role: role! },
+      () => this.closed.emit(),
+      () => this.submitting.set(false),
+    );
   }
 }

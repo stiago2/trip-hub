@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, inject, input, OnInit, output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, inject, input, OnInit, output, signal, ViewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Destination } from '@org/util-types';
 import { Accommodation, CreateAccommodationPayload } from '@org/data-access-trips';
@@ -140,14 +140,15 @@ import { AccommodationsStore } from '../../store/accommodations.store';
 
           <div class="modal-footer">
             <button type="button" class="btn-cancel" (click)="onClose()">Cancel</button>
-            <button type="submit" class="btn-submit">
-              @if (accommodation()) {
+            <button type="submit" class="btn-submit" [disabled]="form.invalid || submitting()">
+              @if (submitting()) {
+                <svg class="spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+              } @else if (accommodation()) {
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7L9 18l-5-5"/></svg>
-                Save Changes
               } @else {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Add Accommodation
               }
+              {{ accommodation() ? 'Save Changes' : 'Add Accommodation' }}
             </button>
           </div>
 
@@ -223,7 +224,10 @@ import { AccommodationsStore } from '../../store/accommodations.store';
       background: #2563eb; color: #fff; font-size: 0.9rem; font-weight: 600;
       cursor: pointer; transition: background 150ms;
     }
-    .btn-submit:hover { background: #1d4ed8; }
+    .btn-submit:hover:not(:disabled) { background: #1d4ed8; }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin { animation: spin 0.7s linear infinite; }
     @media (max-width: 480px) {
       .backdrop { align-items: flex-end; padding: 0; }
       .modal { border-radius: 20px 20px 0 0; width: 100%; max-height: 90vh; overflow-y: auto; padding: 20px 16px; }
@@ -239,6 +243,7 @@ export class AddAccommodationModalComponent implements AfterViewInit, OnInit {
   readonly destinations  = input<Destination[]>([]);
   readonly accommodation = input<Accommodation | null>(null);
   readonly closed        = output<void>();
+  readonly submitting    = signal(false);
 
   @ViewChild('nameInput') private readonly nameInputRef!: ElementRef<HTMLInputElement>;
 
@@ -299,10 +304,11 @@ export class AddAccommodationModalComponent implements AfterViewInit, OnInit {
       ...(v.price != null   ? { price: Number(v.price) }    : {}),
     };
 
+    this.submitting.set(true);
     if (acc) {
-      this.store.updateAccommodation(acc.id, payload, () => this.closed.emit());
+      this.store.updateAccommodation(acc.id, payload, () => this.closed.emit(), () => this.submitting.set(false));
     } else {
-      this.store.createAccommodation(v.destinationId!, payload, () => this.closed.emit());
+      this.store.createAccommodation(v.destinationId!, payload, () => this.closed.emit(), () => this.submitting.set(false));
     }
   }
 }

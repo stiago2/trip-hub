@@ -43,13 +43,14 @@ export const AccommodationsStore = signalStore(
         destinationId: string,
         payload: CreateAccommodationPayload,
         onSuccess?: () => void,
+        onError?: () => void,
       ): void {
         api.createAccommodation(destinationId, payload).subscribe({
           next: (created) => {
             patchState(store, { items: [...store.items(), created] });
             onSuccess?.();
           },
-          error: () => toast.error('Failed to add accommodation. Please try again.'),
+          error: () => { toast.error('Failed to add accommodation. Please try again.'); onError?.(); },
         });
       },
 
@@ -57,13 +58,14 @@ export const AccommodationsStore = signalStore(
         id: string,
         payload: UpdateAccommodationPayload,
         onSuccess?: () => void,
+        onError?: () => void,
       ): void {
         api.updateAccommodation(id, payload).subscribe({
           next: (updated) => {
             patchState(store, { items: store.items().map((i) => (i.id === id ? updated : i)) });
             onSuccess?.();
           },
-          error: () => toast.error('Failed to update accommodation. Please try again.'),
+          error: () => { toast.error('Failed to update accommodation. Please try again.'); onError?.(); },
         });
       },
 

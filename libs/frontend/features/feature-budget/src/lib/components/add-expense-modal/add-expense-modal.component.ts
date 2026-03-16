@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, computed, ElementRef, HostListener, inject, output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, computed, ElementRef, HostListener, inject, output, signal, ViewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BudgetStore } from '../../store/budget.store';
 import { TripMembersStore } from '@org/feature-trip-members';
@@ -123,10 +123,14 @@ const CATEGORIES = [
 
           <div class="modal-footer">
             <button type="button" class="btn-cancel" (click)="onClose()">Cancel</button>
-            <button type="submit" class="btn-submit">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
+            <button type="submit" class="btn-submit" [disabled]="form.invalid || submitting()">
+              @if (submitting()) {
+                <svg class="spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+              } @else {
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+              }
               Add Expense
             </button>
           </div>
@@ -295,7 +299,10 @@ const CATEGORIES = [
       cursor: pointer;
       transition: background 150ms;
     }
-    .btn-submit:hover { background: #1d4ed8; }
+    .btn-submit:hover:not(:disabled) { background: #1d4ed8; }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin { animation: spin 0.7s linear infinite; }
   `],
 })
 export class AddExpenseModalComponent implements AfterViewInit {
@@ -306,6 +313,7 @@ export class AddExpenseModalComponent implements AfterViewInit {
 
   readonly closed = output<void>();
   readonly categories = CATEGORIES;
+  readonly submitting = signal(false);
 
   @ViewChild('titleInput') private readonly titleInputRef!: ElementRef<HTMLInputElement>;
 
@@ -347,6 +355,7 @@ export class AddExpenseModalComponent implements AfterViewInit {
   onSubmit(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const { title, amount, category, paidByUserId } = this.form.value;
+    this.submitting.set(true);
     this.store.createItem(
       {
         title: title!.trim(),
@@ -355,6 +364,7 @@ export class AddExpenseModalComponent implements AfterViewInit {
         paidByUserId: paidByUserId || undefined,
       },
       () => this.closed.emit(),
+      () => this.submitting.set(false),
     );
   }
 }

@@ -25,7 +25,7 @@ export const TransportStore = signalStore(
         });
       },
 
-      createTransport(payload: CreateTransportPayload, onSuccess?: () => void): void {
+      createTransport(payload: CreateTransportPayload, onSuccess?: () => void, onError?: () => void): void {
         const tripId = tripStore.activeTripId();
         if (!tripId) return;
         api.createTransport(tripId, payload).subscribe({
@@ -33,7 +33,7 @@ export const TransportStore = signalStore(
             patchState(store, { transports: [...store.transports(), item] });
             onSuccess?.();
           },
-          error: () => toast.error('Failed to add transport. Please try again.'),
+          error: () => { toast.error('Failed to add transport. Please try again.'); onError?.(); },
         });
       },
 

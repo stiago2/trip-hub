@@ -35,7 +35,7 @@ export const TripMembersStore = signalStore(
         });
       },
 
-      inviteUser(payload: InviteUserPayload, onSuccess?: () => void): void {
+      inviteUser(payload: InviteUserPayload, onSuccess?: () => void, onError?: () => void): void {
         const tripId = tripStore.activeTripId();
         if (!tripId) return;
         invitationsApi.inviteUser(tripId, payload).subscribe({
@@ -43,7 +43,7 @@ export const TripMembersStore = signalStore(
             patchState(store, { invitations: [invitation, ...store.invitations()] });
             onSuccess?.();
           },
-          error: () => toast.error('Failed to send invitation. Please try again.'),
+          error: () => { toast.error('Failed to send invitation. Please try again.'); onError?.(); },
         });
       },
 
