@@ -8,31 +8,46 @@ import { TripMembersStore } from '../../store/trip-members.store';
   imports: [ReactiveFormsModule],
   template: `
     <div class="modal-backdrop" (click)="onClose()">
-      <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-container" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <h2>Invite Member</h2>
-          <button class="close-btn" (click)="onClose()">✕</button>
+          <div>
+            <h2 class="modal-title">Invite Member</h2>
+            <p class="modal-subtitle">Send an invitation to collaborate on this trip.</p>
+          </div>
+          <button class="modal-close-btn" type="button" (click)="onClose()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
         </div>
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
-          <div class="field">
-            <label for="email">Email *</label>
-            <input
-              id="email"
-              formControlName="email"
-              type="email"
-              placeholder="e.g. friend@email.com"
-            />
+          <div class="modal-body">
+            <div class="field-group">
+              <label class="field-label" for="email">Email</label>
+              <input
+                id="email"
+                class="field-input"
+                formControlName="email"
+                type="email"
+                placeholder="e.g. friend@email.com"
+              />
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="role">Role</label>
+              <div class="select-wrapper">
+                <select id="role" class="field-select" formControlName="role">
+                  <option value="EDITOR">Editor</option>
+                  <option value="VIEWER">Viewer</option>
+                </select>
+                <svg class="select-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+              </div>
+            </div>
           </div>
-          <div class="field">
-            <label for="role">Role *</label>
-            <select id="role" formControlName="role">
-              <option value="EDITOR">Editor</option>
-              <option value="VIEWER">Viewer</option>
-            </select>
-          </div>
-          <div class="modal-actions">
+          <div class="modal-footer">
             <button type="button" class="btn-cancel" (click)="onClose()">Cancel</button>
-            <button type="submit" class="btn-submit" [disabled]="form.invalid || submitting()">
+            <button type="submit" class="btn-primary" [disabled]="form.invalid || submitting()">
               @if (submitting()) {
                 <svg class="spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
               }
@@ -44,39 +59,18 @@ import { TripMembersStore } from '../../store/trip-members.store';
     </div>
   `,
   styles: [`
-    .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.4);
-      display: flex; align-items: center; justify-content: center; z-index: 100;
+    form { display: contents; }
+    .select-wrapper { position: relative; }
+    .field-select {
+      width: 100%; border: 1.5px solid var(--color-border); border-radius: var(--radius-lg);
+      padding: 10px 36px 10px 14px; font-size: var(--font-size-base); color: var(--color-text);
+      outline: none; appearance: none; background: var(--color-surface); cursor: pointer;
+      transition: border-color 150ms; box-sizing: border-box;
     }
-    .modal {
-      background: white; border-radius: 12px; padding: 32px;
-      width: 100%; max-width: 440px; box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-    }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .modal-header h2 { margin: 0; font-size: 1.15rem; }
-    .close-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #666; }
-    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
-    .field label { font-size: 0.875rem; font-weight: 500; color: #374151; }
-    .field input, .field select {
-      border: 1px solid #d1d5db; border-radius: 6px; padding: 8px 12px;
-      font-size: 0.95rem; outline: none; background: white;
-    }
-    .field input:focus, .field select:focus { border-color: #4285f4; }
-    .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
-    .btn-cancel { background: none; border: 1px solid #d1d5db; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
-    .btn-submit {
-      background: #4285f4; color: white; border: none;
-      padding: 8px 20px; border-radius: 6px; cursor: pointer; font-size: 0.95rem;
-    }
-    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-submit:not(:disabled):hover { background: #3367d6; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .spin { animation: spin 0.7s linear infinite; }
-
-    @media (max-width: 480px) {
-      .modal-backdrop { align-items: flex-end; padding: 0; }
-      .modal { border-radius: 20px 20px 0 0; width: 100%; max-height: 90vh; overflow-y: auto; padding: 20px 16px; }
-      .modal-actions { margin-top: 16px; }
+    .field-select:focus { border-color: var(--color-border-focus); }
+    .select-chevron {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      pointer-events: none; color: var(--color-text-muted);
     }
   `],
 })

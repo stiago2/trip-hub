@@ -39,12 +39,12 @@ const TYPE_OPTIONS: TypeOption[] = [
   imports: [ReactiveFormsModule, LocationAutocompleteInputComponent],
   template: `
     <div class="modal-backdrop" (click)="onClose()">
-      <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-container transport-modal" (click)="$event.stopPropagation()">
 
         <!-- Header -->
-        <div class="modal-header">
+        <div class="modal-header transport-header">
           <h2 class="modal-title">Add New Transport</h2>
-          <button class="close-btn" (click)="onClose()" type="button" aria-label="Close">
+          <button class="modal-close-btn" (click)="onClose()" type="button" aria-label="Close">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
@@ -195,7 +195,7 @@ const TYPE_OPTIONS: TypeOption[] = [
             <button type="button" class="btn-cancel" (click)="onClose()">Cancel</button>
             <button
               type="submit"
-              class="btn-submit"
+              class="btn-primary"
               [disabled]="form.invalid || submitting()"
             >
               @if (submitting()) {
@@ -213,45 +213,9 @@ const TYPE_OPTIONS: TypeOption[] = [
     </div>
   `,
   styles: [`
-    .modal-backdrop {
-      position: fixed; inset: 0;
-      background: rgba(15,23,42,0.45);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 200; padding: 16px;
-    }
-
-    .modal {
-      background: white; border-radius: 16px;
-      width: 100%; max-width: 600px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-      max-height: calc(100vh - 32px);
-      display: flex; flex-direction: column;
-      overflow: hidden;
-    }
-
-    /* Header */
-    .modal-header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 24px 28px 0;
-    }
-    .modal-title {
-      margin: 0; font-size: 1.15rem; font-weight: 800;
-      color: #0f172a; letter-spacing: -0.02em;
-    }
-    .close-btn {
-      background: none; border: none; cursor: pointer; color: #94a3b8;
-      padding: 6px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.12s, color 0.12s;
-    }
-    .close-btn:hover { background: #f1f5f9; color: #475569; }
-
-    /* Body */
-    .modal-body {
-      padding: 20px 28px;
-      overflow-y: auto;
-      display: flex; flex-direction: column; gap: 18px;
-    }
+    /* Override max-width and remove header border for transport modal */
+    .transport-modal { max-width: 600px; }
+    .transport-header { border-bottom: none; padding-bottom: 0; }
 
     /* Field */
     .field-group { display: flex; flex-direction: column; gap: 6px; }
@@ -259,60 +223,29 @@ const TYPE_OPTIONS: TypeOption[] = [
       font-size: 0.78rem; font-weight: 600; color: #475569;
       text-transform: uppercase; letter-spacing: 0.04em;
     }
-
-    .form-row {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
-    }
-    @media (max-width: 520px) {
-      .form-row { grid-template-columns: 1fr; }
-    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 520px) { .form-row { grid-template-columns: 1fr; } }
 
     /* Input */
     .input-wrap { position: relative; display: flex; align-items: center; }
-    .input-icon {
-      position: absolute; left: 12px; color: #94a3b8; pointer-events: none;
-    }
     .input-prefix {
-      position: absolute; left: 12px; font-size: 0.9rem; color: #94a3b8;
-      font-weight: 600; pointer-events: none;
+      position: absolute; left: 12px; font-size: var(--font-size-base);
+      color: var(--color-text-placeholder); font-weight: 600; pointer-events: none;
     }
-
-    .field-input {
-      width: 100%; border: 1.5px solid #e2e8f0; border-radius: 10px;
-      padding: 10px 14px; font-size: 0.875rem; color: #1e293b;
-      outline: none; background: white; box-sizing: border-box;
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-    .field-input:focus {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
-    }
-    .field-input--icon { padding-left: 36px; }
     .field-input--prefix { padding-left: 28px; }
-    .field-input--error { border-color: #ef4444; }
-    .field-input--error:focus { box-shadow: 0 0 0 3px rgba(239,68,68,0.12); }
-    .field-error { font-size: 0.75rem; color: #ef4444; }
 
     /* Type grid */
-    .type-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
-    }
-    @media (max-width: 520px) {
-      .type-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-
+    .type-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    @media (max-width: 520px) { .type-grid { grid-template-columns: repeat(2, 1fr); } }
     .type-btn {
       display: flex; flex-direction: column; align-items: center;
       gap: 6px; padding: 14px 8px;
-      background: #f8fafc; border: 1.5px solid #e2e8f0;
-      border-radius: 12px; cursor: pointer;
-      transition: border-color 0.15s, background 0.15s, color 0.15s;
-      color: #64748b;
+      background: var(--color-surface-subtle); border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-xl); cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, color 0.15s; color: #64748b;
     }
-    .type-btn:hover { border-color: #93c5fd; background: #eff6ff; color: #3b82f6; }
-    .type-btn--active {
-      border-color: #3b82f6; background: #eff6ff; color: #3b82f6;
-    }
+    .type-btn:hover { border-color: #93c5fd; background: var(--color-primary-light); color: #3b82f6; }
+    .type-btn--active { border-color: var(--color-border-focus); background: var(--color-primary-light); color: #3b82f6; }
     .type-icon { display: flex; align-items: center; justify-content: center; }
     .type-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
 
@@ -320,40 +253,7 @@ const TYPE_OPTIONS: TypeOption[] = [
     .duration-hint {
       display: flex; align-items: center; gap: 6px;
       font-size: 0.8rem; color: #3b82f6; font-weight: 500;
-      background: #eff6ff; border-radius: 8px; padding: 8px 12px;
-    }
-
-    /* Footer */
-    .modal-footer {
-      display: flex; justify-content: flex-end; gap: 10px;
-      padding: 16px 28px 24px;
-      border-top: 1px solid #f1f5f9;
-    }
-    .btn-cancel {
-      background: white; border: 1.5px solid #e2e8f0; color: #64748b;
-      padding: 10px 20px; border-radius: 10px; cursor: pointer;
-      font-size: 0.875rem; font-weight: 600;
-      transition: background 0.12s;
-    }
-    .btn-cancel:hover { background: #f8fafc; }
-    .btn-submit {
-      display: flex; align-items: center; gap: 7px;
-      background: #3b82f6; color: white; border: none;
-      padding: 10px 22px; border-radius: 10px; cursor: pointer;
-      font-size: 0.875rem; font-weight: 700;
-      transition: background 0.15s, transform 0.15s;
-    }
-    .btn-submit:hover:not(:disabled) { background: #2563eb; transform: translateY(-1px); }
-    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .spin { animation: spin 0.7s linear infinite; }
-
-    @media (max-width: 480px) {
-      .modal-backdrop { align-items: flex-end; padding: 0; }
-      .modal { border-radius: 20px 20px 0 0; width: 100%; max-height: 90vh; overflow-y: auto; }
-      .modal-header { padding: 16px 16px 0; }
-      .modal-body { padding: 16px; }
-      .modal-footer { padding: 12px 16px 16px; }
+      background: var(--color-primary-light); border-radius: var(--radius-md); padding: 8px 12px;
     }
   `],
 })

@@ -18,15 +18,15 @@ const CATEGORIES: CategoryOption[] = [
   standalone: true,
   imports: [ReactiveFormsModule],
   template: `
-    <div class="backdrop" (click)="onClose()">
-      <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-backdrop" (click)="onClose()">
+      <div class="modal-shell" (click)="$event.stopPropagation()">
 
-        <div class="modal-header">
+        <div class="modal-header-flat">
           <div>
             <h2 class="modal-title">Add Inventory Item</h2>
             <p class="modal-subtitle">Enter the details of the item you want to pack.</p>
           </div>
-          <button class="close-btn" type="button" (click)="onClose()">
+          <button class="modal-close-btn" type="button" (click)="onClose()">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
@@ -86,9 +86,9 @@ const CATEGORIES: CategoryOption[] = [
             </div>
           </div>
 
-          <div class="modal-footer">
+          <div class="modal-footer-flat">
             <button type="button" class="btn-cancel" (click)="onClose()">Cancel</button>
-            <button type="submit" class="btn-submit" [disabled]="submitting()">
+            <button type="submit" class="btn-primary" [disabled]="submitting()">
               @if (submitting()) {
                 <svg class="spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
               }
@@ -101,192 +101,55 @@ const CATEGORIES: CategoryOption[] = [
     </div>
   `,
   styles: [`
-    @keyframes backdropFade {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-    @keyframes modalSlide {
-      from { opacity: 0; transform: translateY(16px) scale(0.98); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .backdrop {
-      position: fixed; inset: 0;
-      background: rgba(0, 0, 0, 0.45);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 200;
-      animation: backdropFade 180ms ease;
-    }
-
-    .modal {
-      background: #fff;
-      border-radius: 16px;
-      padding: 28px 28px 24px;
-      width: 100%; max-width: 440px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+    .modal-shell {
+      background: var(--color-surface); border-radius: var(--radius-2xl);
+      padding: 28px 28px 24px; width: 100%; max-width: 440px;
+      max-height: 90vh; overflow-y: auto;
+      box-shadow: var(--shadow-lg);
       animation: modalSlide 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
+    .modal-header-flat {
+      display: flex; justify-content: space-between; align-items: flex-start;
       margin-bottom: 24px;
     }
-
-    .modal-title {
-      margin: 0 0 4px;
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #111827;
-    }
-
-    .modal-subtitle {
-      margin: 0;
-      font-size: 0.82rem;
-      color: #6b7280;
-    }
-
-    .close-btn {
-      background: none; border: none;
-      color: #9ca3af; cursor: pointer;
-      padding: 4px; border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-      transition: color 150ms, background 150ms;
-    }
-    .close-btn:hover { color: #374151; background: #f3f4f6; }
-
     .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
-
-    .field-label {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #374151;
-      letter-spacing: 0.01em;
-    }
-
-    .field-input {
-      border: 1.5px solid #e5e7eb;
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-size: 0.92rem;
-      color: #111827;
-      outline: none;
-      transition: border-color 150ms;
-      background: #fff;
-    }
-    .field-input::placeholder { color: #9ca3af; }
-    .field-input:focus { border-color: #4f46e5; }
-    .field-input.error { border-color: #ef4444; }
-
-    .field-error { font-size: 0.78rem; color: #ef4444; }
-
     .select-wrapper { position: relative; }
-
     .field-select {
-      width: 100%;
-      border: 1.5px solid #e5e7eb;
-      border-radius: 10px;
-      padding: 10px 36px 10px 14px;
-      font-size: 0.92rem;
-      color: #111827;
-      outline: none;
-      appearance: none;
-      background: #fff;
-      cursor: pointer;
-      transition: border-color 150ms;
+      width: 100%; border: 1.5px solid var(--color-border); border-radius: var(--radius-lg);
+      padding: 10px 36px 10px 14px; font-size: var(--font-size-base); color: var(--color-text);
+      outline: none; appearance: none; background: var(--color-surface);
+      cursor: pointer; transition: border-color 150ms;
     }
-    .field-select:focus { border-color: #4f46e5; }
-
+    .field-select:focus { border-color: var(--color-border-focus); }
     .select-chevron {
-      position: absolute;
-      right: 12px; top: 50%;
-      transform: translateY(-50%);
-      pointer-events: none;
-      color: #6b7280;
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      pointer-events: none; color: var(--color-text-muted);
     }
-
     .quantity-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: #f9fafb;
-      border: 1.5px solid #e5e7eb;
-      border-radius: 10px;
-      padding: 10px 14px;
+      display: flex; align-items: center; gap: 12px;
+      background: var(--color-surface-subtle); border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-lg); padding: 10px 14px;
     }
-
-    .stepper {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-left: auto;
-    }
-
+    .stepper { display: flex; align-items: center; gap: 14px; margin-left: auto; }
     .stepper-btn {
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      border: 1.5px solid #d1d5db;
-      background: #fff;
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1.5px solid var(--color-border); background: var(--color-surface);
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      color: #374151;
-      transition: background 150ms, border-color 150ms;
-      padding: 0;
+      cursor: pointer; color: var(--color-text-secondary);
+      transition: background 150ms, border-color 150ms; padding: 0;
     }
-    .stepper-btn:hover:not(:disabled) { background: #f3f4f6; border-color: #9ca3af; }
+    .stepper-btn:hover:not(:disabled) { background: var(--color-surface-muted); border-color: var(--color-text-placeholder); }
     .stepper-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-
     .stepper-value {
-      font-size: 1rem;
-      font-weight: 600;
-      color: #111827;
-      min-width: 24px;
-      text-align: center;
+      font-size: 1rem; font-weight: 600; color: var(--color-text);
+      min-width: 24px; text-align: center;
     }
-
-    .modal-footer {
-      display: flex;
-      gap: 10px;
-      margin-top: 28px;
-    }
-
-    .btn-cancel {
-      flex: 0 0 auto;
-      padding: 10px 18px;
-      border: 1.5px solid #e5e7eb;
-      border-radius: 10px;
-      background: none;
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: #374151;
-      cursor: pointer;
-      transition: background 150ms, border-color 150ms;
-    }
-    .btn-cancel:hover { background: #f9fafb; border-color: #d1d5db; }
-
+    .modal-footer-flat { display: flex; gap: var(--space-3); margin-top: 28px; }
+    .btn-primary { flex: 1; justify-content: center; }
     @media (max-width: 480px) {
-      .backdrop { align-items: flex-end; padding: 0; }
-      .modal { border-radius: 20px 20px 0 0; width: 100%; max-height: 90vh; overflow-y: auto; padding: 20px 16px; }
-      .modal-footer { margin-top: 16px; }
+      .modal-shell { border-radius: 20px 20px 0 0; width: 100%; padding: 20px 16px; }
+      .modal-footer-flat { margin-top: 16px; }
     }
-
-    .btn-submit {
-      flex: 1;
-      padding: 10px 18px;
-      border: none;
-      border-radius: 10px;
-      background: #4f46e5;
-      color: #fff;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 150ms;
-    }
-    .btn-submit:hover:not(:disabled) { background: #4338ca; }
-    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .spin { animation: spin 0.7s linear infinite; }
   `],
 })
 export class AddItemModalComponent implements AfterViewInit {
