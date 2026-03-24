@@ -16,7 +16,7 @@ const CATEGORY_LABEL: Record<InventoryItem['category'], string> = {
   standalone: true,
   imports: [RouterLink],
   template: `
-    <div class="preview-card">
+    <div class="preview-card card">
       <div class="card-header">
         <span class="card-title">Packing List</span>
         <a class="card-link" [routerLink]="['/trips', tripId(), 'inventory']">See all</a>
@@ -70,104 +70,101 @@ const CATEGORY_LABEL: Record<InventoryItem['category'], string> = {
   `,
   styles: [`
     .preview-card {
-      background: white;
-      border: 1px solid #e8edf3;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.04);
+      padding: var(--space-5);
     }
 
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px; padding-bottom: 12px;
-      border-bottom: 1px solid #f1f5f9;
+      margin-bottom: var(--space-3-5); padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--color-surface-muted);
     }
-    .card-title { font-size: 0.875rem; font-weight: 700; color: #0f172a; }
+    .card-title { font-size: var(--font-size-body); font-weight: var(--font-weight-bold); color: var(--color-text); }
     .card-link {
-      font-size: 0.775rem; font-weight: 600; color: #3b82f6;
+      font-size: 0.775rem; font-weight: var(--font-weight-semibold); color: var(--color-action);
       text-decoration: none; padding: 3px 8px; border-radius: 6px;
-      background: #eff6ff; transition: background 0.15s;
+      background: var(--color-action-light); transition: background var(--transition-fast);
     }
     .card-link:hover { background: #dbeafe; }
 
-    .empty-state { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 0 8px; }
+    .empty-state { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); padding: var(--space-4) 0 var(--space-2); }
     .empty-icon-wrap {
       width: 52px; height: 52px; border-radius: 14px;
-      background: #f8fafc;
+
+      background: var(--color-surface-subtle);
       display: flex; align-items: center; justify-content: center;
       margin-bottom: 4px;
     }
-    .empty-title { margin: 0; font-size: 0.875rem; color: #64748b; font-weight: 600; }
+    .empty-title { margin: 0; font-size: var(--font-size-body); color: var(--color-text-soft); font-weight: var(--font-weight-semibold); }
     .btn-add {
       display: flex; align-items: center; gap: 5px; margin-top: 4px;
-      background: #f8fafc; color: #475569; text-decoration: none;
-      font-size: 0.8rem; font-weight: 600; padding: 8px 16px;
-      border-radius: 8px; border: 1px solid #e2e8f0;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      background: var(--color-surface-subtle); color: #475569; text-decoration: none;
+      font-size: 0.8rem; font-weight: var(--font-weight-semibold); padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-md); border: 1px solid var(--color-border);
+      transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
     }
-    .btn-add:hover { background: #eff6ff; border-color: #bfdbfe; color: #2563eb; }
+    .btn-add:hover { background: var(--color-action-light); border-color: #bfdbfe; color: var(--color-action-hover); }
 
     .progress-bar-wrap {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 12px;
+      margin-bottom: var(--space-3);
     }
     .progress-bar {
       flex: 1;
       height: 6px;
-      background: #f1f5f9;
-      border-radius: 99px;
+      background: var(--color-surface-muted);
+      border-radius: var(--radius-full);
       overflow: hidden;
     }
     .progress-fill {
       height: 100%;
       background: #22c55e;
-      border-radius: 99px;
+      border-radius: var(--radius-full);
       transition: width 0.3s ease;
     }
-    .progress-label { font-size: 0.75rem; color: #64748b; white-space: nowrap; }
+    .progress-label { font-size: 0.75rem; color: var(--color-text-soft); white-space: nowrap; }
 
     .item-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
     .item-row {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: var(--space-2);
       padding: 4px 6px;
       border-radius: 6px;
       cursor: pointer;
-      transition: background 0.12s;
+      transition: background var(--transition-fast);
     }
-    .item-row:hover { background: #f8fafc; }
+    .item-row:hover { background: var(--color-surface-subtle); }
 
     .item-check {
       width: 16px; height: 16px; border-radius: 4px;
-      border: 1.5px solid #cbd5e1;
+      border: 1.5px solid var(--color-text-dim);
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
       color: white;
-      transition: background 0.15s, border-color 0.15s;
+      transition: background var(--transition-fast), border-color var(--transition-fast);
     }
     .item-check--packed { background: #22c55e; border-color: #22c55e; }
 
-    .item-name { font-size: 0.875rem; color: #334155; flex: 1; }
-    .item-name--packed { color: #94a3b8; text-decoration: line-through; }
+    .item-name { font-size: var(--font-size-body); color: var(--color-text-body); flex: 1; }
+    .item-name--packed { color: var(--color-text-subtle); text-decoration: line-through; }
 
     .item-category {
-      font-size: 0.7rem;
-      font-weight: 600;
+      font-size: var(--font-size-2xs);
+      font-weight: var(--font-weight-semibold);
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      color: #94a3b8;
+      color: var(--color-text-subtle);
     }
 
     .more-link {
       display: block;
       margin-top: 10px;
       font-size: 0.8rem;
-      color: #3b82f6;
+      color: var(--color-action);
       text-decoration: none;
     }
     .more-link:hover { text-decoration: underline; }

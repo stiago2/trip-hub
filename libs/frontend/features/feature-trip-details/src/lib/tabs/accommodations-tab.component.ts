@@ -86,7 +86,7 @@ const CITY_GRADIENTS: Record<string, string> = {
       } @else {
         <div class="cards-list">
           @for (item of store.items(); track item.id) {
-            <div class="acc-card">
+            <div class="acc-card card">
 
               <!-- Left gradient panel -->
               <div class="card-panel" [style.background]="cityGradient(destinationCity(item.destinationId))">
@@ -202,58 +202,23 @@ const CITY_GRADIENTS: Record<string, string> = {
     }
   `,
   styles: [`
-    .acc-page { padding: 8px 0; }
+    .acc-page { padding: var(--space-2) 0; }
 
     /* ── Header ── */
-    .page-header {
-      display: flex; justify-content: space-between;
-      align-items: flex-start; margin-bottom: 28px; gap: 16px;
-    }
     .header-left { display: flex; flex-direction: column; gap: 10px; }
-    .page-title { margin: 0; font-size: 1.35rem; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; }
 
-    .trip-stats { display: flex; gap: 8px; flex-wrap: wrap; }
-    .stat-pill {
-      display: flex; align-items: center; gap: 5px;
-      font-size: 0.78rem; font-weight: 600; color: #3b82f6;
-      background: #eff6ff; padding: 4px 10px; border-radius: 20px;
-    }
+    .trip-stats { display: flex; gap: var(--space-2); flex-wrap: wrap; }
     .stat-pill--indigo { color: #6366f1; background: #eef2ff; }
     .stat-pill--green  { color: #059669; background: #ecfdf5; }
 
-    .btn-add {
-      display: flex; align-items: center; gap: 7px;
-      background: #3b82f6; color: white; border: none;
-      padding: 10px 18px; border-radius: 10px;
-      font-size: 0.875rem; font-weight: 600; white-space: nowrap;
-      cursor: pointer; flex-shrink: 0;
-      transition: background 0.15s, transform 0.15s;
-    }
-    .btn-add:hover { background: #2563eb; transform: translateY(-1px); }
-    .btn-add--lg { padding: 12px 22px; }
-
-    /* ── Empty state ── */
-    .empty-state {
-      display: flex; flex-direction: column; align-items: center;
-      gap: 10px; padding: 80px 24px; text-align: center;
-    }
-    .empty-icon-wrap {
-      width: 72px; height: 72px; border-radius: 20px; background: #f1f5f9;
-      display: flex; align-items: center; justify-content: center; margin-bottom: 8px;
-    }
-    .empty-title { margin: 0; font-size: 1rem; font-weight: 700; color: #0f172a; }
-    .empty-desc { margin: 0; font-size: 0.875rem; color: #94a3b8; max-width: 300px; }
-
     /* ── Cards list ── */
-    .cards-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+    .cards-list { display: flex; flex-direction: column; gap: var(--space-3); margin-bottom: var(--space-4); }
 
     /* ── Accommodation card ── */
     .acc-card {
-      background: white; border: 1px solid #e8edf3; border-radius: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
       display: flex; flex-direction: row;
       position: relative; overflow: visible;
-      transition: transform 0.18s, box-shadow 0.18s;
+      transition: transform var(--transition-normal), box-shadow var(--transition-normal);
     }
     .acc-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.10); }
 
@@ -262,10 +227,10 @@ const CITY_GRADIENTS: Record<string, string> = {
       width: 82px; flex-shrink: 0;
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
       border-radius: 15px 0 0 15px; overflow: hidden;
-      padding: 20px 8px;
+      padding: var(--space-5) var(--space-2);
     }
     .panel-nights {
-      font-size: 0.65rem; font-weight: 800; letter-spacing: 0.08em;
+      font-size: 0.65rem; font-weight: var(--font-weight-extrabold); letter-spacing: var(--tracking-wider);
       color: rgba(255,255,255,0.8);
     }
 
@@ -276,27 +241,27 @@ const CITY_GRADIENTS: Record<string, string> = {
     }
 
     .card-top-row {
-      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      display: flex; align-items: center; justify-content: space-between; gap: var(--space-2);
     }
     .dest-badge {
-      display: inline-block; padding: 3px 9px; border-radius: 20px;
-      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.07em;
+      display: inline-block; padding: 3px 9px; border-radius: var(--radius-3xl);
+      font-size: 0.68rem; font-weight: var(--font-weight-bold); letter-spacing: var(--tracking-wide);
       color: #0369a1; background: #e0f2fe;
     }
     .price-badge {
-      font-size: 0.82rem; font-weight: 800; color: #0f172a;
-      background: #f8fafc; border: 1px solid #e2e8f0;
-      padding: 3px 10px; border-radius: 20px;
+      font-size: var(--font-size-sm); font-weight: 800; color: var(--color-text);
+      background: var(--color-surface-subtle); border: 1px solid var(--color-border);
+      padding: 3px 10px; border-radius: var(--radius-3xl);
     }
 
     .card-name {
-      margin: 0; font-size: 1.05rem; font-weight: 800;
-      color: #0f172a; letter-spacing: -0.02em; line-height: 1.25;
+      margin: 0; font-size: var(--font-size-card); font-weight: var(--font-weight-extrabold);
+      color: var(--color-text); letter-spacing: var(--tracking-tight); line-height: 1.25;
     }
 
     .card-address {
       margin: 0; display: flex; align-items: center; gap: 4px;
-      font-size: 0.78rem; color: #94a3b8;
+      font-size: var(--font-size-caption); color: var(--color-text-subtle);
     }
 
     /* Dates */
@@ -304,44 +269,36 @@ const CITY_GRADIENTS: Record<string, string> = {
       display: flex; align-items: center; gap: 10px; margin-top: 2px;
     }
     .date-block { display: flex; flex-direction: column; gap: 2px; }
-    .date-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.07em; color: #94a3b8; text-transform: uppercase; }
-    .date-value { font-size: 0.82rem; font-weight: 700; color: #334155; }
+    .date-label { font-size: 0.65rem; font-weight: var(--font-weight-semibold); letter-spacing: var(--tracking-wide); color: var(--color-text-subtle); text-transform: uppercase; }
+    .date-value { font-size: var(--font-size-sm); font-weight: var(--font-weight-bold); color: var(--color-text-body); }
     .date-arrow { display: flex; align-items: center; flex-shrink: 0; padding-top: 12px; }
 
     /* Action buttons */
     .card-actions {
       position: absolute; top: 12px; right: 12px;
       display: flex; flex-direction: column; gap: 5px;
-      opacity: 0; transition: opacity 0.15s;
+      opacity: 0; transition: opacity var(--transition-fast);
     }
     .acc-card:hover .card-actions { opacity: 1; }
 
     .btn-edit, .btn-delete {
-      width: 28px; height: 28px; border-radius: 7px;
-      background: #f1f5f9; border: none;
+      width: 28px; height: 28px; border-radius: var(--radius-xs);
+      background: var(--color-surface-muted); border: none;
       display: flex; align-items: center; justify-content: center;
-      color: #cbd5e1; cursor: pointer;
-      transition: background 0.15s, color 0.15s;
+      color: var(--color-text-dim); cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast);
     }
-    .btn-edit:hover { background: #eff6ff; color: #3b82f6; }
-    .btn-delete:hover { background: #fef2f2; color: #ef4444; }
+    .btn-edit:hover { background: var(--color-action-light); color: var(--color-action); }
+    .btn-delete:hover { background: var(--color-danger-light); color: var(--color-danger); }
 
     /* ── Skeleton ── */
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
-    .shimmer {
-      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
-      background-size: 200% 100%; animation: shimmer 1.4s ease infinite;
-    }
-    .skeleton-card { height: 100px; border-radius: 16px; }
+    .skeleton-card { height: 100px; border-radius: var(--radius-2xl); }
 
     /* ── Summary bar ── */
     .summary-bar {
-      display: flex; align-items: center; gap: 20px;
-      background: #0f172a; border-radius: 16px; padding: 22px 28px;
-      margin-top: 8px; color: white;
+      display: flex; align-items: center; gap: var(--space-5);
+      background: var(--color-dark-bg); border-radius: var(--radius-2xl); padding: 22px var(--space-7);
+      margin-top: var(--space-2); color: white;
     }
     .summary-icon-wrap {
       width: 42px; height: 42px; border-radius: 10px;
@@ -349,21 +306,21 @@ const CITY_GRADIENTS: Record<string, string> = {
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
     .summary-main { display: flex; flex-direction: column; gap: 3px; }
-    .summary-eyebrow { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; color: #64748b; text-transform: uppercase; }
-    .summary-total { font-size: 1.35rem; font-weight: 800; color: white; }
-    .summary-divider { width: 1px; background: #1e293b; align-self: stretch; flex-shrink: 0; }
+    .summary-eyebrow { font-size: 0.65rem; font-weight: var(--font-weight-semibold); letter-spacing: var(--tracking-widest); color: var(--color-text-soft); text-transform: uppercase; }
+    .summary-total { font-size: var(--font-size-xl); font-weight: var(--font-weight-extrabold); color: white; }
+    .summary-divider { width: 1px; background: var(--color-dark-surface); align-self: stretch; flex-shrink: 0; }
     .summary-stats { display: flex; gap: 32px; margin-left: 4px; flex-wrap: wrap; }
     .summary-stat { display: flex; flex-direction: column; gap: 3px; }
-    .summary-stat-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; color: #64748b; text-transform: uppercase; }
-    .summary-stat-value { font-size: 1.1rem; font-weight: 700; color: white; }
-    .summary-stat-value--blue { color: #3b82f6; }
+    .summary-stat-label { font-size: 0.65rem; font-weight: var(--font-weight-semibold); letter-spacing: var(--tracking-widest); color: var(--color-text-soft); text-transform: uppercase; }
+    .summary-stat-value { font-size: 1.1rem; font-weight: var(--font-weight-bold); color: white; }
+    .summary-stat-value--blue { color: var(--color-action); }
 
     @media (max-width: 600px) {
       .card-panel { width: 60px; }
       .summary-bar { flex-wrap: wrap; gap: 14px; }
       .page-header { margin-bottom: 18px; align-items: center; gap: 10px; }
       .page-title { font-size: 1.1rem; }
-      .btn-add { padding: 8px 12px; font-size: 0.8rem; gap: 5px; }
+      .btn-add { padding: var(--space-2) var(--space-3); font-size: 0.8rem; gap: 5px; }
     }
   `],
 })

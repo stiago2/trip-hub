@@ -10,6 +10,9 @@
   "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"],
   "references": [
     {
+      "path": "../../libs/frontend/ui/ui-components/tsconfig.lib.json"
+    },
+    {
       "path": "../../libs/frontend/features/feature-trip-details/tsconfig.lib.json"
     },
     {

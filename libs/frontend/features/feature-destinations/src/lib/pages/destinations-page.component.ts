@@ -85,7 +85,7 @@ const CARD_GRADIENTS = [
 
             <!-- Destination card -->
             <div
-              class="dest-card"
+              class="dest-card card"
               [class.is-dragging]="draggingId() === dest.id"
               [class.is-drag-over]="dragOverId() === dest.id"
               draggable="true"
@@ -192,51 +192,26 @@ const CARD_GRADIENTS = [
     }
   `,
   styles: [`
-    .page { padding: 8px 0; }
+    .page { padding: var(--space-2) 0; }
 
     /* Header */
-    .page-header {
-      display: flex; justify-content: space-between;
-      align-items: flex-start; margin-bottom: 28px; gap: 16px;
-    }
     .header-left { display: flex; flex-direction: column; gap: 10px; }
-    .page-title { margin: 0; font-size: 1.35rem; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; }
-
-    .trip-stats { display: flex; gap: 8px; flex-wrap: wrap; }
-    .stat-pill {
-      display: flex; align-items: center; gap: 5px;
-      font-size: 0.78rem; font-weight: 600; color: #3b82f6;
-      background: #eff6ff; padding: 4px 10px; border-radius: 20px;
-    }
-
-    .btn-add {
-      display: flex; align-items: center; gap: 7px;
-      background: #3b82f6; color: white; border: none;
-      padding: 10px 18px; border-radius: 10px;
-      font-size: 0.875rem; font-weight: 600; white-space: nowrap;
-      cursor: pointer; flex-shrink: 0;
-      transition: background 0.15s, transform 0.15s;
-    }
-    .btn-add:hover { background: #2563eb; transform: translateY(-1px); }
-    .btn-add--lg { padding: 12px 22px; }
+    .trip-stats { display: flex; gap: var(--space-2); flex-wrap: wrap; }
 
     /* Timeline */
     .timeline { display: flex; flex-direction: column; }
 
     /* Destination card */
     .dest-card {
-      background: white; border-radius: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
-      border: 1px solid #e8edf3;
       position: relative;
       display: flex; flex-direction: row;
-      transition: transform 0.18s, box-shadow 0.18s;
+      transition: transform var(--transition-normal), box-shadow var(--transition-normal);
       cursor: default;
     }
     .dest-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.10); }
     .dest-card.is-dragging { opacity: 0.45; transform: scale(0.98); }
     .dest-card.is-drag-over {
-      border-color: #3b82f6;
+      border-color: var(--color-action);
       box-shadow: 0 0 0 2px rgba(59,130,246,0.25);
     }
 
@@ -245,7 +220,7 @@ const CARD_GRADIENTS = [
       position: absolute; left: -24px; top: 50%; transform: translateY(-50%);
       width: 18px; height: 30px;
       display: flex; align-items: center; justify-content: center;
-      cursor: grab; opacity: 0; transition: opacity 0.15s;
+      cursor: grab; opacity: 0; transition: opacity var(--transition-fast);
       border-radius: 4px;
     }
     .dest-card:hover .drag-handle { opacity: 1; }
@@ -255,93 +230,89 @@ const CARD_GRADIENTS = [
     .card-panel {
       width: 90px; flex-shrink: 0;
       display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 8px;
-      padding: 20px 8px;
+      align-items: center; justify-content: center; gap: var(--space-2);
+      padding: var(--space-5) var(--space-2);
       border-radius: 15px 0 0 15px;
       overflow: hidden;
     }
     .panel-country {
-      font-size: 0.65rem; font-weight: 800; letter-spacing: 0.1em;
+      font-size: 0.65rem; font-weight: var(--font-weight-extrabold); letter-spacing: var(--tracking-widest);
       color: rgba(255,255,255,0.85);
     }
 
     /* Overflow menu — right side */
     .card-menu-wrap {
       position: absolute; top: 12px; right: 12px;
-      opacity: 0; transition: opacity 0.15s;
+      opacity: 0; transition: opacity var(--transition-fast);
     }
     .dest-card:hover .card-menu-wrap { opacity: 1; }
 
     .btn-menu {
       width: 28px; height: 28px;
-      background: #f1f5f9; border: none; border-radius: 7px;
-      cursor: pointer; color: #64748b;
+      background: var(--color-surface-muted); border: none; border-radius: var(--radius-xs);
+      cursor: pointer; color: var(--color-text-soft);
       display: flex; align-items: center; justify-content: center;
-      transition: background 0.15s, color 0.15s;
+      transition: background var(--transition-fast), color var(--transition-fast);
     }
-    .btn-menu:hover, .btn-menu.open { background: #e2e8f0; color: #0f172a; }
+    .btn-menu:hover, .btn-menu.open { background: var(--color-border); color: var(--color-text); }
 
     .card-dropdown {
       position: absolute; top: calc(100% + 4px); right: 0;
-      background: white; border-radius: 10px;
+      background: var(--color-surface); border-radius: var(--radius-lg);
       box-shadow: 0 8px 24px rgba(0,0,0,0.14), 0 1px 4px rgba(0,0,0,0.08);
-      border: 1px solid #e2e8f0; min-width: 130px; z-index: 50;
-      padding: 5px; animation: dropIn 120ms ease;
-    }
-    @keyframes dropIn {
-      from { opacity: 0; transform: translateY(-6px) scale(0.97); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
+      border: 1px solid var(--color-border); min-width: 130px; z-index: 50;
+      padding: 5px; animation: dropIn var(--transition-fast) ease;
     }
     .dropdown-item {
-      display: flex; align-items: center; gap: 8px;
-      width: 100%; padding: 8px 11px;
-      background: none; border: none; border-radius: 7px;
-      font-size: 0.84rem; font-weight: 500;
-      cursor: pointer; text-align: left; transition: background 0.12s;
+      display: flex; align-items: center; gap: var(--space-2);
+      width: 100%; padding: var(--space-2) 11px;
+      background: none; border: none; border-radius: var(--radius-xs);
+      font-size: 0.84rem; font-weight: var(--font-weight-medium);
+      cursor: pointer; text-align: left; transition: background var(--transition-fast);
     }
-    .dropdown-item:not(.dropdown-item--danger) { color: #374151; }
-    .dropdown-item:not(.dropdown-item--danger):hover { background: #f8fafc; }
+    .dropdown-item:not(.dropdown-item--danger) { color: var(--color-text-secondary); }
+    .dropdown-item:not(.dropdown-item--danger):hover { background: var(--color-surface-subtle); }
     .dropdown-item--danger { color: #dc2626; }
-    .dropdown-item--danger:hover { background: #fef2f2; }
-    .dropdown-divider { height: 1px; background: #f1f5f9; margin: 3px 5px; }
+    .dropdown-item--danger:hover { background: var(--color-danger-light); }
+    .dropdown-divider { height: 1px; background: var(--color-surface-muted); margin: 3px 5px; }
 
     /* Card body */
-    .card-body { padding: 20px 44px 20px 20px; flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+    .card-body { padding: var(--space-5) 44px var(--space-5) var(--space-5); flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
 
     .card-title-row {
       display: flex; align-items: center; justify-content: space-between;
       gap: 10px; margin-bottom: 2px;
     }
     .card-title {
-      margin: 0; font-size: 1.1rem; font-weight: 800; color: #0f172a;
-      letter-spacing: -0.02em; line-height: 1.2;
+      margin: 0; font-size: 1.1rem; font-weight: var(--font-weight-extrabold); color: var(--color-text);
+      letter-spacing: var(--tracking-tight); line-height: 1.2;
     }
-    .card-title-right { display: flex; align-items: center; gap: 8px; }
+    .card-title-right { display: flex; align-items: center; gap: var(--space-2); }
 
     .card-days-badge {
       display: inline-flex; align-items: center;
-      font-size: 0.72rem; font-weight: 700;
+      font-size: 0.72rem; font-weight: var(--font-weight-bold);
       background: #eef2ff; color: #6366f1;
       border: 1px solid #e0e7ff;
-      padding: 2px 9px; border-radius: 20px;
+      padding: 2px 9px; border-radius: var(--radius-3xl);
     }
 
     .card-country {
       display: flex; align-items: center; gap: 4px;
-      font-size: 0.75rem; font-weight: 700; color: #94a3b8;
-      text-transform: uppercase; letter-spacing: 0.07em;
+      font-size: 0.75rem; font-weight: var(--font-weight-bold); color: var(--color-text-subtle);
+      text-transform: uppercase; letter-spacing: var(--tracking-wide);
     }
-    .pin-icon { color: #3b82f6; flex-shrink: 0; }
+    .pin-icon { color: var(--color-action); flex-shrink: 0; }
 
     .card-dates {
       display: flex; align-items: center; gap: 6px;
-      font-size: 0.82rem; color: #64748b;
+      font-size: 0.82rem; color: var(--color-text-soft);
     }
-    .card-dates svg { flex-shrink: 0; color: #94a3b8; }
+    .card-dates svg { flex-shrink: 0; color: var(--color-text-subtle); }
 
     .card-notes {
       margin: 2px 0 0;
-      font-size: 0.79rem; color: #94a3b8; line-height: 1.4;
+      font-size: 0.79rem; color: var(--color-text-subtle); line-height: var(--leading-normal);
       display: -webkit-box; -webkit-line-clamp: 1;
       -webkit-box-orient: vertical; overflow: hidden;
     }
@@ -351,78 +322,55 @@ const CARD_GRADIENTS = [
       display: flex; flex-direction: column; align-items: center;
       padding: 0; gap: 0; margin-left: 44px;
     }
-    .connector-line { width: 2px; height: 12px; background: #e2e8f0; }
+    .connector-line { width: 2px; height: 12px; background: var(--color-border); }
     .connector-arrow {
       width: 28px; height: 28px; border-radius: 50%;
-      background: white; border: 1px solid #e2e8f0;
+      background: var(--color-surface); border: 1px solid var(--color-border);
       display: flex; align-items: center; justify-content: center;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
     /* Add card */
     .add-card {
-      margin-top: 12px;
+      margin-top: var(--space-3);
       display: flex; align-items: center; gap: 14px;
-      background: none; border: 2px dashed #e2e8f0;
-      border-radius: 14px; padding: 14px 20px;
+      background: none; border: 2px dashed var(--color-border);
+      border-radius: 14px; padding: 14px var(--space-5);
       cursor: pointer; width: 100%;
-      transition: border-color 0.15s, background 0.15s;
+      transition: border-color var(--transition-fast), background var(--transition-fast);
     }
     .add-card:hover { border-color: #93c5fd; background: #f0f9ff; }
     .add-card-icon {
-      width: 36px; height: 36px; border-radius: 10px;
-      background: #f1f5f9;
+      width: 36px; height: 36px; border-radius: var(--radius-lg);
+      background: var(--color-surface-muted);
       display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; transition: background 0.15s;
+      flex-shrink: 0; transition: background var(--transition-fast);
     }
     .add-card:hover .add-card-icon { background: #dbeafe; }
-    .add-card:hover .add-card-icon svg { stroke: #3b82f6; }
-    .add-card-label { font-size: 0.875rem; font-weight: 600; color: #94a3b8; transition: color 0.15s; }
-    .add-card:hover .add-card-label { color: #3b82f6; }
-
-    /* Empty state */
-    .empty-state {
-      display: flex; flex-direction: column; align-items: center;
-      gap: 10px; padding: 80px 24px; text-align: center;
-    }
-    .empty-icon-wrap {
-      width: 72px; height: 72px; border-radius: 20px;
-      background: #f1f5f9;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 8px;
-    }
-    .empty-title { margin: 0; font-size: 1rem; font-weight: 700; color: #0f172a; }
-    .empty-desc { margin: 0; font-size: 0.875rem; color: #94a3b8; max-width: 300px; }
+    .add-card:hover .add-card-icon svg { stroke: var(--color-action); }
+    .add-card-label { font-size: var(--font-size-body); font-weight: var(--font-weight-semibold); color: var(--color-text-subtle); transition: color var(--transition-fast); }
+    .add-card:hover .add-card-label { color: var(--color-action); }
 
     /* Skeleton */
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
-    .shimmer {
-      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.4s ease infinite;
-    }
     .skeleton-card {
-      height: 150px; border-radius: 16px; margin-bottom: 12px;
+      height: 150px; border-radius: var(--radius-2xl); margin-bottom: var(--space-3);
     }
 
     @media (max-width: 600px) {
-      .page { padding: 8px 0; }
+      .page { padding: var(--space-2) 0; }
       .drag-handle { display: none; }
 
       /* Compact header */
       .page-header { margin-bottom: 18px; align-items: center; }
       .page-title { font-size: 1.15rem; }
       .trip-stats { gap: 6px; }
-      .btn-add { padding: 8px 12px; font-size: 0.8rem; gap: 5px; }
+      .btn-add { padding: var(--space-2) var(--space-3); font-size: 0.8rem; gap: 5px; }
 
       /* Narrower gradient panel */
-      .card-panel { width: 70px; padding: 16px 6px; }
+      .card-panel { width: 70px; padding: var(--space-4) 6px; }
       .card-body { padding: 14px 40px 14px 14px; gap: 4px; }
       .card-title { font-size: 0.95rem; }
-      .card-dates { font-size: 0.78rem; }
+      .card-dates { font-size: var(--font-size-caption); }
 
       /* Always show overflow menu on touch (no hover) */
       .card-menu-wrap { opacity: 1; }

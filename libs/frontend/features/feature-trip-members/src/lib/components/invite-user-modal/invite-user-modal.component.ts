@@ -63,7 +63,7 @@ import { TripMembersStore } from '../../store/trip-members.store';
     .select-wrapper { position: relative; }
     .field-select {
       width: 100%; border: 1.5px solid var(--color-border); border-radius: var(--radius-lg);
-      padding: 10px 36px 10px 14px; font-size: var(--font-size-base); color: var(--color-text);
+      padding: 10px 36px 10px var(--space-3-5); font-size: var(--font-size-base); color: var(--color-text);
       outline: none; appearance: none; background: var(--color-surface); cursor: pointer;
       transition: border-color 150ms; box-sizing: border-box;
     }

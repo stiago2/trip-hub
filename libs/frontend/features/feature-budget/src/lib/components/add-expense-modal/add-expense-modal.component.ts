@@ -142,21 +142,21 @@ const CATEGORIES = [
   styles: [`
     .modal-shell {
       background: var(--color-surface); border-radius: var(--radius-2xl);
-      padding: 28px 28px 24px; width: 100%; max-width: 500px;
+      padding: var(--space-7) var(--space-7) var(--space-6); width: 100%; max-width: 500px;
       max-height: 90vh; overflow-y: auto;
       box-shadow: var(--shadow-lg);
       animation: modalSlide 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .modal-header-flat {
       display: flex; justify-content: space-between; align-items: flex-start;
-      margin-bottom: 24px;
+      margin-bottom: var(--space-6);
     }
-    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: var(--space-4); }
     .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .amount-wrapper { position: relative; }
     .amount-prefix {
       position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-      font-size: var(--font-size-base); font-weight: 600;
+      font-size: var(--font-size-base); font-weight: var(--font-weight-semibold);
       color: var(--color-text-muted); pointer-events: none;
     }
     .field-input--amount { padding-left: 26px; }
@@ -175,11 +175,11 @@ const CATEGORIES = [
     }
     .modal-footer-flat {
       display: flex; align-items: center; justify-content: flex-end;
-      gap: var(--space-3); margin-top: 24px;
+      gap: var(--space-3); margin-top: var(--space-6);
     }
     @media (max-width: 480px) {
-      .modal-shell { border-radius: 20px 20px 0 0; width: 100%; padding: 20px 16px; }
-      .modal-footer-flat { margin-top: 16px; }
+      .modal-shell { border-radius: 20px 20px 0 0; width: 100%; padding: var(--space-5) var(--space-4); }
+      .modal-footer-flat { margin-top: var(--space-4); }
     }
   `],
 })

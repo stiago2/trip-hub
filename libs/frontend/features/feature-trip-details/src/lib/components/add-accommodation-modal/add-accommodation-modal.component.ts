@@ -159,17 +159,17 @@ import { AccommodationsStore } from '../../store/accommodations.store';
   styles: [`
     .modal-shell {
       background: var(--color-surface); border-radius: var(--radius-2xl);
-      padding: 28px 28px 24px; width: 100%; max-width: 520px;
+      padding: var(--space-7) var(--space-7) var(--space-6); width: 100%; max-width: 520px;
       max-height: 90vh; overflow-y: auto;
       box-shadow: var(--shadow-lg);
       animation: modalSlide 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .modal-header-flat {
       display: flex; justify-content: space-between; align-items: flex-start;
-      margin-bottom: 24px;
+      margin-bottom: var(--space-6);
     }
     .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
-    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
     .optional-label { font-weight: 400; color: var(--color-text-placeholder); margin-left: 4px; }
     .input-icon-wrapper { position: relative; }
     .input-icon {
@@ -195,11 +195,11 @@ import { AccommodationsStore } from '../../store/accommodations.store';
       position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
       pointer-events: none; color: var(--color-text-muted);
     }
-    .modal-footer-flat { display: flex; gap: var(--space-3); margin-top: 28px; }
+    .modal-footer-flat { display: flex; gap: var(--space-3); margin-top: var(--space-7); }
     .btn-primary { flex: 1; justify-content: center; }
     @media (max-width: 480px) {
-      .modal-shell { border-radius: 20px 20px 0 0; width: 100%; padding: 20px 16px; }
-      .modal-footer-flat { margin-top: 16px; }
+      .modal-shell { border-radius: 20px 20px 0 0; width: 100%; padding: var(--space-5) var(--space-4); }
+      .modal-footer-flat { margin-top: var(--space-4); }
     }
   `],
 })

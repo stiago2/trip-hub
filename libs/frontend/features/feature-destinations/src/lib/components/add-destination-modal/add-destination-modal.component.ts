@@ -182,11 +182,11 @@ interface CalDay { day: number | null; date: Date | null; }
     .dest-modal { max-width: 580px; }
 
     /* Form layout */
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3-5); }
     @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
 
     .field-group { display: flex; flex-direction: column; gap: 5px; }
-    .section-label { font-size: 0.88rem; font-weight: 700; color: var(--color-text); margin-bottom: -2px; }
+    .section-label { font-size: 0.88rem; font-weight: var(--font-weight-bold); color: var(--color-text); margin-bottom: -2px; }
 
     .input-wrap { position: relative; }
     .input-icon {
@@ -202,13 +202,13 @@ interface CalDay { day: number | null; date: Date | null; }
     }
     .cal-nav {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 13px 16px 10px; border-bottom: 1px solid var(--color-surface-muted);
+      padding: 13px var(--space-4) 10px; border-bottom: 1px solid var(--color-surface-muted);
     }
-    .cal-month-label { font-size: var(--font-size-md); font-weight: 800; color: var(--color-text); }
+    .cal-month-label { font-size: var(--font-size-md); font-weight: var(--font-weight-extrabold); color: var(--color-text); }
     .cal-nav-btn {
       background: none; border: none; cursor: pointer; color: #64748b;
-      padding: 5px; border-radius: 7px; display: flex; align-items: center;
-      transition: background 0.12s, color 0.12s;
+      padding: 5px; border-radius: var(--radius-xs); display: flex; align-items: center;
+      transition: background var(--transition-fast), color var(--transition-fast);
     }
     .cal-nav-btn:hover { background: var(--color-surface-muted); color: var(--color-text); }
     .cal-grid {
@@ -217,7 +217,7 @@ interface CalDay { day: number | null; date: Date | null; }
     }
     .cal-dow {
       height: 30px; display: flex; align-items: center; justify-content: center;
-      font-size: 0.72rem; font-weight: 700; color: var(--color-text-placeholder);
+      font-size: 0.72rem; font-weight: var(--font-weight-bold); color: var(--color-text-placeholder);
       text-transform: uppercase; letter-spacing: 0.04em;
     }
     .cal-cell {
@@ -235,28 +235,28 @@ interface CalDay { day: number | null; date: Date | null; }
     .day-btn {
       position: relative; z-index: 1; width: 34px; height: 34px;
       border: none; background: none; border-radius: 50%;
-      cursor: pointer; font-size: 0.875rem; font-weight: 500; color: var(--color-text-secondary);
+      cursor: pointer; font-size: var(--font-size-body); font-weight: var(--font-weight-medium); color: var(--color-text-secondary);
       display: flex; align-items: center; justify-content: center;
       transition: background 0.1s, color 0.1s;
     }
     .day-btn:hover:not(.day-selected):not(.day-hover-sel) { background: var(--color-surface-muted); }
     .day-btn.day-selected {
-      background: var(--color-primary); color: white; font-weight: 700;
+      background: var(--color-primary); color: white; font-weight: var(--font-weight-bold);
       box-shadow: 0 2px 8px rgba(37,99,235,0.35);
     }
-    .day-btn.day-hover-sel { background: #93c5fd; color: white; font-weight: 700; }
-    .day-btn.day-today:not(.day-selected):not(.day-hover-sel) { color: var(--color-primary); font-weight: 700; }
+    .day-btn.day-hover-sel { background: #93c5fd; color: white; font-weight: var(--font-weight-bold); }
+    .day-btn.day-today:not(.day-selected):not(.day-hover-sel) { color: var(--color-primary); font-weight: var(--font-weight-bold); }
     .cal-cell.cell-in-range .day-btn:not(.day-selected):not(.day-hover-sel) { color: var(--color-primary-hover); }
     .cal-info {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 8px 16px 12px; border-top: 1px solid var(--color-surface-muted);
+      padding: var(--space-2) var(--space-4) var(--space-3); border-top: 1px solid var(--color-surface-muted);
       font-size: var(--font-size-sm); min-height: 38px;
     }
     .cal-sel-text { color: var(--color-text-secondary); }
-    .cal-date-hl { color: var(--color-primary); font-weight: 700; }
+    .cal-date-hl { color: var(--color-primary); font-weight: var(--font-weight-bold); }
     .nights-pill {
-      font-size: var(--font-size-xs); font-weight: 600; color: #475569;
-      background: var(--color-surface-muted); padding: 3px 10px; border-radius: 20px;
+      font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); color: #475569;
+      background: var(--color-surface-muted); padding: 3px 10px; border-radius: var(--radius-3xl);
     }
     .cal-hint { color: var(--color-text-placeholder); font-size: 0.8rem; }
 
@@ -264,9 +264,9 @@ interface CalDay { day: number | null; date: Date | null; }
     .notes-area {
       width: 100%; box-sizing: border-box;
       border: 1.5px solid var(--color-border); border-radius: var(--radius-lg);
-      padding: 11px 13px; font-size: 0.875rem; color: var(--color-text);
+      padding: 11px 13px; font-size: var(--font-size-body); color: var(--color-text);
       outline: none; resize: vertical; min-height: 78px;
-      font-family: inherit; line-height: 1.5;
+      font-family: inherit; line-height: var(--leading-relaxed);
       transition: border-color 0.15s, box-shadow 0.15s;
     }
     .notes-area:focus { border-color: var(--color-border-focus); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }

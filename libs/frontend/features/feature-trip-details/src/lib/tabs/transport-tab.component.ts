@@ -85,7 +85,7 @@ const TYPE_SVG: Record<TransportType, string> = {
 
             <div class="timeline-entry">
               <!-- Card (boarding-pass style) -->
-              <div class="transport-card">
+              <div class="transport-card card">
                 <!-- Left gradient panel -->
                 <div class="card-panel" [style.background]="typeGradient(item.type)" [innerHTML]="typeIcon(item.type)"></div>
 
@@ -170,46 +170,13 @@ const TYPE_SVG: Record<TransportType, string> = {
     }
   `,
   styles: [`
-    .transport-page { padding: 8px 0; }
+    .transport-page { padding: var(--space-2) 0; }
 
     /* ── Header ── */
-    .page-header {
-      display: flex; justify-content: space-between;
-      align-items: flex-start; margin-bottom: 28px; gap: 16px;
-    }
     .header-left { display: flex; flex-direction: column; gap: 10px; }
-    .page-title { margin: 0; font-size: 1.35rem; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; }
 
-    .trip-stats { display: flex; gap: 8px; flex-wrap: wrap; }
-    .stat-pill {
-      display: flex; align-items: center; gap: 5px;
-      font-size: 0.78rem; font-weight: 600; color: #3b82f6;
-      background: #eff6ff; padding: 4px 10px; border-radius: 20px;
-    }
+    .trip-stats { display: flex; gap: var(--space-2); flex-wrap: wrap; }
     .stat-pill--green { color: #059669; background: #ecfdf5; }
-
-    .btn-add {
-      display: flex; align-items: center; gap: 7px;
-      background: #3b82f6; color: white; border: none;
-      padding: 10px 18px; border-radius: 10px;
-      font-size: 0.875rem; font-weight: 600; white-space: nowrap;
-      cursor: pointer; flex-shrink: 0;
-      transition: background 0.15s, transform 0.15s;
-    }
-    .btn-add:hover { background: #2563eb; transform: translateY(-1px); }
-    .btn-add--lg { padding: 12px 22px; }
-
-    /* ── Empty state ── */
-    .empty-state {
-      display: flex; flex-direction: column; align-items: center;
-      gap: 10px; padding: 80px 24px; text-align: center;
-    }
-    .empty-icon-wrap {
-      width: 72px; height: 72px; border-radius: 20px; background: #f1f5f9;
-      display: flex; align-items: center; justify-content: center; margin-bottom: 8px;
-    }
-    .empty-title { margin: 0; font-size: 1rem; font-weight: 700; color: #0f172a; }
-    .empty-desc { margin: 0; font-size: 0.875rem; color: #94a3b8; max-width: 300px; }
 
     /* ── Timeline ── */
     .cards-list { display: flex; flex-direction: column; gap: 0; }
@@ -219,12 +186,10 @@ const TYPE_SVG: Record<TransportType, string> = {
 
     /* ── Transport card ── */
     .transport-card {
-      flex: 1; background: white;
-      border: 1px solid #e8edf3; border-radius: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+      flex: 1;
       display: flex; flex-direction: row; overflow: hidden;
-      margin-bottom: 12px; position: relative;
-      transition: transform 0.18s, box-shadow 0.18s;
+      margin-bottom: var(--space-3); position: relative;
+      transition: transform var(--transition-normal), box-shadow var(--transition-normal);
     }
     .transport-card:hover {
       transform: translateY(-2px);
@@ -247,13 +212,13 @@ const TYPE_SVG: Record<TransportType, string> = {
 
     .card-top-row {
       display: flex; align-items: center; justify-content: space-between;
-      gap: 8px;
+      gap: var(--space-2);
     }
 
     .type-badge {
       display: inline-flex; align-items: center;
-      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.07em;
-      padding: 3px 9px; border-radius: 20px;
+      font-size: 0.68rem; font-weight: var(--font-weight-bold); letter-spacing: var(--tracking-wide);
+      padding: 3px 9px; border-radius: var(--radius-3xl);
     }
     .type-badge--flight { color: #1d4ed8; background: #dbeafe; }
     .type-badge--train  { color: #065f46; background: #d1fae5; }
@@ -261,17 +226,17 @@ const TYPE_SVG: Record<TransportType, string> = {
     .type-badge--car    { color: #92400e; background: #fef3c7; }
 
     .price-badge {
-      font-size: 0.82rem; font-weight: 800; color: #0f172a;
-      background: #f8fafc; border: 1px solid #e2e8f0;
-      padding: 3px 10px; border-radius: 20px;
+      font-size: var(--font-size-sm); font-weight: 800; color: var(--color-text);
+      background: var(--color-surface-subtle); border: 1px solid var(--color-border);
+      padding: 3px 10px; border-radius: var(--radius-3xl);
     }
 
     .route-row {
-      display: flex; align-items: center; gap: 8px;
+      display: flex; align-items: center; gap: var(--space-2);
     }
     .location {
-      font-size: 1.05rem; font-weight: 800; color: #0f172a;
-      letter-spacing: -0.02em;
+      font-size: var(--font-size-card); font-weight: var(--font-weight-extrabold); color: var(--color-text);
+      letter-spacing: var(--tracking-tight);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       max-width: 160px;
     }
@@ -279,39 +244,31 @@ const TYPE_SVG: Record<TransportType, string> = {
 
     .time-row {
       display: flex; align-items: center; gap: 5px;
-      font-size: 0.8rem; color: #64748b;
+      font-size: 0.8rem; color: var(--color-text-soft);
     }
-    .time-row svg { color: #94a3b8; flex-shrink: 0; }
-    .time-sep { color: #cbd5e1; margin: 0 2px; }
+    .time-row svg { color: var(--color-text-subtle); flex-shrink: 0; }
+    .time-sep { color: var(--color-text-dim); margin: 0 2px; }
 
     /* Delete button */
     .btn-delete {
       position: absolute; top: 12px; right: 12px;
-      width: 28px; height: 28px; border-radius: 7px;
-      background: #f1f5f9; border: none;
+      width: 28px; height: 28px; border-radius: var(--radius-xs);
+      background: var(--color-surface-muted); border: none;
       display: flex; align-items: center; justify-content: center;
-      color: #cbd5e1; cursor: pointer;
-      opacity: 0; transition: opacity 0.15s, background 0.15s, color 0.15s;
+      color: var(--color-text-dim); cursor: pointer;
+      opacity: 0; transition: opacity var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
     }
     .transport-card:hover .btn-delete { opacity: 1; }
-    .btn-delete:hover { background: #fef2f2; color: #ef4444; }
+    .btn-delete:hover { background: var(--color-danger-light); color: var(--color-danger); }
 
     /* ── Skeleton ── */
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
-    .shimmer {
-      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
-      background-size: 200% 100%; animation: shimmer 1.4s ease infinite;
-    }
-    .skeleton-card { height: 90px; border-radius: 16px; margin-bottom: 12px; }
+    .skeleton-card { height: 90px; border-radius: var(--radius-2xl); margin-bottom: var(--space-3); }
 
     /* ── Summary bar ── */
     .summary-bar {
-      display: flex; align-items: center; gap: 20px;
-      background: #0f172a; border-radius: 16px; padding: 22px 28px;
-      margin-top: 8px; color: white;
+      display: flex; align-items: center; gap: var(--space-5);
+      background: var(--color-dark-bg); border-radius: var(--radius-2xl); padding: 22px var(--space-7);
+      margin-top: var(--space-2); color: white;
     }
     .summary-icon-wrap {
       width: 42px; height: 42px; border-radius: 10px;
@@ -319,14 +276,14 @@ const TYPE_SVG: Record<TransportType, string> = {
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
     .summary-main { display: flex; flex-direction: column; gap: 3px; }
-    .summary-eyebrow { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; color: #64748b; text-transform: uppercase; }
-    .summary-count { font-size: 1rem; font-weight: 700; color: white; }
-    .summary-divider { width: 1px; background: #1e293b; align-self: stretch; flex-shrink: 0; }
+    .summary-eyebrow { font-size: 0.65rem; font-weight: var(--font-weight-semibold); letter-spacing: var(--tracking-widest); color: var(--color-text-soft); text-transform: uppercase; }
+    .summary-count { font-size: 1rem; font-weight: var(--font-weight-bold); color: white; }
+    .summary-divider { width: 1px; background: var(--color-dark-surface); align-self: stretch; flex-shrink: 0; }
     .summary-stats { display: flex; gap: 32px; margin-left: 4px; flex-wrap: wrap; }
     .summary-stat { display: flex; flex-direction: column; gap: 3px; }
-    .summary-stat-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; color: #64748b; text-transform: uppercase; }
-    .summary-stat-value { font-size: 1.1rem; font-weight: 700; color: white; }
-    .summary-stat-value--blue { color: #3b82f6; }
+    .summary-stat-label { font-size: 0.65rem; font-weight: var(--font-weight-semibold); letter-spacing: var(--tracking-widest); color: var(--color-text-soft); text-transform: uppercase; }
+    .summary-stat-value { font-size: 1.1rem; font-weight: var(--font-weight-bold); color: white; }
+    .summary-stat-value--blue { color: var(--color-action); }
 
     @media (max-width: 600px) {
       .card-panel { width: 60px; }
@@ -338,7 +295,7 @@ const TYPE_SVG: Record<TransportType, string> = {
 
       /* Summary bar: icon+title inline, stats grid below */
       .summary-bar {
-        flex-direction: column; gap: 12px; padding: 16px;
+        flex-direction: column; gap: var(--space-3); padding: var(--space-4);
       }
       .summary-divider { display: none; }
       .summary-icon-wrap { width: 36px; height: 36px; }
@@ -348,13 +305,13 @@ const TYPE_SVG: Record<TransportType, string> = {
       .summary-stats {
         display: grid; grid-template-columns: 1fr 1fr;
         gap: 10px; margin: 0; width: 100%;
-        border-top: 1px solid #1e293b; padding-top: 12px;
+        border-top: 1px solid var(--color-dark-surface); padding-top: var(--space-3);
       }
       .summary-stat-value { font-size: 1rem; }
 
       .page-header { margin-bottom: 18px; align-items: center; gap: 10px; }
       .page-title { font-size: 1.1rem; }
-      .btn-add { padding: 8px 12px; font-size: 0.8rem; gap: 5px; }
+      .btn-add { padding: var(--space-2) var(--space-3); font-size: 0.8rem; gap: 5px; }
     }
   `],
 })

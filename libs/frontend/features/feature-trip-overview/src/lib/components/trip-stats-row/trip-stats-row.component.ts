@@ -9,7 +9,7 @@ import { RouterLink } from '@angular/router';
   template: `
     <div class="stats-row">
 
-      <a class="stat-card stat-card--blue" [routerLink]="['/trips', tripId(), 'destinations']">
+      <a class="stat-card stat-card--blue card" [routerLink]="['/trips', tripId(), 'destinations']">
         <div class="stat-top">
           <span class="stat-label">Destinations</span>
           <span class="stat-icon stat-icon--blue">
@@ -89,28 +89,24 @@ import { RouterLink } from '@angular/router';
     .stats-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
     }
     @media (max-width: 700px) {
       .stats-row { grid-template-columns: repeat(2, 1fr); }
     }
 
     .stat-card {
-      background: white;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 18px 20px 16px;
+      padding: 18px var(--space-5) var(--space-4);
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+      gap: var(--space-2);
       text-decoration: none;
       color: inherit;
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      transition: box-shadow 0.18s, transform 0.18s;
+      transition: box-shadow var(--transition-normal), transform var(--transition-normal);
     }
     .stat-card::before {
       content: '';
@@ -138,37 +134,37 @@ import { RouterLink } from '@angular/router';
 
     .stat-label {
       font-size: 0.72rem;
-      font-weight: 700;
+      font-weight: var(--font-weight-bold);
       text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: #94a3b8;
+      letter-spacing: var(--tracking-wide);
+      color: var(--color-text-subtle);
     }
 
     .stat-icon {
-      width: 34px; height: 34px; border-radius: 10px;
+      width: 34px; height: 34px; border-radius: var(--radius-lg);
       display: flex; align-items: center; justify-content: center;
     }
-    .stat-icon--blue { background: #eff6ff; color: #3b82f6; }
+    .stat-icon--blue { background: var(--color-action-light); color: var(--color-action); }
     .stat-icon--green { background: #f0fdf4; color: #22c55e; }
     .stat-icon--amber { background: #fffbeb; color: #f59e0b; }
     .stat-icon--purple { background: #faf5ff; color: #8b5cf6; }
 
     .stat-value {
       font-size: 2.1rem;
-      font-weight: 800;
-      color: #0f172a;
-      line-height: 1;
+      font-weight: var(--font-weight-extrabold);
+      color: var(--color-text);
+      line-height: var(--leading-tight);
       letter-spacing: -0.03em;
     }
     .stat-value--budget { font-size: 1.6rem; }
-    .stat-value-total { font-size: 1.1rem; font-weight: 600; color: #94a3b8; }
+    .stat-value-total { font-size: 1.1rem; font-weight: var(--font-weight-semibold); color: var(--color-text-subtle); }
 
     .stat-hint {
       font-size: 0.75rem;
-      color: #94a3b8;
-      font-weight: 500;
+      color: var(--color-text-subtle);
+      font-weight: var(--font-weight-medium);
     }
-    .stat-hint--positive { color: #22c55e; font-weight: 600; }
+    .stat-hint--positive { color: #22c55e; font-weight: var(--font-weight-semibold); }
   `],
 })
 export class TripStatsRowComponent {

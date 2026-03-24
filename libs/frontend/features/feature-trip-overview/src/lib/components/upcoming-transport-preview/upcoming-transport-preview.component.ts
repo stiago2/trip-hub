@@ -15,7 +15,7 @@ const TYPE_ICON: Record<string, string> = {
   standalone: true,
   imports: [RouterLink, DatePipe, TitleCasePipe],
   template: `
-    <div class="preview-card">
+    <div class="preview-card card">
       <div class="card-header">
         <span class="card-title">Upcoming Transport</span>
         <a class="card-link" [routerLink]="['/trips', tripId(), 'transport']">See all</a>
@@ -66,21 +66,19 @@ const TYPE_ICON: Record<string, string> = {
   `,
   styles: [`
     .preview-card {
-      background: white; border: 1px solid #e8edf3;
-      border-radius: 16px; padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.04);
+      padding: var(--space-5);
     }
 
     .card-header {
       display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 16px; padding-bottom: 12px;
-      border-bottom: 1px solid #f1f5f9;
+      margin-bottom: var(--space-4); padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--color-surface-muted);
     }
-    .card-title { font-size: 0.875rem; font-weight: 700; color: #0f172a; }
+    .card-title { font-size: var(--font-size-body); font-weight: var(--font-weight-bold); color: var(--color-text); }
     .card-link {
-      font-size: 0.775rem; font-weight: 600; color: #3b82f6;
+      font-size: 0.775rem; font-weight: var(--font-weight-semibold); color: var(--color-action);
       text-decoration: none; padding: 3px 8px; border-radius: 6px;
-      background: #eff6ff; transition: background 0.15s;
+      background: var(--color-action-light); transition: background var(--transition-fast);
     }
     .card-link:hover { background: #dbeafe; }
 
@@ -89,13 +87,13 @@ const TYPE_ICON: Record<string, string> = {
 
     .transport-item {
       display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px; border-radius: 10px;
-      background: #f8fafc; border: 1px solid #f1f5f9;
+      padding: 10px var(--space-3); border-radius: var(--radius-lg);
+      background: var(--color-surface-subtle); border: 1px solid var(--color-surface-muted);
     }
 
     .type-badge {
-      width: 32px; height: 32px; border-radius: 8px;
-      background: #eff6ff; color: #3b82f6;
+      width: 32px; height: 32px; border-radius: var(--radius-md);
+      background: var(--color-action-light); color: var(--color-action);
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
@@ -104,41 +102,42 @@ const TYPE_ICON: Record<string, string> = {
 
     .route {
       display: flex; align-items: center; gap: 5px;
-      font-size: 0.82rem; font-weight: 600; color: #0f172a;
+      font-size: 0.82rem; font-weight: var(--font-weight-semibold); color: var(--color-text);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .location { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70px; }
 
     .transport-time {
-      font-size: 0.75rem; color: #94a3b8; margin-top: 2px;
+      font-size: 0.75rem; color: var(--color-text-subtle); margin-top: 2px;
     }
 
     .type-label {
-      font-size: 0.7rem; font-weight: 700; color: #3b82f6;
-      background: #eff6ff; padding: 2px 7px; border-radius: 20px;
+      font-size: var(--font-size-2xs); font-weight: var(--font-weight-bold); color: var(--color-action);
+      background: var(--color-action-light); padding: 2px 7px; border-radius: var(--radius-3xl);
       flex-shrink: 0; text-transform: capitalize;
     }
 
     /* Empty state */
     .empty-state {
       display: flex; flex-direction: column; align-items: center;
-      gap: 8px; padding: 16px 0 8px;
+      gap: var(--space-2); padding: var(--space-4) 0 var(--space-2);
     }
     .empty-icon-wrap {
       width: 52px; height: 52px; border-radius: 14px;
-      background: #f8fafc;
+
+      background: var(--color-surface-subtle);
       display: flex; align-items: center; justify-content: center;
       margin-bottom: 4px;
     }
-    .empty-title { margin: 0; font-size: 0.875rem; color: #64748b; font-weight: 600; }
+    .empty-title { margin: 0; font-size: var(--font-size-body); color: var(--color-text-soft); font-weight: var(--font-weight-semibold); }
     .btn-add {
       display: flex; align-items: center; gap: 5px; margin-top: 4px;
-      background: #f8fafc; color: #475569; text-decoration: none;
-      font-size: 0.8rem; font-weight: 600; padding: 8px 16px;
-      border-radius: 8px; border: 1px solid #e2e8f0;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      background: var(--color-surface-subtle); color: #475569; text-decoration: none;
+      font-size: 0.8rem; font-weight: var(--font-weight-semibold); padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-md); border: 1px solid var(--color-border);
+      transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
     }
-    .btn-add:hover { background: #eff6ff; border-color: #bfdbfe; color: #2563eb; }
+    .btn-add:hover { background: var(--color-action-light); border-color: #bfdbfe; color: var(--color-action-hover); }
 
     /* Skeleton */
     @keyframes shimmer {
@@ -146,11 +145,11 @@ const TYPE_ICON: Record<string, string> = {
       100% { background-position: 200% 0; }
     }
     .shimmer {
-      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background: linear-gradient(90deg, var(--color-surface-muted) 25%, var(--color-border) 50%, var(--color-surface-muted) 75%);
       background-size: 200% 100%; animation: shimmer 1.4s ease infinite;
     }
     .skeleton-list { display: flex; flex-direction: column; gap: 10px; }
-    .skeleton-item { height: 54px; border-radius: 10px; }
+    .skeleton-item { height: 54px; border-radius: var(--radius-lg); }
   `],
 })
 export class UpcomingTransportPreviewComponent {

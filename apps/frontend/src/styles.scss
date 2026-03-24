@@ -26,6 +26,7 @@
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
+  --space-3-5: 14px;
   --space-4: 16px;
   --space-5: 20px;
   --space-6: 24px;
@@ -51,6 +52,50 @@
   --font-size-md: 0.95rem;
   --font-size-lg: 1.1rem;
   --font-size-xl: 1.35rem;
+
+  /* Extended palette — semantic aliases used across feature components */
+  --color-text-body: #334155;
+  --color-text-soft: #64748b;
+  --color-text-subtle: #94a3b8;
+  --color-text-dim: #cbd5e1;
+  --color-action: #3b82f6;
+  --color-action-hover: #2563eb;
+  --color-action-light: #eff6ff;
+  --color-dark-bg: #0f172a;
+  --color-dark-surface: #1e293b;
+
+  /* Transitions */
+  --transition-fast: 0.15s;
+  --transition-normal: 0.18s;
+
+  /* Font weights */
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* Additional font sizes */
+  --font-size-2xs: 0.7rem;
+  --font-size-caption: 0.78rem;
+  --font-size-body: 0.875rem;
+  --font-size-card: 1.05rem;
+
+  /* Letter spacing */
+  --tracking-tight: -0.02em;
+  --tracking-open: 0.06em;
+  --tracking-wide: 0.07em;
+  --tracking-wider: 0.08em;
+  --tracking-widest: 0.1em;
+
+  /* Additional border radius */
+  --radius-xs: 7px;
+  --radius-3xl: 20px;
+  --radius-full: 99px;
+
+  /* Line heights */
+  --leading-tight: 1;
+  --leading-normal: 1.4;
+  --leading-relaxed: 1.5;
 }
 
 /* ── Base reset ─────────────────────────────────────────────── */
@@ -285,6 +330,74 @@ body {
 /* ── Spinner ────────────────────────────────────────────────── */
 @keyframes spin { to { transform: rotate(360deg); } }
 .spin { animation: spin 0.7s linear infinite; }
+
+/* ── Shimmer skeleton ───────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, var(--color-surface-muted) 25%, var(--color-border) 50%, var(--color-surface-muted) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+/* ── Empty state ────────────────────────────────────────────── */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10px; padding: 80px var(--space-6); text-align: center;
+}
+.empty-icon-wrap {
+  width: 72px; height: 72px; border-radius: 20px;
+  background: var(--color-surface-muted);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: var(--space-2);
+}
+.empty-title {
+  margin: 0; font-size: 1rem; font-weight: 700; color: var(--color-text);
+}
+.empty-desc {
+  margin: 0; font-size: var(--font-size-base); color: var(--color-text-subtle); max-width: 300px;
+}
+
+/* ── Page layout ────────────────────────────────────────────── */
+.page-header {
+  display: flex; justify-content: space-between;
+  align-items: flex-start; margin-bottom: var(--space-7); gap: var(--space-4);
+}
+.page-title {
+  margin: 0; font-size: var(--font-size-xl); font-weight: 800;
+  color: var(--color-text); letter-spacing: -0.02em;
+}
+
+/* ── Feature action button ──────────────────────────────────── */
+.btn-add {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--color-action); color: white; border: none;
+  padding: 10px 18px; border-radius: var(--radius-lg);
+  font-size: var(--font-size-base); font-weight: 600; white-space: nowrap;
+  cursor: pointer; flex-shrink: 0;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+.btn-add:hover { background: var(--color-action-hover); transform: translateY(-1px); }
+.btn-add--lg { padding: 12px 22px; }
+
+/* ── Stat pills ─────────────────────────────────────────────── */
+.stat-pill {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 0.78rem; font-weight: 600;
+  color: var(--color-action); background: var(--color-action-light);
+  padding: 4px 10px; border-radius: 20px;
+}
+.stat-pill--indigo { color: #6366f1; background: #eef2ff; }
+.stat-pill--green  { color: #059669; background: #ecfdf5; }
+.stat-pill--amber  { color: #b45309; background: #fef3c7; }
+
+/* ── Dropdown animation ─────────────────────────────────────── */
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
 
 /* ── Responsive modal bottom-sheet on small screens ────────── */
 @media (max-width: 480px) {

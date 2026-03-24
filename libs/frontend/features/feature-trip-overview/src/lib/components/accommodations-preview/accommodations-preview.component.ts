@@ -8,7 +8,7 @@ import { AccommodationApiService, Accommodation } from '@org/data-access-trips';
   standalone: true,
   imports: [RouterLink, DatePipe, DecimalPipe],
   template: `
-    <div class="preview-card">
+    <div class="preview-card card">
       <div class="card-header">
         <span class="card-title">Accommodations</span>
         <a class="card-link" [routerLink]="['/trips', tripId(), 'accommodations']">Manage</a>
@@ -78,42 +78,38 @@ import { AccommodationApiService, Accommodation } from '@org/data-access-trips';
   `,
   styles: [`
     .preview-card {
-      background: white;
-      border: 1px solid #e8edf3;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.04);
+      padding: var(--space-5);
     }
 
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px; padding-bottom: 12px;
-      border-bottom: 1px solid #f1f5f9;
+      margin-bottom: var(--space-4); padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--color-surface-muted);
     }
-    .card-title { font-size: 0.875rem; font-weight: 700; color: #0f172a; }
+    .card-title { font-size: var(--font-size-body); font-weight: var(--font-weight-bold); color: var(--color-text); }
     .card-link {
-      font-size: 0.775rem; font-weight: 600; color: #3b82f6;
+      font-size: 0.775rem; font-weight: var(--font-weight-semibold); color: var(--color-action);
       text-decoration: none; padding: 3px 8px; border-radius: 6px;
-      background: #eff6ff; transition: background 0.15s;
+      background: var(--color-action-light); transition: background var(--transition-fast);
     }
     .card-link:hover { background: #dbeafe; }
 
     /* Skeletons */
     .skeleton-list { display: flex; flex-direction: column; gap: 10px; }
     .skeleton-item { display: flex; align-items: center; gap: 10px; }
-    .skeleton-icon { width: 32px; height: 32px; border-radius: 8px; background: #f1f5f9; flex-shrink: 0; }
+    .skeleton-icon { width: 32px; height: 32px; border-radius: var(--radius-md); background: var(--color-surface-muted); flex-shrink: 0; }
     .skeleton-lines { flex: 1; display: flex; flex-direction: column; gap: 6px; }
     .skeleton-line {
-      height: 10px; border-radius: 5px; background: #f1f5f9;
+      height: 10px; border-radius: 5px; background: var(--color-surface-muted);
       animation: shimmer 1.2s infinite linear;
     }
     .skeleton-line--short { width: 55%; }
     @keyframes shimmer {
-      0%   { background-color: #f1f5f9; }
-      50%  { background-color: #e2e8f0; }
-      100% { background-color: #f1f5f9; }
+      0%   { background-color: var(--color-surface-muted); }
+      50%  { background-color: var(--color-border); }
+      100% { background-color: var(--color-surface-muted); }
     }
 
     /* Empty state */
@@ -121,60 +117,60 @@ import { AccommodationApiService, Accommodation } from '@org/data-access-trips';
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
-      padding: 16px 0 8px;
+      gap: var(--space-2);
+      padding: var(--space-4) 0 var(--space-2);
     }
     .empty-icon-wrap {
       width: 52px; height: 52px; border-radius: 14px;
-      background: #f8fafc;
+      background: var(--color-surface-subtle);
       display: flex; align-items: center; justify-content: center;
       margin-bottom: 4px;
     }
-    .empty-title { margin: 0; font-size: 0.875rem; color: #64748b; font-weight: 600; }
+    .empty-title { margin: 0; font-size: var(--font-size-body); color: var(--color-text-soft); font-weight: var(--font-weight-semibold); }
     .btn-add {
       display: flex;
       align-items: center;
       gap: 5px;
       margin-top: 4px;
-      background: #f8fafc;
+      background: var(--color-surface-subtle);
       color: #475569;
       text-decoration: none;
       font-size: 0.8rem;
-      font-weight: 600;
-      padding: 8px 16px;
-      border-radius: 8px;
-      border: 1px solid #e2e8f0;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      font-weight: var(--font-weight-semibold);
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
+      transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
     }
-    .btn-add:hover { background: #eff6ff; border-color: #bfdbfe; color: #2563eb; }
+    .btn-add:hover { background: var(--color-action-light); border-color: #bfdbfe; color: var(--color-action-hover); }
 
     /* Items list */
-    .items-list { display: flex; flex-direction: column; gap: 8px; }
+    .items-list { display: flex; flex-direction: column; gap: var(--space-2); }
     .acc-item {
       display: flex; align-items: center; gap: 10px;
-      padding: 8px 10px;
-      border-radius: 10px;
-      background: #f8fafc;
+      padding: var(--space-2) 10px;
+      border-radius: var(--radius-lg);
+      background: var(--color-surface-subtle);
     }
     .acc-icon-wrap {
-      width: 32px; height: 32px; border-radius: 8px;
-      background: #eff6ff;
+      width: 32px; height: 32px; border-radius: var(--radius-md);
+      background: var(--color-action-light);
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
     .acc-info { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-    .acc-name { font-size: 0.83rem; font-weight: 600; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .acc-dates { font-size: 0.75rem; color: #64748b; }
-    .acc-price { font-size: 0.82rem; font-weight: 700; color: #0f172a; white-space: nowrap; }
+    .acc-name { font-size: 0.83rem; font-weight: var(--font-weight-semibold); color: var(--color-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .acc-dates { font-size: 0.75rem; color: var(--color-text-soft); }
+    .acc-price { font-size: 0.82rem; font-weight: var(--font-weight-bold); color: var(--color-text); white-space: nowrap; }
 
     /* Summary */
     .summary-row {
       display: flex; justify-content: space-between; align-items: center;
-      margin-top: 12px; padding-top: 12px;
-      border-top: 1px solid #f1f5f9;
+      margin-top: var(--space-3); padding-top: var(--space-3);
+      border-top: 1px solid var(--color-surface-muted);
     }
-    .summary-label { font-size: 0.78rem; color: #64748b; }
-    .summary-amount { font-size: 0.82rem; font-weight: 700; color: #0f172a; }
+    .summary-label { font-size: var(--font-size-caption); color: var(--color-text-soft); }
+    .summary-amount { font-size: 0.82rem; font-weight: var(--font-weight-bold); color: var(--color-text); }
   `],
 })
 export class AccommodationsPreviewComponent {

@@ -16,7 +16,7 @@ const GRADIENTS = [
   standalone: true,
   imports: [DatePipe, RouterLink],
   template: `
-    <div class="preview-card">
+    <div class="preview-card card">
       <div class="card-header">
         <span class="card-title">Next Destination</span>
       </div>
@@ -62,16 +62,14 @@ const GRADIENTS = [
   `,
   styles: [`
     .preview-card {
-      background: white; border: 1px solid #e8edf3;
-      border-radius: 16px; padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.04);
+      padding: var(--space-5);
     }
     .card-header {
       display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 16px; padding-bottom: 12px;
-      border-bottom: 1px solid #f1f5f9;
+      margin-bottom: var(--space-4); padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--color-surface-muted);
     }
-    .card-title { font-size: 0.875rem; font-weight: 700; color: #0f172a; }
+    .card-title { font-size: var(--font-size-body); font-weight: var(--font-weight-bold); color: var(--color-text); }
 
     .hero-card {
       position: relative;
@@ -93,7 +91,7 @@ const GRADIENTS = [
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 20px 24px;
+      padding: var(--space-5) var(--space-6);
     }
 
     .hero-top { display: flex; }
@@ -102,9 +100,9 @@ const GRADIENTS = [
       backdrop-filter: blur(8px);
       color: white;
       font-size: 0.75rem;
-      font-weight: 700;
+      font-weight: var(--font-weight-bold);
       padding: 5px 12px;
-      border-radius: 20px;
+      border-radius: var(--radius-3xl);
       letter-spacing: 0.03em;
       border: 1px solid rgba(255,255,255,0.2);
     }
@@ -113,24 +111,24 @@ const GRADIENTS = [
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      gap: 12px;
+      gap: var(--space-3);
     }
 
     .destination-country {
       margin: 0 0 2px;
-      font-size: 0.78rem;
-      font-weight: 500;
+      font-size: var(--font-size-caption);
+      font-weight: var(--font-weight-medium);
       color: rgba(255,255,255,0.7);
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: var(--tracking-wider);
     }
     .destination-name {
       margin: 0;
       font-size: 1.75rem;
-      font-weight: 800;
+      font-weight: var(--font-weight-extrabold);
       color: white;
       text-shadow: 0 1px 4px rgba(0,0,0,0.3);
-      letter-spacing: -0.02em;
+      letter-spacing: var(--tracking-tight);
     }
 
     .btn-itinerary {
@@ -138,13 +136,13 @@ const GRADIENTS = [
       align-items: center;
       gap: 5px;
       background: white;
-      color: #0f172a;
+      color: var(--color-text);
       text-decoration: none;
-      font-size: 0.875rem;
-      font-weight: 600;
+      font-size: var(--font-size-body);
+      font-weight: var(--font-weight-semibold);
       padding: 10px 18px;
-      border-radius: 10px;
-      transition: opacity 0.15s, transform 0.15s;
+      border-radius: var(--radius-lg);
+      transition: opacity var(--transition-fast), transform var(--transition-fast);
       white-space: nowrap;
       flex-shrink: 0;
     }
@@ -152,38 +150,38 @@ const GRADIENTS = [
 
     .empty-card {
       height: 220px;
-      border: 2px dashed #e2e8f0;
-      border-radius: 16px;
+      border: 2px dashed var(--color-border);
+      border-radius: var(--radius-2xl);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      background: #f8fafc;
+      gap: var(--space-2);
+      background: var(--color-surface-subtle);
     }
     .empty-icon-wrap {
-      width: 64px; height: 64px; border-radius: 16px;
-      background: #f1f5f9;
+      width: 64px; height: 64px; border-radius: var(--radius-2xl);
+      background: var(--color-surface-muted);
       display: flex; align-items: center; justify-content: center;
       margin-bottom: 4px;
     }
-    .empty-title { margin: 0; color: #0f172a; font-size: 0.95rem; font-weight: 700; }
-    .empty-desc { margin: 0; color: #94a3b8; font-size: 0.85rem; text-align: center; }
+    .empty-title { margin: 0; color: var(--color-text); font-size: 0.95rem; font-weight: var(--font-weight-bold); }
+    .empty-desc { margin: 0; color: var(--color-text-subtle); font-size: 0.85rem; text-align: center; }
     .btn-add-destination {
       display: flex;
       align-items: center;
       gap: 6px;
       margin-top: 4px;
-      background: #3b82f6;
+      background: var(--color-action);
       color: white;
       text-decoration: none;
-      font-size: 0.875rem;
-      font-weight: 600;
-      padding: 10px 20px;
-      border-radius: 10px;
-      transition: background 0.15s, transform 0.15s;
+      font-size: var(--font-size-body);
+      font-weight: var(--font-weight-semibold);
+      padding: 10px var(--space-5);
+      border-radius: var(--radius-lg);
+      transition: background var(--transition-fast), transform var(--transition-fast);
     }
-    .btn-add-destination:hover { background: #2563eb; transform: translateY(-1px); }
+    .btn-add-destination:hover { background: var(--color-action-hover); transform: translateY(-1px); }
 
     @media (max-width: 600px) {
       .hero-card { height: 190px; }

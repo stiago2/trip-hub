@@ -46,41 +46,41 @@ import { TripMember } from '@org/util-types';
       margin-bottom: 22px;
     }
 
-    .members-section { display: flex; align-items: center; gap: 12px; }
+    .members-section { display: flex; align-items: center; gap: var(--space-3); }
 
     .avatar-stack { display: flex; }
     .avatar {
       width: 36px; height: 36px; border-radius: 50%;
       background: linear-gradient(135deg, #3b82f6, #6366f1); color: white;
-      font-size: 0.78rem; font-weight: 700;
+      font-size: var(--font-size-caption); font-weight: var(--font-weight-bold);
       display: flex; align-items: center; justify-content: center;
       border: 2.5px solid #f1f5f9; margin-left: -10px;
       box-shadow: 0 2px 6px rgba(59,130,246,0.3);
     }
     .avatar-stack .avatar:first-child { margin-left: 0; }
     .avatar--overflow {
-      background: #e2e8f0; color: #475569; font-size: 0.7rem;
+      background: #e2e8f0; color: #475569; font-size: var(--font-size-2xs);
       box-shadow: none;
     }
 
     .members-info { display: flex; flex-direction: column; gap: 1px; }
-    .members-label { font-size: 0.875rem; font-weight: 700; color: #0f172a; }
+    .members-label { font-size: var(--font-size-body); font-weight: var(--font-weight-bold); color: #0f172a; }
     .members-sub { font-size: 0.75rem; color: #94a3b8; }
 
     .header-actions { display: flex; align-items: center; gap: 10px; }
 
     .overview-badge {
       display: flex; align-items: center; gap: 6px;
-      font-size: 0.78rem; font-weight: 600; color: #6366f1;
+      font-size: var(--font-size-caption); font-weight: var(--font-weight-semibold); color: #6366f1;
       background: #eef2ff; border: 1px solid #e0e7ff;
-      padding: 5px 12px; border-radius: 20px;
+      padding: 5px var(--space-3); border-radius: var(--radius-3xl);
     }
 
     .import-btn {
       display: inline-flex; align-items: center; gap: 6px;
-      padding: 7px 14px; border-radius: 8px;
+      padding: 7px 14px; border-radius: var(--radius-md);
       background: white; border: 1.5px solid #e2e8f0;
-      font-size: 0.8rem; font-weight: 600; color: #475569;
+      font-size: 0.8rem; font-weight: var(--font-weight-semibold); color: #475569;
       cursor: pointer; transition: all 0.15s;
     }
     .import-btn:hover {

@@ -104,13 +104,13 @@ const TABS: { id: TripTab; label: string; icon: string }[] = [
 
     .nav-item {
       display: flex; align-items: center; gap: 11px;
-      padding: 9px 12px; border-radius: 8px;
+      padding: 9px var(--space-3); border-radius: var(--radius-md);
       text-decoration: none; color: #cbd5e1;
-      font-size: 0.875rem; font-weight: 500;
+      font-size: var(--font-size-body); font-weight: var(--font-weight-medium);
       transition: background 0.15s, color 0.15s;
     }
     .nav-item:hover { background: rgba(255,255,255,0.10); color: #f1f5f9; }
-    .nav-item.active { background: rgba(59,130,246,0.18); color: #93c5fd; font-weight: 600; }
+    .nav-item.active { background: rgba(59,130,246,0.18); color: #93c5fd; font-weight: var(--font-weight-semibold); }
     .nav-item.active .nav-icon { color: #60a5fa; }
     .nav-icon { display: flex; align-items: center; flex-shrink: 0; }
     .nav-label { white-space: nowrap; }
@@ -123,7 +123,7 @@ const TABS: { id: TripTab; label: string; icon: string }[] = [
 
       .mobile-hamburger {
         display: flex; align-items: center; justify-content: center;
-        width: 38px; height: 38px; border-radius: 10px;
+        width: 38px; height: 38px; border-radius: var(--radius-lg);
         background: rgba(255,255,255,0.08); border: none;
         color: #e2e8f0; cursor: pointer;
         transition: background 0.15s;
@@ -155,32 +155,32 @@ const TABS: { id: TripTab; label: string; icon: string }[] = [
       .drawer-handle {
         width: 36px; height: 4px; border-radius: 2px;
         background: rgba(255,255,255,0.2);
-        margin: 12px auto 0;
+        margin: var(--space-3) auto 0;
       }
 
       .drawer-header {
         display: flex; align-items: center; justify-content: space-between;
-        padding: 14px 20px 10px;
+        padding: 14px var(--space-5) 10px;
         border-bottom: 1px solid rgba(255,255,255,0.08);
       }
-      .drawer-title { font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; }
+      .drawer-title { font-size: 0.8rem; font-weight: var(--font-weight-bold); color: #64748b; text-transform: uppercase; letter-spacing: var(--tracking-wider); }
       .drawer-close {
-        width: 30px; height: 30px; border-radius: 8px;
+        width: 30px; height: 30px; border-radius: var(--radius-md);
         background: rgba(255,255,255,0.08); border: none;
         color: #94a3b8; cursor: pointer;
         display: flex; align-items: center; justify-content: center;
       }
 
-      .drawer-nav { display: flex; flex-direction: column; padding: 8px 12px 16px; gap: 2px; }
+      .drawer-nav { display: flex; flex-direction: column; padding: var(--space-2) var(--space-3) var(--space-4); gap: 2px; }
       .drawer-item {
-        display: flex; align-items: center; gap: 14px;
-        padding: 13px 14px; border-radius: 12px;
+        display: flex; align-items: center; gap: var(--space-3-5);
+        padding: 13px var(--space-3-5); border-radius: var(--radius-xl);
         text-decoration: none; color: #cbd5e1;
-        font-size: 0.95rem; font-weight: 500;
-        transition: background 0.12s, color 0.12s;
+        font-size: 0.95rem; font-weight: var(--font-weight-medium);
+        transition: background var(--transition-fast), color var(--transition-fast);
       }
       .drawer-item:hover { background: rgba(255,255,255,0.08); color: #f1f5f9; }
-      .drawer-item.active { background: rgba(59,130,246,0.18); color: #93c5fd; font-weight: 600; }
+      .drawer-item.active { background: rgba(59,130,246,0.18); color: #93c5fd; font-weight: var(--font-weight-semibold); }
       .drawer-item--back { color: #93c5fd; }
       .drawer-item--back:hover { background: rgba(59,130,246,0.12); color: #bfdbfe; }
       .drawer-section-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 6px 0; }

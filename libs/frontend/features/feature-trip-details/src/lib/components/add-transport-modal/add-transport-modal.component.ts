@@ -220,7 +220,7 @@ const TYPE_OPTIONS: TypeOption[] = [
     /* Field */
     .field-group { display: flex; flex-direction: column; gap: 6px; }
     .field-label {
-      font-size: 0.78rem; font-weight: 600; color: #475569;
+      font-size: var(--font-size-caption); font-weight: var(--font-weight-semibold); color: #475569;
       text-transform: uppercase; letter-spacing: 0.04em;
     }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -239,7 +239,7 @@ const TYPE_OPTIONS: TypeOption[] = [
     @media (max-width: 520px) { .type-grid { grid-template-columns: repeat(2, 1fr); } }
     .type-btn {
       display: flex; flex-direction: column; align-items: center;
-      gap: 6px; padding: 14px 8px;
+      gap: 6px; padding: 14px var(--space-2);
       background: var(--color-surface-subtle); border: 1.5px solid var(--color-border);
       border-radius: var(--radius-xl); cursor: pointer;
       transition: border-color 0.15s, background 0.15s, color 0.15s; color: #64748b;
@@ -247,13 +247,13 @@ const TYPE_OPTIONS: TypeOption[] = [
     .type-btn:hover { border-color: #93c5fd; background: var(--color-primary-light); color: #3b82f6; }
     .type-btn--active { border-color: var(--color-border-focus); background: var(--color-primary-light); color: #3b82f6; }
     .type-icon { display: flex; align-items: center; justify-content: center; }
-    .type-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+    .type-label { font-size: 0.72rem; font-weight: var(--font-weight-bold); text-transform: uppercase; letter-spacing: var(--tracking-open); }
 
     /* Duration hint */
     .duration-hint {
       display: flex; align-items: center; gap: 6px;
-      font-size: 0.8rem; color: #3b82f6; font-weight: 500;
-      background: var(--color-primary-light); border-radius: var(--radius-md); padding: 8px 12px;
+      font-size: 0.8rem; color: #3b82f6; font-weight: var(--font-weight-medium);
+      background: var(--color-primary-light); border-radius: var(--radius-md); padding: var(--space-2) var(--space-3);
     }
   `],
 })

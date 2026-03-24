@@ -103,14 +103,14 @@ const CATEGORIES: CategoryOption[] = [
   styles: [`
     .modal-shell {
       background: var(--color-surface); border-radius: var(--radius-2xl);
-      padding: 28px 28px 24px; width: 100%; max-width: 440px;
+      padding: var(--space-7) var(--space-7) var(--space-6); width: 100%; max-width: 440px;
       max-height: 90vh; overflow-y: auto;
       box-shadow: var(--shadow-lg);
       animation: modalSlide 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .modal-header-flat {
       display: flex; justify-content: space-between; align-items: flex-start;
-      margin-bottom: 24px;
+      margin-bottom: var(--space-6);
     }
     .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
     .select-wrapper { position: relative; }
@@ -126,11 +126,11 @@ const CATEGORIES: CategoryOption[] = [
       pointer-events: none; color: var(--color-text-muted);
     }
     .quantity-row {
-      display: flex; align-items: center; gap: 12px;
+      display: flex; align-items: center; gap: var(--space-3);
       background: var(--color-surface-subtle); border: 1.5px solid var(--color-border);
-      border-radius: var(--radius-lg); padding: 10px 14px;
+      border-radius: var(--radius-lg); padding: 10px var(--space-3-5);
     }
-    .stepper { display: flex; align-items: center; gap: 14px; margin-left: auto; }
+    .stepper { display: flex; align-items: center; gap: var(--space-3-5); margin-left: auto; }
     .stepper-btn {
       width: 32px; height: 32px; border-radius: 50%;
       border: 1.5px solid var(--color-border); background: var(--color-surface);
@@ -141,14 +141,14 @@ const CATEGORIES: CategoryOption[] = [
     .stepper-btn:hover:not(:disabled) { background: var(--color-surface-muted); border-color: var(--color-text-placeholder); }
     .stepper-btn:disabled { opacity: 0.35; cursor: not-allowed; }
     .stepper-value {
-      font-size: 1rem; font-weight: 600; color: var(--color-text);
+      font-size: 1rem; font-weight: var(--font-weight-semibold); color: var(--color-text);
       min-width: 24px; text-align: center;
     }
-    .modal-footer-flat { display: flex; gap: var(--space-3); margin-top: 28px; }
+    .modal-footer-flat { display: flex; gap: var(--space-3); margin-top: var(--space-7); }
     .btn-primary { flex: 1; justify-content: center; }
     @media (max-width: 480px) {
-      .modal-shell { border-radius: 20px 20px 0 0; width: 100%; padding: 20px 16px; }
-      .modal-footer-flat { margin-top: 16px; }
+      .modal-shell { border-radius: 20px 20px 0 0; width: 100%; padding: var(--space-5) var(--space-4); }
+      .modal-footer-flat { margin-top: var(--space-4); }
     }
   `],
 })

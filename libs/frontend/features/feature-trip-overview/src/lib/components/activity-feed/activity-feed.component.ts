@@ -36,7 +36,7 @@ function relativeTime(dateStr: string): string {
   standalone: true,
   imports: [RouterLink, SlicePipe, UpperCasePipe],
   template: `
-    <div class="preview-card">
+    <div class="preview-card card">
       <div class="card-header">
         <span class="card-title">Activity Feed</span>
         <span class="live-dot" title="Live"></span>
@@ -92,21 +92,17 @@ function relativeTime(dateStr: string): string {
   `,
   styles: [`
     .preview-card {
-      background: white;
-      border: 1px solid #e8edf3;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.04);
+      padding: var(--space-5);
     }
 
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px; padding-bottom: 12px;
-      border-bottom: 1px solid #f1f5f9;
+      margin-bottom: var(--space-4); padding-bottom: var(--space-3);
+      border-bottom: 1px solid var(--color-surface-muted);
     }
-    .card-title { font-size: 0.875rem; font-weight: 700; color: #0f172a; }
+    .card-title { font-size: var(--font-size-body); font-weight: var(--font-weight-bold); color: var(--color-text); }
 
     .live-dot {
       width: 8px; height: 8px; border-radius: 50%;
@@ -117,27 +113,27 @@ function relativeTime(dateStr: string): string {
     /* Skeleton */
     .skeleton-avatar {
       width: 32px; height: 32px; border-radius: 50%;
-      background: #f1f5f9; flex-shrink: 0;
+      background: var(--color-surface-muted); flex-shrink: 0;
       animation: shimmer 1.2s infinite linear;
     }
     .skeleton-lines { flex: 1; display: flex; flex-direction: column; gap: 6px; }
     .skeleton-line {
-      height: 10px; border-radius: 5px; background: #f1f5f9;
+      height: 10px; border-radius: 5px; background: var(--color-surface-muted);
       animation: shimmer 1.2s infinite linear;
     }
     .skeleton-line--short { width: 45%; }
     @keyframes shimmer {
-      0%   { background-color: #f1f5f9; }
-      50%  { background-color: #e2e8f0; }
-      100% { background-color: #f1f5f9; }
+      0%   { background-color: var(--color-surface-muted); }
+      50%  { background-color: var(--color-border); }
+      100% { background-color: var(--color-surface-muted); }
     }
 
     /* Empty */
     .empty-state {
-      display: flex; flex-direction: column; align-items: center; gap: 8px;
-      padding: 16px 0 8px; text-align: center;
+      display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
+      padding: var(--space-4) 0 var(--space-2); text-align: center;
     }
-    .empty-text { margin: 0; font-size: 0.82rem; color: #94a3b8; max-width: 220px; line-height: 1.4; }
+    .empty-text { margin: 0; font-size: 0.82rem; color: var(--color-text-subtle); max-width: 220px; line-height: var(--leading-normal); }
 
     .feed-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; }
 
@@ -146,34 +142,34 @@ function relativeTime(dateStr: string): string {
     .feed-avatar {
       width: 32px; height: 32px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      color: white; font-size: 0.75rem; font-weight: 700;
+      color: white; font-size: 0.75rem; font-weight: var(--font-weight-bold);
       flex-shrink: 0;
     }
 
     .feed-body { display: flex; flex-direction: column; gap: 2px; }
-    .feed-text { margin: 0; font-size: 0.85rem; color: #334155; line-height: 1.4; }
-    .feed-text strong { color: #0f172a; }
-    .feed-time { font-size: 0.75rem; color: #94a3b8; }
+    .feed-text { margin: 0; font-size: 0.85rem; color: var(--color-text-body); line-height: var(--leading-normal); }
+    .feed-text strong { color: var(--color-text); }
+    .feed-time { font-size: 0.75rem; color: var(--color-text-subtle); }
 
     .btn-view-all {
-      margin-top: 16px;
+      margin-top: var(--space-4);
       width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      color: #64748b;
+      background: var(--color-surface-subtle);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-soft);
       padding: 9px;
-      border-radius: 10px;
+      border-radius: var(--radius-lg);
       font-size: 0.85rem;
-      font-weight: 500;
+      font-weight: var(--font-weight-medium);
       text-decoration: none;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
       box-sizing: border-box;
     }
-    .btn-view-all:hover { background: #eff6ff; border-color: #bfdbfe; color: #2563eb; }
+    .btn-view-all:hover { background: var(--color-action-light); border-color: #bfdbfe; color: var(--color-action-hover); }
   `],
 })
 export class ActivityFeedComponent {
