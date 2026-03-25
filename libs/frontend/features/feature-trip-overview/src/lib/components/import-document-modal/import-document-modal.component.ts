@@ -147,9 +147,19 @@ type Step = 'upload' | 'analyzing' | 'preview' | 'success';
                 </div>
               </div>
 
-              <div class="form-field form-field--half">
+              <div class="form-field">
                 <label>Price (optional)</label>
-                <input type="number" [(ngModel)]="transportForm.price" placeholder="0.00" min="0" />
+                <div class="price-row">
+                  <input class="price-input" type="number" [(ngModel)]="transportForm.price" (ngModelChange)="onPriceChange()" placeholder="0.00" min="0" />
+                  <select class="currency-select" [(ngModel)]="priceCurrency" (ngModelChange)="onCurrencyChange($event)">
+                    @for (c of currencies; track c.code) {
+                      <option [value]="c.code">{{ c.code }} {{ c.flag }}</option>
+                    }
+                  </select>
+                </div>
+                @if (usdPreview() && priceCurrency !== 'USD') {
+                  <span class="usd-preview">≈ {{ usdPreview() }} USD</span>
+                }
               </div>
             </div>
 
@@ -196,9 +206,19 @@ type Step = 'upload' | 'analyzing' | 'preview' | 'success';
                 <input type="text" [(ngModel)]="accommodationForm.address" placeholder="Street address" />
               </div>
 
-              <div class="form-field form-field--half">
+              <div class="form-field">
                 <label>Total price (optional)</label>
-                <input type="number" [(ngModel)]="accommodationForm.price" placeholder="0.00" min="0" />
+                <div class="price-row">
+                  <input class="price-input" type="number" [(ngModel)]="accommodationForm.price" (ngModelChange)="onPriceChange()" placeholder="0.00" min="0" />
+                  <select class="currency-select" [(ngModel)]="priceCurrency" (ngModelChange)="onCurrencyChange($event)">
+                    @for (c of currencies; track c.code) {
+                      <option [value]="c.code">{{ c.code }} {{ c.flag }}</option>
+                    }
+                  </select>
+                </div>
+                @if (usdPreview() && priceCurrency !== 'USD') {
+                  <span class="usd-preview">≈ {{ usdPreview() }} USD</span>
+                }
               </div>
 
               @if (destinations().length > 0) {
@@ -355,6 +375,15 @@ type Step = 'upload' | 'analyzing' | 'preview' | 'success';
     }
     .form-field input:focus, .form-field select:focus { border-color: #6366f1; }
 
+    /* Price + currency row */
+    .price-row { display: flex; gap: 8px; }
+    .price-input { flex: 1; min-width: 0; }
+    .currency-select { width: 110px; flex-shrink: 0; }
+    .usd-preview {
+      display: block; margin-top: 5px;
+      font-size: 0.78rem; color: #059669; font-weight: var(--font-weight-semibold);
+    }
+
     /* Type pills */
     .type-pills { display: flex; gap: var(--space-2); flex-wrap: wrap; }
     .type-pill {
@@ -440,6 +469,23 @@ export class ImportDocumentModalComponent {
   readonly successType = signal<string>('entry');
 
   readonly transportTypes = ['FLIGHT', 'TRAIN', 'BUS', 'CAR'] as const;
+
+  readonly currencies = [
+    { code: 'USD', flag: '🇺🇸' }, { code: 'EUR', flag: '🇪🇺' }, { code: 'GBP', flag: '🇬🇧' },
+    { code: 'COP', flag: '🇨🇴' }, { code: 'MXN', flag: '🇲🇽' }, { code: 'BRL', flag: '🇧🇷' },
+    { code: 'ARS', flag: '🇦🇷' }, { code: 'JPY', flag: '🇯🇵' }, { code: 'KRW', flag: '🇰🇷' },
+    { code: 'IDR', flag: '🇮🇩' }, { code: 'THB', flag: '🇹🇭' }, { code: 'SGD', flag: '🇸🇬' },
+    { code: 'AUD', flag: '🇦🇺' }, { code: 'CAD', flag: '🇨🇦' },
+  ];
+
+  priceCurrency = 'USD';
+  private exchangeRate = signal(1);
+  readonly usdPreview = computed(() => {
+    const price = this.transportForm.price ?? this.accommodationForm.price;
+    if (!price || this.priceCurrency === 'USD') return null;
+    const converted = Number(price) * this.exchangeRate();
+    return converted > 0 ? converted.toFixed(2) : null;
+  });
 
   transportForm: ExtractedTransportData = {
     type: 'FLIGHT',
@@ -548,26 +594,28 @@ export class ImportDocumentModalComponent {
     this.isSaving.set(true);
     this.saveError.set(null);
 
-    const payload: CreateTransportPayload = {
-      type: this.transportForm.type,
-      fromLocation: this.transportForm.fromLocation,
-      toLocation: this.transportForm.toLocation,
-      departureTime: new Date(this.transportForm.departureTime).toISOString(),
-      arrivalTime: new Date(this.transportForm.arrivalTime).toISOString(),
-      ...(this.transportForm.price != null ? { price: Number(this.transportForm.price) } : {}),
-    };
-
-    this.transportApi.createTransport(this.tripId(), payload).subscribe({
-      next: () => {
-        this.isSaving.set(false);
-        this.successType.set('transport');
-        this.step.set('success');
-        this.imported.emit();
-      },
-      error: (err) => {
-        this.isSaving.set(false);
-        this.saveError.set(err?.error?.message ?? 'Failed to save transport. Please try again.');
-      },
+    const rawPrice = this.transportForm.price != null ? Number(this.transportForm.price) : undefined;
+    this.priceInUsd(rawPrice).then(usdPrice => {
+      const payload: CreateTransportPayload = {
+        type: this.transportForm.type,
+        fromLocation: this.transportForm.fromLocation,
+        toLocation: this.transportForm.toLocation,
+        departureTime: new Date(this.transportForm.departureTime).toISOString(),
+        arrivalTime: new Date(this.transportForm.arrivalTime).toISOString(),
+        ...(usdPrice != null ? { price: usdPrice } : {}),
+      };
+      this.transportApi.createTransport(this.tripId(), payload).subscribe({
+        next: () => {
+          this.isSaving.set(false);
+          this.successType.set('transport');
+          this.step.set('success');
+          this.imported.emit();
+        },
+        error: (err) => {
+          this.isSaving.set(false);
+          this.saveError.set(err?.error?.message ?? 'Failed to save transport. Please try again.');
+        },
+      });
     });
   }
 
@@ -576,35 +624,57 @@ export class ImportDocumentModalComponent {
     this.isSaving.set(true);
     this.saveError.set(null);
 
-    const payload: CreateAccommodationPayload = {
-      name: this.accommodationForm.name,
-      checkIn: new Date(this.accommodationForm.checkIn).toISOString(),
-      checkOut: new Date(this.accommodationForm.checkOut).toISOString(),
-      ...(this.accommodationForm.address ? { address: this.accommodationForm.address } : {}),
-      ...(this.accommodationForm.price != null ? { price: Number(this.accommodationForm.price) } : {}),
-    };
+    const rawPrice = this.accommodationForm.price != null ? Number(this.accommodationForm.price) : undefined;
+    this.priceInUsd(rawPrice).then(usdPrice => {
+      const payload: CreateAccommodationPayload = {
+        name: this.accommodationForm.name,
+        checkIn: new Date(this.accommodationForm.checkIn).toISOString(),
+        checkOut: new Date(this.accommodationForm.checkOut).toISOString(),
+        ...(this.accommodationForm.address ? { address: this.accommodationForm.address } : {}),
+        ...(usdPrice != null ? { price: usdPrice } : {}),
+      };
+      this.accommodationApi
+        .createAccommodation(this.accommodationForm.destinationId, payload)
+        .subscribe({
+          next: () => {
+            this.isSaving.set(false);
+            this.successType.set('accommodation');
+            this.step.set('success');
+            this.imported.emit();
+          },
+          error: (err) => {
+            this.isSaving.set(false);
+            this.saveError.set(err?.error?.message ?? 'Failed to save accommodation. Please try again.');
+          },
+        });
+    });
+  }
 
-    this.accommodationApi
-      .createAccommodation(this.accommodationForm.destinationId, payload)
-      .subscribe({
-        next: () => {
-          this.isSaving.set(false);
-          this.successType.set('accommodation');
-          this.step.set('success');
-          this.imported.emit();
-        },
-        error: (err) => {
-          this.isSaving.set(false);
-          this.saveError.set(
-            err?.error?.message ?? 'Failed to save accommodation. Please try again.',
-          );
-        },
-      });
+  onPriceChange(): void {
+    this.exchangeRate.set(this.exchangeRate()); // trigger recompute
+  }
+
+  async onCurrencyChange(currency: string): Promise<void> {
+    this.priceCurrency = currency;
+    if (currency === 'USD') { this.exchangeRate.set(1); return; }
+    try {
+      const res = await fetch(`https://api.frankfurter.app/latest?from=${currency}&to=USD`);
+      const json = await res.json() as { rates?: Record<string, number> };
+      this.exchangeRate.set(json.rates?.['USD'] ?? 1);
+    } catch { this.exchangeRate.set(1); }
+  }
+
+  private async priceInUsd(price: number | undefined): Promise<number | undefined> {
+    if (price == null) return undefined;
+    if (this.priceCurrency === 'USD') return price;
+    return Math.round(price * this.exchangeRate() * 100) / 100;
   }
 
   resetToUpload() {
     this.step.set('upload');
     this.saveError.set(null);
+    this.priceCurrency = 'USD';
+    this.exchangeRate.set(1);
   }
 
   private toDatetimeLocal(isoString: string): string {
