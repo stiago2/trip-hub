@@ -26,7 +26,7 @@ import { RouterLink } from '@angular/router';
         }
       </a>
 
-      <a class="stat-card stat-card--green" [routerLink]="['/trips', tripId(), 'budget']">
+      <a class="stat-card stat-card--green card" [routerLink]="['/trips', tripId(), 'budget']">
         <div class="stat-top">
           <span class="stat-label">Budget</span>
           <span class="stat-icon stat-icon--green">
@@ -44,7 +44,7 @@ import { RouterLink } from '@angular/router';
         }
       </a>
 
-      <a class="stat-card stat-card--amber" [routerLink]="['/trips', tripId(), 'inventory']">
+      <a class="stat-card stat-card--amber card" [routerLink]="['/trips', tripId(), 'inventory']">
         <div class="stat-top">
           <span class="stat-label">Items Packed</span>
           <span class="stat-icon stat-icon--amber">
@@ -63,7 +63,7 @@ import { RouterLink } from '@angular/router';
         }
       </a>
 
-      <a class="stat-card stat-card--purple" [routerLink]="['/trips', tripId(), 'members']">
+      <a class="stat-card stat-card--purple card" [routerLink]="['/trips', tripId(), 'members']">
         <div class="stat-top">
           <span class="stat-label">Members</span>
           <span class="stat-icon stat-icon--purple">

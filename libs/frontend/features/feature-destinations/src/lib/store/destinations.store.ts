@@ -1,5 +1,5 @@
-import { computed, effect, inject } from '@angular/core';
-import { signalStore, withComputed, withHooks, withMethods, withState, patchState } from '@ngrx/signals';
+import { effect, inject } from '@angular/core';
+import { signalStore, withHooks, withMethods, withState, patchState } from '@ngrx/signals';
 import { Destination } from '@org/util-types';
 import { CreateDestinationPayload, DestinationsApiService, TripStore, UpdateDestinationPayload } from '@org/data-access-trips';
 import { ToastService } from '@org/ui-components';
@@ -10,11 +10,6 @@ export const DestinationsStore = signalStore(
     rawDestinations: [] as Destination[],
     loading: false,
   }),
-  withComputed(({ rawDestinations }) => ({
-    destinations: computed(() =>
-      [...rawDestinations()].sort((a, b) => a.startDate.localeCompare(b.startDate)),
-    ),
-  })),
   withMethods((store) => {
     const api = inject(DestinationsApiService);
     const tripStore = inject(TripStore);

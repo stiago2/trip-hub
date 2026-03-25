@@ -428,7 +428,7 @@ export class ImportDocumentModalComponent {
   private readonly accommodationApi = inject(AccommodationApiService);
   private readonly destinationsStore = inject(DestinationsStore);
 
-  readonly destinations = computed((): Destination[] => this.destinationsStore.destinations());
+  readonly destinations = computed((): Destination[] => this.destinationsStore.rawDestinations());
 
   readonly step = signal<Step>('upload');
   readonly selectedFile = signal<File | null>(null);

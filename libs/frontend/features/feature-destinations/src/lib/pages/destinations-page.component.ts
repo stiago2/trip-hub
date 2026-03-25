@@ -1,19 +1,9 @@
 import { DatePipe, SlicePipe, TitleCasePipe, UpperCasePipe } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { destinationPhotoBg } from '@org/util';
 import { Destination } from '@org/util-types';
 import { AddDestinationModalComponent } from '../components/add-destination-modal/add-destination-modal.component';
 import { DestinationsStore } from '../store/destinations.store';
-
-const CARD_GRADIENTS = [
-  'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-  'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-  'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-  'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-  'linear-gradient(135deg, #fda085 0%, #f6d365 100%)',
-  'linear-gradient(135deg, #373b44 0%, #4286f4 100%)',
-  'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
-  'linear-gradient(135deg, #0f2027 0%, #2c5364 100%)',
-];
 
 @Component({
   selector: 'lib-destinations-page',
@@ -84,26 +74,9 @@ const CARD_GRADIENTS = [
           @for (dest of ordered(); track dest.id; let i = $index; let last = $last) {
 
             <!-- Destination card -->
-            <div
-              class="dest-card card"
-              [class.is-dragging]="draggingId() === dest.id"
-              [class.is-drag-over]="dragOverId() === dest.id"
-              draggable="true"
-              (dragstart)="onDragStart(dest.id)"
-              (dragover)="onDragOver(dest.id, $event)"
-              (dragleave)="dragOverId.set(null)"
-              (drop)="onDrop(dest.id)"
-              (dragend)="draggingId.set(null); dragOverId.set(null)"
-            >
-              <!-- Drag handle -->
-              <div class="drag-handle" title="Drag to reorder">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2">
-                  <line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="18" x2="16" y2="18"/>
-                </svg>
-              </div>
-
+            <div class="dest-card card">
               <!-- Gradient left panel -->
-              <div class="card-panel" [style.background]="gradient(dest)">
+              <div class="card-panel" [style.background]="cardBg(dest)">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.8">
                   <circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
                 </svg>
@@ -209,22 +182,6 @@ const CARD_GRADIENTS = [
       cursor: default;
     }
     .dest-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.10); }
-    .dest-card.is-dragging { opacity: 0.45; transform: scale(0.98); }
-    .dest-card.is-drag-over {
-      border-color: var(--color-action);
-      box-shadow: 0 0 0 2px rgba(59,130,246,0.25);
-    }
-
-    /* Drag handle */
-    .drag-handle {
-      position: absolute; left: -24px; top: 50%; transform: translateY(-50%);
-      width: 18px; height: 30px;
-      display: flex; align-items: center; justify-content: center;
-      cursor: grab; opacity: 0; transition: opacity var(--transition-fast);
-      border-radius: 4px;
-    }
-    .dest-card:hover .drag-handle { opacity: 1; }
-    .drag-handle:active { cursor: grabbing; }
 
     /* Gradient left panel */
     .card-panel {
@@ -358,8 +315,6 @@ const CARD_GRADIENTS = [
 
     @media (max-width: 600px) {
       .page { padding: var(--space-2) 0; }
-      .drag-handle { display: none; }
-
       /* Compact header */
       .page-header { margin-bottom: 18px; align-items: center; }
       .page-title { font-size: 1.15rem; }
@@ -386,20 +341,9 @@ export class DestinationsPageComponent implements OnInit {
   readonly showModal = signal(false);
   readonly editingDest = signal<Destination | null>(null);
   readonly menuOpenId = signal<string | null>(null);
-  readonly draggingId = signal<string | null>(null);
-  readonly dragOverId = signal<string | null>(null);
-  readonly localOrder = signal<string[]>([]);
   readonly skeletons = [1, 2, 3];
 
-  // Maintain local ordering, falling back to store order on first load
-  readonly ordered = computed<Destination[]>(() => {
-    const dests = this.store.destinations();
-    const order = this.localOrder();
-    if (order.length === 0) return dests;
-    const ordered = order.map(id => dests.find(d => d.id === id)).filter(Boolean) as Destination[];
-    const added = dests.filter(d => !order.includes(d.id));
-    return [...ordered, ...added];
-  });
+  readonly ordered = computed<Destination[]>(() => this.store.rawDestinations());
 
   readonly totalDays = computed(() =>
     this.ordered().reduce((sum, d) => sum + this.dayCount(d), 0)
@@ -409,35 +353,6 @@ export class DestinationsPageComponent implements OnInit {
     document.addEventListener('click', () => this.menuOpenId.set(null));
   }
 
-  // Drag & drop
-  onDragStart(id: string): void {
-    this.draggingId.set(id);
-    if (this.localOrder().length === 0) {
-      this.localOrder.set(this.ordered().map(d => d.id));
-    }
-  }
-
-  onDragOver(id: string, event: DragEvent): void {
-    event.preventDefault();
-    if (this.draggingId() !== id) this.dragOverId.set(id);
-  }
-
-  onDrop(targetId: string): void {
-    const fromId = this.draggingId();
-    if (!fromId || fromId === targetId) return;
-    const order = this.localOrder().length
-      ? [...this.localOrder()]
-      : this.ordered().map(d => d.id);
-    const fromIdx = order.indexOf(fromId);
-    const toIdx = order.indexOf(targetId);
-    order.splice(fromIdx, 1);
-    order.splice(toIdx, 0, fromId);
-    this.localOrder.set(order);
-    this.draggingId.set(null);
-    this.dragOverId.set(null);
-  }
-
-  // Menu
   toggleMenu(id: string): void {
     this.menuOpenId.set(this.menuOpenId() === id ? null : id);
   }
@@ -450,13 +365,12 @@ export class DestinationsPageComponent implements OnInit {
 
   deleteAndClose(id: string): void {
     this.store.deleteDestination(id);
-    this.localOrder.update(order => order.filter(o => o !== id));
     this.menuOpenId.set(null);
   }
 
   // Helpers
-  gradient(dest: Destination): string {
-    return CARD_GRADIENTS[dest.city.charCodeAt(0) % CARD_GRADIENTS.length];
+  cardBg(dest: Destination): string {
+    return destinationPhotoBg(dest.city);
   }
 
   dayCount(dest: Destination): number {

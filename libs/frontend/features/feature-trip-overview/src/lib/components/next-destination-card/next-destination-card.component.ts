@@ -1,15 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { destinationPhotoBg } from '@org/util';
 import { Destination } from '@org/util-types';
-
-const GRADIENTS = [
-  'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-  'linear-gradient(135deg, #2d1b69 0%, #11998e 100%)',
-  'linear-gradient(135deg, #232526 0%, #414345 100%)',
-  'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)',
-  'linear-gradient(135deg, #1f4037 0%, #99f2c8 100%)',
-];
 
 @Component({
   selector: 'lib-next-destination-card',
@@ -22,7 +15,7 @@ const GRADIENTS = [
       </div>
 
       @if (destination()) {
-        <div class="hero-card" [style.background]="gradient()">
+        <div class="hero-card" [style.background]="heroBg()">
           <div class="hero-overlay"></div>
           <div class="hero-content">
             <div class="hero-top">
@@ -195,10 +188,9 @@ export class NextDestinationCardComponent {
   readonly destination = input<Destination | null>(null);
   readonly tripId = input('');
 
-  readonly gradient = computed(() => {
+  readonly heroBg = computed(() => {
     const dest = this.destination();
-    if (!dest) return GRADIENTS[0];
-    const idx = dest.city.charCodeAt(0) % GRADIENTS.length;
-    return GRADIENTS[idx];
+    if (!dest) return '';
+    return destinationPhotoBg(dest.city);
   });
 }

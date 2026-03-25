@@ -108,11 +108,11 @@ export class TripOverviewPage {
   readonly showImportModal = signal(false);
 
   readonly members = computed((): TripMember[] => this.membersStore.members());
-  readonly destinationCount = computed(() => this.destinationsStore.destinations().length);
+  readonly destinationCount = computed(() => this.destinationsStore.rawDestinations().length);
   readonly totalBudget = computed(() => this.budgetStore.totalBudget());
   readonly inventoryItems = computed((): InventoryItem[] => this.inventoryStore.items());
   readonly totalItems = computed(() => this.inventoryStore.items().length);
   readonly packedCount = computed(() => this.inventoryStore.items().filter((i) => i.packed).length);
-  readonly firstDestination = computed(() => this.destinationsStore.destinations()[0] ?? null);
+  readonly firstDestination = computed(() => this.destinationsStore.rawDestinations()[0] ?? null);
 
 }

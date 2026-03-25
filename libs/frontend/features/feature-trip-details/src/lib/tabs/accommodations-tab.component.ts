@@ -195,7 +195,7 @@ const CITY_GRADIENTS: Record<string, string> = {
 
     @if (showModal()) {
       <lib-add-accommodation-modal
-        [destinations]="destinationsStore.destinations()"
+        [destinations]="destinationsStore.rawDestinations()"
         [accommodation]="editingAccommodation()"
         (closed)="showModal.set(false); editingAccommodation.set(null)"
       />
@@ -343,11 +343,11 @@ export class AccommodationsTabComponent {
   }
 
   destinationCity(destinationId: string): string {
-    return this.destinationsStore.destinations().find((d) => d.id === destinationId)?.city ?? '';
+    return this.destinationsStore.rawDestinations().find((d) => d.id === destinationId)?.city ?? '';
   }
 
   destinationLabel(destinationId: string): string {
-    const d = this.destinationsStore.destinations().find((d) => d.id === destinationId);
+    const d = this.destinationsStore.rawDestinations().find((d) => d.id === destinationId);
     return d ? `${d.city}, ${d.country}` : 'Unknown';
   }
 
