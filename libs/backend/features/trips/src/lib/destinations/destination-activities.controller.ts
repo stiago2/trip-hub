@@ -34,4 +34,9 @@ export class DestinationActivitiesController {
   deleteActivity(@CurrentUser() user: AuthenticatedUser, @Param('id') id: string) {
     return this.service.deleteActivity(user.userId, id);
   }
+
+  @Post('destinations/:destinationId/suggest-activities')
+  suggestActivities(@CurrentUser() user: AuthenticatedUser, @Param('destinationId') destinationId: string) {
+    return this.service.suggestActivities(user.userId, destinationId);
+  }
 }

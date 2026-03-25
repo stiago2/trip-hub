@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { DestinationActivity } from '@org/util-types';
-import { CreateActivityPayload, DestinationActivitiesApiService } from '@org/data-access-trips';
+import { CreateActivityPayload, DestinationActivitiesApiService, SuggestedActivity } from '@org/data-access-trips';
 import { ToastService } from '@org/ui-components';
 
 export const DestinationActivitiesStore = signalStore(
@@ -9,6 +9,8 @@ export const DestinationActivitiesStore = signalStore(
   withState({
     activitiesByDestination: {} as Record<string, DestinationActivity[]>,
     loadingIds: [] as string[],
+    suggestionsByDestination: {} as Record<string, SuggestedActivity[]>,
+    suggestingIds: [] as string[],
   }),
   withMethods((store) => {
     const api = inject(DestinationActivitiesApiService);
@@ -73,6 +75,28 @@ export const DestinationActivitiesStore = signalStore(
           },
           error: () => toast.error('Failed to delete activity.'),
         });
+      },
+
+      suggestActivities(destinationId: string): void {
+        if (store.suggestingIds().includes(destinationId)) return;
+        patchState(store, { suggestingIds: [...store.suggestingIds(), destinationId] });
+        api.suggestActivities(destinationId).subscribe({
+          next: ({ suggestions }) =>
+            patchState(store, {
+              suggestionsByDestination: { ...store.suggestionsByDestination(), [destinationId]: suggestions },
+              suggestingIds: store.suggestingIds().filter((id) => id !== destinationId),
+            }),
+          error: () => {
+            toast.error('Failed to get suggestions.');
+            patchState(store, { suggestingIds: store.suggestingIds().filter((id) => id !== destinationId) });
+          },
+        });
+      },
+
+      clearSuggestions(destinationId: string): void {
+        const updated = { ...store.suggestionsByDestination() };
+        delete updated[destinationId];
+        patchState(store, { suggestionsByDestination: updated });
       },
     };
   }),

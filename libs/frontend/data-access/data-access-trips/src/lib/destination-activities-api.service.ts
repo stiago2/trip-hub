@@ -9,6 +9,12 @@ export interface CreateActivityPayload {
   notes?: string;
 }
 
+export interface SuggestedActivity {
+  name: string;
+  category: string;
+  reason: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class DestinationActivitiesApiService {
   private readonly http = inject(HttpClient);
@@ -28,5 +34,12 @@ export class DestinationActivitiesApiService {
 
   deleteActivity(id: string): Observable<void> {
     return this.http.delete<void>(`${this.base}/destination-activities/${id}`);
+  }
+
+  suggestActivities(destinationId: string): Observable<{ suggestions: SuggestedActivity[] }> {
+    return this.http.post<{ suggestions: SuggestedActivity[] }>(
+      `${this.base}/destinations/${destinationId}/suggest-activities`,
+      {}
+    );
   }
 }

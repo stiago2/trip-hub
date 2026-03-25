@@ -143,9 +143,23 @@ import { DestinationActivitiesStore } from '../store/destination-activities.stor
                 <div class="activities-panel" role="presentation" (click)="$event.stopPropagation()">
                   <div class="activities-header">
                     <span class="activities-title">Activities</span>
-                    <span class="activities-count">
-                      {{ (activitiesStore.activitiesByDestination()[dest.id] ?? []).length }} planned
-                    </span>
+                    <div class="activities-header-actions">
+                      <button
+                        class="btn-suggest"
+                        (click)="activitiesStore.suggestActivities(dest.id)"
+                        [disabled]="activitiesStore.suggestingIds().includes(dest.id)"
+                        title="Get AI suggestions"
+                      >
+                        @if (activitiesStore.suggestingIds().includes(dest.id)) {
+                          <span class="suggest-spinner"></span> Thinking...
+                        } @else {
+                          ✨ Suggest
+                        }
+                      </button>
+                      <span class="activities-count">
+                        {{ (activitiesStore.activitiesByDestination()[dest.id] ?? []).length }} planned
+                      </span>
+                    </div>
                   </div>
 
                   @if (activitiesStore.loadingIds().includes(dest.id)) {
@@ -170,6 +184,32 @@ import { DestinationActivitiesStore } from '../store/destination-activities.stor
                         <li class="activity-empty">No activities yet. Add one below.</li>
                       }
                     </ul>
+
+                    <!-- AI Suggestions -->
+                    <div class="suggestions-section" role="presentation" (click)="$event.stopPropagation()">
+                      @if (activitiesStore.suggestionsByDestination()[dest.id]?.length) {
+                        <div class="suggestions-header">
+                          <span class="suggestions-label">✨ AI Suggestions</span>
+                          <button class="suggestions-dismiss" (click)="activitiesStore.clearSuggestions(dest.id)">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                          </button>
+                        </div>
+                        <div class="suggestion-list">
+                          @for (s of activitiesStore.suggestionsByDestination()[dest.id]; track s.name) {
+                            <div class="suggestion-chip">
+                              <span class="suggestion-dot act-dot--{{ s.category | lowercase }}"></span>
+                              <div class="suggestion-info">
+                                <span class="suggestion-name">{{ s.name }}</span>
+                                <span class="suggestion-reason">{{ s.reason }}</span>
+                              </div>
+                              <button class="suggestion-add" (click)="addSuggestion(dest.id, s)" title="Add to activities">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                              </button>
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
 
                     <!-- Add activity form -->
                     <div class="add-activity-form" role="presentation" (click)="$event.stopPropagation()">
@@ -480,6 +520,60 @@ import { DestinationActivitiesStore } from '../store/destination-activities.stor
       /* Route connector alignment */
       .route-connector { margin-left: 34px; }
     }
+
+    /* Suggest button */
+    .activities-header-actions { display: flex; align-items: center; gap: var(--space-3); }
+    .btn-suggest {
+      display: flex; align-items: center; gap: 5px;
+      padding: 5px 12px; border-radius: var(--radius-full);
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white; border: none; font-size: 0.75rem; font-weight: var(--font-weight-semibold);
+      cursor: pointer; transition: opacity var(--transition-fast), transform var(--transition-fast);
+      white-space: nowrap;
+    }
+    .btn-suggest:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+    .btn-suggest:disabled { opacity: 0.6; cursor: not-allowed; }
+    .suggest-spinner {
+      width: 10px; height: 10px; border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white; border-radius: 50%;
+      animation: spin 0.7s linear infinite; display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Suggestions section */
+    .suggestions-section { margin-bottom: var(--space-3); }
+    .suggestions-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: var(--space-2);
+    }
+    .suggestions-label { font-size: 0.75rem; font-weight: var(--font-weight-semibold); color: #6366f1; }
+    .suggestions-dismiss {
+      background: none; border: none; color: var(--color-text-subtle); cursor: pointer;
+      padding: 2px; border-radius: 4px; display: flex; align-items: center;
+    }
+    .suggestions-dismiss:hover { color: var(--color-text); }
+
+    .suggestion-list { display: flex; flex-direction: column; gap: 6px; }
+    .suggestion-chip {
+      display: flex; align-items: center; gap: var(--space-2);
+      padding: 8px 10px; border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+      border: 1px solid #ddd6fe;
+      transition: background var(--transition-fast);
+    }
+    .suggestion-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    }
+    .suggestion-info { flex: 1; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+    .suggestion-name { font-size: 0.85rem; font-weight: var(--font-weight-semibold); color: var(--color-text); }
+    .suggestion-reason { font-size: 0.75rem; color: var(--color-text-subtle); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .suggestion-add {
+      width: 26px; height: 26px; flex-shrink: 0; border-radius: 50%;
+      background: #6366f1; border: none; color: white; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background var(--transition-fast), transform var(--transition-fast);
+    }
+    .suggestion-add:hover { background: #4f46e5; transform: scale(1.1); }
   `],
 })
 export class DestinationsPageComponent implements OnInit {
@@ -537,6 +631,10 @@ export class DestinationsPageComponent implements OnInit {
       this.newActivityName.set('');
       this.newActivityCategory.set('CULTURE');
     }
+  }
+
+  addSuggestion(destinationId: string, suggestion: { name: string; category: string }): void {
+    this.activitiesStore.createActivity(destinationId, { name: suggestion.name, category: suggestion.category });
   }
 
   addActivity(destinationId: string): void {

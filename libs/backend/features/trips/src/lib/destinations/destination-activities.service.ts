@@ -38,6 +38,56 @@ export class DestinationActivitiesService {
     await this.prisma.destinationActivity.delete({ where: { id } });
   }
 
+  async suggestActivities(userId: string, destinationId: string) {
+    await this.assertAccess(userId, destinationId);
+
+    const destination = await this.prisma.destination.findUnique({
+      where: { id: destinationId },
+      include: { activities: true },
+    });
+    if (!destination) throw new NotFoundException();
+
+    const existing = destination.activities.map((a) => a.name).join(', ') || 'none yet';
+    const start = destination.startDate.toISOString().split('T')[0];
+    const end = destination.endDate.toISOString().split('T')[0];
+    const ms = destination.endDate.getTime() - destination.startDate.getTime();
+    const days = Math.max(1, Math.round(ms / 86400000) + 1);
+
+    const prompt = `You are a travel expert. Suggest 6 activities for a trip to ${destination.city}, ${destination.country}.
+Trip dates: ${start} to ${end} (${days} days).
+Activities already planned: ${existing}.
+
+Return ONLY a JSON array (no markdown, no explanation) with exactly this structure:
+[
+  { "name": "activity name", "category": "CULTURE|FOOD|NATURE|NIGHTLIFE|SHOPPING|OTHER", "reason": "one short sentence why" },
+  ...
+]
+
+Rules:
+- Do not repeat any already planned activity
+- Use only the exact category values: CULTURE, FOOD, NATURE, NIGHTLIFE, SHOPPING, OTHER
+- Keep names concise (3-6 words max)
+- Keep reasons under 12 words`;
+
+    const Anthropic = (await import('@anthropic-ai/sdk')).default;
+    const client = new Anthropic({ apiKey: process.env['ANTHROPIC_API_KEY'] });
+
+    const message = await client.messages.create({
+      model: 'claude-opus-4-6',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: prompt }],
+    });
+
+    const text = message.content[0].type === 'text' ? message.content[0].text : '[]';
+
+    try {
+      const suggestions = JSON.parse(text);
+      return { suggestions };
+    } catch {
+      return { suggestions: [] };
+    }
+  }
+
   private async assertAccess(userId: string, destinationId: string) {
     const destination = await this.prisma.destination.findUnique({
       where: { id: destinationId },
