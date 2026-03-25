@@ -1,10 +1,11 @@
-import { DatePipe, SlicePipe, TitleCasePipe, UpperCasePipe } from '@angular/common';
+import { DatePipe, TitleCasePipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { AuthStore } from '@org/feature-auth';
 import { AuthService } from '@org/feature-auth';
 import { TripStore } from '@org/data-access-trips';
 import { TripTabsComponent } from '../components/trip-tabs.component';
+import { UserProfileWidgetComponent } from '@org/ui-components';
 
 const THUMB_GRADIENTS = [
   'linear-gradient(145deg, #667eea, #764ba2)',
@@ -20,7 +21,7 @@ const THUMB_GRADIENTS = [
 @Component({
   selector: 'lib-trip-details-page',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, TripTabsComponent, DatePipe, SlicePipe, TitleCasePipe, UpperCasePipe],
+  imports: [RouterOutlet, RouterLink, TripTabsComponent, DatePipe, TitleCasePipe, UserProfileWidgetComponent],
   template: `
     <div class="shell">
 
@@ -49,15 +50,7 @@ const THUMB_GRADIENTS = [
           </a>
 
           @if (authStore.user()) {
-            <div class="user-row">
-              <div class="user-avatar">
-                {{ (authStore.user()!.name || authStore.user()!.email) | slice:0:1 | uppercase }}
-              </div>
-              <div class="user-info">
-                <span class="user-name">{{ authStore.user()!.name || authStore.user()!.email }}</span>
-                <button class="logout-btn" (click)="logout()">Sign out</button>
-              </div>
-            </div>
+            <lib-user-profile-widget [user]="authStore.user()!" (logoutClick)="logout()" />
           }
         </div>
       </aside>
@@ -172,30 +165,6 @@ const THUMB_GRADIENTS = [
       background: rgba(59,130,246,0.28); color: #bfdbfe;
       border-color: rgba(59,130,246,0.4);
     }
-
-    .user-row {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 10px; border-radius: 10px;
-      background: rgba(255,255,255,0.06);
-    }
-    .user-avatar {
-      width: 34px; height: 34px; border-radius: 50%;
-      background: linear-gradient(135deg, #3b82f6, #6366f1);
-      color: white;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
-    }
-    .user-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-    .user-name {
-      font-size: 0.8rem; font-weight: 600; color: #f1f5f9;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .logout-btn {
-      background: none; border: none; padding: 0;
-      font-size: 0.72rem; color: #64748b; cursor: pointer; text-align: left;
-      transition: color 0.15s; font-weight: 500;
-    }
-    .logout-btn:hover { color: #f87171; }
 
     /* Main */
     .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }

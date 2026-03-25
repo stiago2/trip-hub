@@ -5,7 +5,7 @@ import { AuthService, AuthStore } from '@org/feature-auth';
 import { PendingInvitation, Trip } from '@org/util-types';
 import { CreateTripModalComponent } from '../components/create-trip-modal/create-trip-modal.component';
 import { InvitationsApiService } from '@org/data-access-trips';
-import { ToastService } from '@org/ui-components';
+import { ToastService, UserProfileWidgetComponent } from '@org/ui-components';
 import { TripsStore } from '../store/trips.store';
 import { getTripStatus, getTripTimeInfo } from '../utils/trip-status';
 import { getTripColor } from '../utils/trip-color';
@@ -15,7 +15,7 @@ type FilterTab = 'all' | 'upcoming' | 'active' | 'past';
 @Component({
   selector: 'lib-trips-page',
   standalone: true,
-  imports: [DatePipe, SlicePipe, TitleCasePipe, UpperCasePipe, CreateTripModalComponent],
+  imports: [DatePipe, SlicePipe, TitleCasePipe, UpperCasePipe, CreateTripModalComponent, UserProfileWidgetComponent],
   template: `
     <div class="trips-shell">
 
@@ -40,18 +40,7 @@ type FilterTab = 'all' | 'upcoming' | 'active' | 'past';
 
         <div class="sidebar-footer">
           @if (authStore.user()) {
-            <div class="user-row">
-              <div class="user-avatar">
-                {{ (authStore.user()!.name || authStore.user()!.email) | slice:0:1 | uppercase }}
-              </div>
-              <div class="user-info">
-                <span class="user-name">{{ authStore.user()!.name || authStore.user()!.email }}</span>
-                <span class="user-plan">Premium Member</span>
-              </div>
-              <button class="logout-icon-btn" title="Sign out" (click)="logout()">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-              </button>
-            </div>
+            <lib-user-profile-widget [user]="authStore.user()!" (logoutClick)="logout()" />
           }
         </div>
       </aside>
@@ -93,18 +82,7 @@ type FilterTab = 'all' | 'upcoming' | 'active' | 'past';
             </nav>
             @if (authStore.user()) {
               <div class="drawer-footer">
-                <div class="drawer-user-row">
-                  <div class="user-avatar">
-                    {{ (authStore.user()!.name || authStore.user()!.email) | slice:0:1 | uppercase }}
-                  </div>
-                  <div class="user-info">
-                    <span class="user-name">{{ authStore.user()!.name || authStore.user()!.email }}</span>
-                    <span class="user-plan">Premium Member</span>
-                  </div>
-                  <button class="logout-icon-btn" title="Sign out" (click)="logout()">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                  </button>
-                </div>
+                <lib-user-profile-widget [user]="authStore.user()!" (logoutClick)="logout()" />
               </div>
             }
           </div>
@@ -374,27 +352,6 @@ type FilterTab = 'all' | 'upcoming' | 'active' | 'past';
       display: flex; flex-direction: column; gap: 4px;
     }
 
-    .user-row {
-      display: flex; align-items: center; gap: 9px;
-      padding: 10px; margin-top: 6px; border-radius: 10px;
-      background: rgba(255,255,255,0.06);
-    }
-    .user-avatar {
-      width: 34px; height: 34px; border-radius: 50%;
-      background: linear-gradient(135deg, #3b82f6, #6366f1); color: white;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.82rem; font-weight: 700; flex-shrink: 0;
-    }
-    .user-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-    .user-name { font-size: 0.8rem; font-weight: 600; color: #f1f5f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .user-plan { font-size: 0.72rem; color: #475569; }
-    .logout-icon-btn {
-      background: none; border: none; cursor: pointer;
-      color: #475569; padding: 4px; border-radius: 6px;
-      display: flex; align-items: center; transition: color 0.15s;
-    }
-    .logout-icon-btn:hover { color: #f87171; }
-
     /* Main */
     .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
@@ -514,12 +471,6 @@ type FilterTab = 'all' | 'upcoming' | 'active' | 'past';
       margin-top: 16px; padding-top: 14px;
       border-top: 1px solid rgba(255,255,255,0.08);
     }
-    .drawer-user-row {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px; border-radius: 10px;
-      background: rgba(255,255,255,0.06);
-    }
-
     /* ── Responsive ── */
     @media (max-width: 900px) {
       .sidebar { width: 200px; }
