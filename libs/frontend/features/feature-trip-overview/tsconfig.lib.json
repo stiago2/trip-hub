@@ -4,7 +4,8 @@
     "outDir": "../../../../dist/out-tsc",
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true, "inlineSources": true,
+    "sourceMap": true,
+    "inlineSources": true,
     "types": []
   },
   "include": ["src/**/*.ts"],
@@ -14,16 +15,19 @@
       "path": "../feature-trip-members/tsconfig.lib.json"
     },
     {
-      "path": "../feature-destinations/tsconfig.lib.json"
+      "path": "../feature-budget/tsconfig.lib.json"
     },
     {
-      "path": "../feature-budget/tsconfig.lib.json"
+      "path": "../../util/tsconfig.lib.json"
+    },
+    {
+      "path": "../feature-inventory/tsconfig.lib.json"
     },
     {
       "path": "../../util/util-types/tsconfig.lib.json"
     },
     {
-      "path": "../feature-inventory/tsconfig.lib.json"
+      "path": "../feature-destinations/tsconfig.lib.json"
     },
     {
       "path": "../../data-access/data-access-trips/tsconfig.lib.json"

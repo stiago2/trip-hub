@@ -8,3 +8,4 @@ export * from './lib/accommodation-api.service';
 export * from './lib/activity-api.service';
 export * from "./lib/trip.store";
 export * from './lib/document-import-api.service';
+export * from './lib/destination-activities-api.service';

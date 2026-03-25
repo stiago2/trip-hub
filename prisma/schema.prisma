@@ -35,6 +35,15 @@ enum InventoryCategory {
   OTHER
 }
 
+enum ActivityCategory {
+  CULTURE
+  FOOD
+  NATURE
+  NIGHTLIFE
+  SHOPPING
+  OTHER
+}
+
 // ─── Models ───────────────────────────────────────────────────────────────────
 
 model User {
@@ -101,8 +110,9 @@ model Destination {
   order     Int      @default(0)
   updatedAt DateTime @updatedAt
 
-  trip           Trip            @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  trip           Trip                  @relation(fields: [tripId], references: [id], onDelete: Cascade)
   accommodations Accommodation[]
+  activities     DestinationActivity[]
 
   @@unique([tripId, city, startDate])
   @@index([tripId])
@@ -201,4 +211,18 @@ model Activity {
 
   @@index([tripId])
   @@index([userId])
+}
+
+model DestinationActivity {
+  id            String           @id @default(cuid())
+  destinationId String
+  name          String
+  category      ActivityCategory
+  notes         String?
+  done          Boolean          @default(false)
+  createdAt     DateTime         @default(now())
+
+  destination Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+
+  @@index([destinationId])
 }

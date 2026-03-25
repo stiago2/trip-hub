@@ -1,14 +1,16 @@
-import { DatePipe, SlicePipe, TitleCasePipe, UpperCasePipe } from '@angular/common';
+import { DatePipe, LowerCasePipe, SlicePipe, TitleCasePipe, UpperCasePipe } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { destinationPhotoBg } from '@org/util';
 import { Destination } from '@org/util-types';
+import { CreateActivityPayload } from '@org/data-access-trips';
 import { AddDestinationModalComponent } from '../components/add-destination-modal/add-destination-modal.component';
 import { DestinationsStore } from '../store/destinations.store';
+import { DestinationActivitiesStore } from '../store/destination-activities.store';
 
 @Component({
   selector: 'lib-destinations-page',
   standalone: true,
-  imports: [DatePipe, SlicePipe, TitleCasePipe, UpperCasePipe, AddDestinationModalComponent],
+  imports: [DatePipe, SlicePipe, TitleCasePipe, UpperCasePipe, LowerCasePipe, AddDestinationModalComponent],
   template: `
     <div class="page">
 
@@ -74,7 +76,7 @@ import { DestinationsStore } from '../store/destinations.store';
           @for (dest of ordered(); track dest.id; let i = $index; let last = $last) {
 
             <!-- Destination card -->
-            <div class="dest-card card">
+            <div class="dest-card card" [class.is-expanded]="expandedId() === dest.id">
               <!-- Gradient left panel -->
               <div class="card-panel" [style.background]="cardBg(dest)">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.8">
@@ -83,12 +85,16 @@ import { DestinationsStore } from '../store/destinations.store';
                 <span class="panel-country">{{ dest.country | slice:0:3 | uppercase }}</span>
               </div>
 
-              <!-- Card body -->
-              <div class="card-body">
+              <!-- Card body (clickable to expand) -->
+              <div class="card-body" (click)="toggleExpand(dest.id)" style="cursor:pointer">
                 <div class="card-title-row">
                   <h3 class="card-title">{{ dest.city | titlecase }}</h3>
                   <div class="card-title-right">
                     <span class="card-days-badge">{{ dayCount(dest) }} day{{ dayCount(dest) !== 1 ? 's' : '' }}</span>
+                    <svg class="expand-chevron" [class.rotated]="expandedId() === dest.id"
+                      width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2">
+                      <polyline points="6 9 12 15 18 9"/>
+                    </svg>
                   </div>
                 </div>
                 <div class="card-country">
@@ -131,6 +137,62 @@ import { DestinationsStore } from '../store/destinations.store';
                   </div>
                 }
               </div>
+
+              <!-- Activities section (expanded) -->
+              @if (expandedId() === dest.id) {
+                <div class="activities-panel" role="presentation" (click)="$event.stopPropagation()">
+                  <div class="activities-header">
+                    <span class="activities-title">Activities</span>
+                    <span class="activities-count">
+                      {{ (activitiesStore.activitiesByDestination()[dest.id] ?? []).length }} planned
+                    </span>
+                  </div>
+
+                  @if (activitiesStore.loadingIds().includes(dest.id)) {
+                    <p class="activities-loading">Loading...</p>
+                  } @else {
+                    <ul class="activity-list">
+                      @for (act of activitiesStore.activitiesByDestination()[dest.id] ?? []; track act.id) {
+                        <li class="activity-item" [class.done]="act.done">
+                          <button class="act-check" (click)="activitiesStore.toggleDone(dest.id, act.id)" [class.checked]="act.done">
+                            @if (act.done) {
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            }
+                          </button>
+                          <span class="act-category-dot act-dot--{{ act.category | lowercase }}"></span>
+                          <span class="act-name">{{ act.name }}</span>
+                          <button class="act-delete" (click)="activitiesStore.deleteActivity(dest.id, act.id)" title="Remove">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                          </button>
+                        </li>
+                      }
+                      @if ((activitiesStore.activitiesByDestination()[dest.id] ?? []).length === 0) {
+                        <li class="activity-empty">No activities yet. Add one below.</li>
+                      }
+                    </ul>
+
+                    <!-- Add activity form -->
+                    <div class="add-activity-form" role="presentation" (click)="$event.stopPropagation()">
+                      <select class="act-category-select" [value]="newActivityCategory()" (change)="newActivityCategory.set($any($event.target).value)">
+                        @for (cat of CATEGORIES; track cat.value) {
+                          <option [value]="cat.value">{{ cat.icon }} {{ cat.label }}</option>
+                        }
+                      </select>
+                      <input
+                        class="act-name-input"
+                        type="text"
+                        placeholder="Add an activity..."
+                        [value]="newActivityName()"
+                        (input)="newActivityName.set($any($event.target).value)"
+                        (keydown.enter)="addActivity(dest.id)"
+                      />
+                      <button class="act-add-btn" (click)="addActivity(dest.id)" [disabled]="!newActivityName().trim()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                      </button>
+                    </div>
+                  }
+                </div>
+              }
             </div>
 
             <!-- Route connector (between cards) -->
@@ -176,8 +238,7 @@ import { DestinationsStore } from '../store/destinations.store';
 
     /* Destination card */
     .dest-card {
-      position: relative;
-      display: flex; flex-direction: row;
+      position: relative; display: flex; flex-direction: row; flex-wrap: wrap;
       transition: transform var(--transition-normal), box-shadow var(--transition-normal);
       cursor: default;
     }
@@ -274,6 +335,92 @@ import { DestinationsStore } from '../store/destinations.store';
       -webkit-box-orient: vertical; overflow: hidden;
     }
 
+    /* Expand chevron */
+    .expand-chevron { transition: transform var(--transition-fast); flex-shrink: 0; }
+    .expand-chevron.rotated { transform: rotate(180deg); }
+
+    /* Activities panel */
+    .activities-panel {
+      width: 100%;
+      border-top: 1px solid var(--color-surface-muted);
+      padding: var(--space-4) var(--space-5);
+      background: var(--color-surface-subtle);
+      border-radius: 0 0 15px 15px;
+    }
+    .activities-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: var(--space-3);
+    }
+    .activities-title { font-size: 0.78rem; font-weight: var(--font-weight-bold); text-transform: uppercase; letter-spacing: var(--tracking-wide); color: var(--color-text-subtle); }
+    .activities-count { font-size: 0.75rem; color: var(--color-text-subtle); }
+    .activities-loading { font-size: 0.82rem; color: var(--color-text-subtle); padding: var(--space-2) 0; }
+
+    /* Activity list */
+    .activity-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; margin-bottom: var(--space-3); }
+    .activity-item {
+      display: flex; align-items: center; gap: var(--space-2);
+      padding: 7px 10px; border-radius: var(--radius-lg);
+      background: var(--color-surface); border: 1px solid var(--color-border);
+      transition: background var(--transition-fast);
+    }
+    .activity-item.done { opacity: 0.55; }
+    .activity-item.done .act-name { text-decoration: line-through; color: var(--color-text-subtle); }
+
+    .act-check {
+      width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0;
+      border: 2px solid var(--color-border); background: var(--color-surface);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: border-color var(--transition-fast), background var(--transition-fast);
+    }
+    .act-check.checked { background: #22c55e; border-color: #22c55e; color: white; }
+
+    .act-category-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    }
+    .act-dot--culture   { background: #6366f1; }
+    .act-dot--food      { background: #f59e0b; }
+    .act-dot--nature    { background: #22c55e; }
+    .act-dot--nightlife { background: #8b5cf6; }
+    .act-dot--shopping  { background: #ec4899; }
+    .act-dot--other     { background: #94a3b8; }
+
+    .act-name { flex: 1; font-size: 0.85rem; color: var(--color-text); font-weight: var(--font-weight-medium); }
+
+    .act-delete {
+      background: none; border: none; color: var(--color-text-dim); cursor: pointer;
+      padding: 2px; border-radius: 4px; display: flex; align-items: center;
+      opacity: 0; transition: opacity var(--transition-fast), color var(--transition-fast);
+    }
+    .activity-item:hover .act-delete { opacity: 1; }
+    .act-delete:hover { color: var(--color-danger); }
+
+    .activity-empty { font-size: 0.82rem; color: var(--color-text-subtle); padding: var(--space-2) 0; text-align: center; }
+
+    /* Add activity form */
+    .add-activity-form {
+      display: flex; gap: var(--space-2); align-items: center;
+    }
+    .act-category-select {
+      padding: 7px var(--space-2); border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg); font-size: 0.8rem; background: var(--color-surface);
+      color: var(--color-text); cursor: pointer; outline: none; flex-shrink: 0;
+    }
+    .act-name-input {
+      flex: 1; padding: 7px var(--space-3); border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg); font-size: 0.85rem; background: var(--color-surface);
+      color: var(--color-text); outline: none;
+    }
+    .act-name-input:focus { border-color: var(--color-action); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+    .act-name-input::placeholder { color: var(--color-text-dim); }
+    .act-add-btn {
+      width: 34px; height: 34px; flex-shrink: 0; border-radius: var(--radius-lg);
+      background: var(--color-action); border: none; color: white; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background var(--transition-fast);
+    }
+    .act-add-btn:hover:not(:disabled) { background: var(--color-action-hover); }
+    .act-add-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
     /* Route connector */
     .route-connector {
       display: flex; flex-direction: column; align-items: center;
@@ -337,11 +484,24 @@ import { DestinationsStore } from '../store/destinations.store';
 })
 export class DestinationsPageComponent implements OnInit {
   readonly store = inject(DestinationsStore);
+  readonly activitiesStore = inject(DestinationActivitiesStore);
 
   readonly showModal = signal(false);
   readonly editingDest = signal<Destination | null>(null);
   readonly menuOpenId = signal<string | null>(null);
+  readonly expandedId = signal<string | null>(null);
+  readonly newActivityName = signal('');
+  readonly newActivityCategory = signal('CULTURE');
   readonly skeletons = [1, 2, 3];
+
+  readonly CATEGORIES = [
+    { value: 'CULTURE', label: 'Culture', icon: '🏛' },
+    { value: 'FOOD', label: 'Food', icon: '🍜' },
+    { value: 'NATURE', label: 'Nature', icon: '🌿' },
+    { value: 'NIGHTLIFE', label: 'Nightlife', icon: '🌙' },
+    { value: 'SHOPPING', label: 'Shopping', icon: '🛍' },
+    { value: 'OTHER', label: 'Other', icon: '📌' },
+  ];
 
   readonly ordered = computed<Destination[]>(() => this.store.rawDestinations());
 
@@ -366,6 +526,27 @@ export class DestinationsPageComponent implements OnInit {
   deleteAndClose(id: string): void {
     this.store.deleteDestination(id);
     this.menuOpenId.set(null);
+  }
+
+  toggleExpand(destId: string): void {
+    if (this.expandedId() === destId) {
+      this.expandedId.set(null);
+    } else {
+      this.expandedId.set(destId);
+      this.activitiesStore.loadActivities(destId);
+      this.newActivityName.set('');
+      this.newActivityCategory.set('CULTURE');
+    }
+  }
+
+  addActivity(destinationId: string): void {
+    const name = this.newActivityName().trim();
+    if (!name) return;
+    this.activitiesStore.createActivity(
+      destinationId,
+      { name, category: this.newActivityCategory() } as CreateActivityPayload,
+      () => { this.newActivityName.set(''); }
+    );
   }
 
   // Helpers

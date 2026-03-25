@@ -198,6 +198,18 @@ export interface ActivityItem {
   userAvatar: string | null;
 }
 
+// ─── Destination Activity ─────────────────────────────────────────────────────
+
+export interface DestinationActivity {
+  id: string;
+  destinationId: string;
+  name: string;
+  category: 'CULTURE' | 'FOOD' | 'NATURE' | 'NIGHTLIFE' | 'SHOPPING' | 'OTHER';
+  notes?: string | null;
+  done: boolean;
+  createdAt: string;
+}
+
 // ─── Document Import ──────────────────────────────────────────────────────────
 
 export interface ExtractedTransportData {
