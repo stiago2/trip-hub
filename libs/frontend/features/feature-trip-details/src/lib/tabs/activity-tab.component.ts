@@ -1,10 +1,9 @@
 import { SlicePipe, UpperCasePipe } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
-import { ActivityApiService, ActivityItem, colorForUser, relativeTime } from '@org/data-access-trips';
-import type { ActivityPageResult } from '@org/data-access-trips';
+import { Component, inject } from '@angular/core';
+import { colorForUser, relativeTime } from '@org/data-access-trips';
+import { ActivityStore } from '../store/activity.store';
 
-const TYPE_ICONS: Record<string, string> = {
+const TYPE_COLORS: Record<string, string> = {
   destination_added: '#10b981',
   accommodation_added: '#3b82f6',
   transport_added: '#f59e0b',
@@ -24,13 +23,13 @@ const TYPE_ICONS: Record<string, string> = {
           <h2 class="page-title">Activity</h2>
           <p class="page-subtitle">Full history of changes to this trip.</p>
         </div>
-        <button class="btn-refresh" (click)="loadMore()" [disabled]="loading()">
+        <button class="btn-refresh" (click)="store.load()" [disabled]="store.loading()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
           Refresh
         </button>
       </div>
 
-      @if (loading()) {
+      @if (store.loading()) {
         <div class="feed card">
           @for (i of [1,2,3,4,5]; track i) {
             <div class="feed-item">
@@ -44,7 +43,7 @@ const TYPE_ICONS: Record<string, string> = {
         </div>
       }
 
-      @if (!loading() && items().length === 0) {
+      @if (!store.loading() && store.items().length === 0) {
         <div class="empty-state">
           <div class="empty-icon">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5">
@@ -56,9 +55,9 @@ const TYPE_ICONS: Record<string, string> = {
         </div>
       }
 
-      @if (!loading() && items().length > 0) {
+      @if (!store.loading() && store.items().length > 0) {
         <div class="feed card">
-          @for (item of items(); track item.id) {
+          @for (item of store.items(); track item.id) {
             <div class="feed-item">
               <div class="feed-avatar" [style.background]="avatarColor(item.userId)">
                 {{ item.userName | slice:0:1 | uppercase }}
@@ -74,9 +73,9 @@ const TYPE_ICONS: Record<string, string> = {
           }
         </div>
 
-        @if (hasMore()) {
+        @if (store.hasMore()) {
           <div class="load-more-row">
-            <button class="btn-load-more" (click)="loadMore()" [disabled]="loading()">
+            <button class="btn-load-more" (click)="store.loadMore()" [disabled]="store.loading()">
               Load more
             </button>
           </div>
@@ -150,59 +149,13 @@ const TYPE_ICONS: Record<string, string> = {
     .btn-load-more:disabled { opacity: 0.5; cursor: not-allowed; }
   `],
 })
-export class ActivityTabComponent implements OnInit {
-  private readonly api = inject(ActivityApiService);
-  private readonly route = inject(ActivatedRoute);
-
-  private tripId = '';
-  private offset = 0;
-  private readonly PAGE_SIZE = 20;
-
-  readonly loading = signal(false);
-  private readonly _items = signal<ActivityItem[]>([]);
-  readonly items = this._items.asReadonly();
-  readonly hasMore = signal(false);
+export class ActivityTabComponent {
+  readonly store = inject(ActivityStore);
 
   readonly avatarColor = colorForUser;
   readonly relativeTime = relativeTime;
 
-  ngOnInit(): void {
-    this.tripId = this.resolveTripId();
-    this.fetch();
-  }
-
-  loadMore(): void {
-    this.offset += this.PAGE_SIZE;
-    this.fetch();
-  }
-
   typeColor(type: string): string {
-    return TYPE_ICONS[type] ?? '#94a3b8';
-  }
-
-  private fetch(): void {
-    this.loading.set(true);
-    this.api.getActivityByTrip(this.tripId, this.PAGE_SIZE, this.offset).subscribe({
-      next: (data: ActivityPageResult) => {
-        if (this.offset === 0) {
-          this._items.set(data.items);
-        } else {
-          this._items.set([...this._items(), ...data.items]);
-        }
-        this.hasMore.set(this._items().length < data.total);
-        this.loading.set(false);
-      },
-      error: () => this.loading.set(false),
-    });
-  }
-
-  private resolveTripId(): string {
-    let snapshot: ActivatedRouteSnapshot | null = this.route.snapshot;
-    while (snapshot) {
-      const id = snapshot.paramMap.get('tripId');
-      if (id) return id;
-      snapshot = snapshot.parent;
-    }
-    return '';
+    return TYPE_COLORS[type] ?? '#94a3b8';
   }
 }
