@@ -3,33 +3,7 @@ import { Component, DestroyRef, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { filter, switchMap, timer } from 'rxjs';
-import { ActivityApiService, ActivityItem } from '@org/data-access-trips';
-
-const AVATAR_COLORS = [
-  '#3b82f6', '#8b5cf6', '#f59e0b', '#10b981', '#ef4444',
-  '#06b6d4', '#f97316', '#ec4899', '#84cc16',
-];
-
-function colorForUser(userId: string): string {
-  let hash = 0;
-  for (let i = 0; i < userId.length; i++) {
-    hash = (hash * 31 + userId.charCodeAt(i)) >>> 0;
-  }
-  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
-}
-
-function relativeTime(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'Just now';
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
-  if (days === 1) return 'Yesterday';
-  if (days < 7) return `${days} days ago`;
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
+import { ActivityApiService, ActivityItem, colorForUser, relativeTime } from '@org/data-access-trips';
 
 @Component({
   selector: 'lib-activity-feed',
@@ -196,7 +170,7 @@ export class ActivityFeedComponent {
       }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: (data) => { this._items.set(data); this.loading.set(false); },
+      next: (data) => { this._items.set(data.items); this.loading.set(false); },
       error: () => { this.loading.set(false); },
     });
   }

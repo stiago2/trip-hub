@@ -1,33 +1,8 @@
 import { SlicePipe, UpperCasePipe } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
-import { ActivityApiService, ActivityItem } from '@org/data-access-trips';
-
-const AVATAR_COLORS = [
-  '#3b82f6', '#8b5cf6', '#f59e0b', '#10b981', '#ef4444',
-  '#06b6d4', '#f97316', '#ec4899', '#84cc16',
-];
-
-function colorForUser(userId: string): string {
-  let hash = 0;
-  for (let i = 0; i < userId.length; i++) {
-    hash = (hash * 31 + userId.charCodeAt(i)) >>> 0;
-  }
-  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
-}
-
-function relativeTime(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'Just now';
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
-  if (days === 1) return 'Yesterday';
-  if (days < 7) return `${days} days ago`;
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
+import { ActivityApiService, ActivityItem, colorForUser, relativeTime } from '@org/data-access-trips';
+import type { ActivityPageResult } from '@org/data-access-trips';
 
 const TYPE_ICONS: Record<string, string> = {
   destination_added: '#10b981',
@@ -92,7 +67,7 @@ const TYPE_ICONS: Record<string, string> = {
                 <p class="feed-text">
                   <strong>{{ item.userName }}</strong> {{ item.message }}
                 </p>
-                <span class="feed-time">{{ formatTime(item.createdAt) }}</span>
+                <span class="feed-time">{{ relativeTime(item.createdAt) }}</span>
               </div>
               <div class="feed-type-dot" [style.background]="typeColor(item.type)"></div>
             </div>
@@ -180,7 +155,8 @@ export class ActivityTabComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
 
   private tripId = '';
-  private limit = 20;
+  private offset = 0;
+  private readonly PAGE_SIZE = 20;
 
   readonly loading = signal(false);
   private readonly _items = signal<ActivityItem[]>([]);
@@ -188,6 +164,7 @@ export class ActivityTabComponent implements OnInit {
   readonly hasMore = signal(false);
 
   readonly avatarColor = colorForUser;
+  readonly relativeTime = relativeTime;
 
   ngOnInit(): void {
     this.tripId = this.resolveTripId();
@@ -195,12 +172,8 @@ export class ActivityTabComponent implements OnInit {
   }
 
   loadMore(): void {
-    this.limit += 20;
+    this.offset += this.PAGE_SIZE;
     this.fetch();
-  }
-
-  formatTime(dateStr: string): string {
-    return relativeTime(dateStr);
   }
 
   typeColor(type: string): string {
@@ -209,10 +182,14 @@ export class ActivityTabComponent implements OnInit {
 
   private fetch(): void {
     this.loading.set(true);
-    this.api.getActivityByTrip(this.tripId, this.limit).subscribe({
-      next: (data) => {
-        this._items.set(data);
-        this.hasMore.set(data.length === this.limit);
+    this.api.getActivityByTrip(this.tripId, this.PAGE_SIZE, this.offset).subscribe({
+      next: (data: ActivityPageResult) => {
+        if (this.offset === 0) {
+          this._items.set(data.items);
+        } else {
+          this._items.set([...this._items(), ...data.items]);
+        }
+        this.hasMore.set(this._items().length < data.total);
         this.loading.set(false);
       },
       error: () => this.loading.set(false),

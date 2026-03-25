@@ -11,8 +11,10 @@ export class ActivityController {
   findByTrip(
     @Param('tripId') tripId: string,
     @Query('limit') limit?: string,
+    @Query('offset') offset?: string,
   ) {
     const parsedLimit = limit ? parseInt(limit, 10) : 10;
-    return this.activityService.findByTrip(tripId, parsedLimit);
+    const parsedOffset = offset ? parseInt(offset, 10) : 0;
+    return this.activityService.findByTrip(tripId, parsedLimit, parsedOffset);
   }
 }

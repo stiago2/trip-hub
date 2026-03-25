@@ -33,19 +33,23 @@ export class ActivityService {
     });
   }
 
-  async findByTrip(tripId: string, limit = 10) {
-    const activities = await this.prisma.activity.findMany({
-      where: { tripId },
-      orderBy: { createdAt: 'desc' },
-      take: limit,
-      include: {
-        user: {
-          select: { id: true, name: true, avatarUrl: true },
+  async findByTrip(tripId: string, limit = 10, offset = 0) {
+    const [total, activities] = await this.prisma.$transaction([
+      this.prisma.activity.count({ where: { tripId } }),
+      this.prisma.activity.findMany({
+        where: { tripId },
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        skip: offset,
+        include: {
+          user: {
+            select: { id: true, name: true, avatarUrl: true },
+          },
         },
-      },
-    });
+      }),
+    ]);
 
-    return activities.map((a) => ({
+    const items = activities.map((a) => ({
       id: a.id,
       type: a.type,
       message: a.message,
@@ -55,5 +59,7 @@ export class ActivityService {
       userName: a.user.name ?? 'Unknown',
       userAvatar: a.user.avatarUrl ?? null,
     }));
+
+    return { items, total };
   }
 }
