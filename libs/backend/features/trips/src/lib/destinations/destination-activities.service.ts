@@ -16,9 +16,14 @@ export class DestinationActivitiesService {
 
   async createActivity(userId: string, destinationId: string, dto: CreateDestinationActivityDto) {
     await this.assertAccess(userId, destinationId);
-    return this.prisma.destinationActivity.create({
-      data: { destinationId, name: dto.name, category: dto.category, notes: dto.notes },
-    });
+    try {
+      return await this.prisma.destinationActivity.create({
+        data: { destinationId, name: dto.name, category: dto.category as any, notes: dto.notes ?? null },
+      });
+    } catch (e: any) {
+      console.error('[createActivity] Prisma error:', e?.message, 'code:', e?.code, 'meta:', JSON.stringify(e?.meta));
+      throw e;
+    }
   }
 
   async toggleDone(userId: string, id: string) {
@@ -69,16 +74,22 @@ Rules:
 - Keep names concise (3-6 words max)
 - Keep reasons under 12 words`;
 
-    const Anthropic = (await import('@anthropic-ai/sdk')).default;
-    const client = new Anthropic({ apiKey: process.env['ANTHROPIC_API_KEY'] });
-
-    const message = await client.messages.create({
-      model: 'claude-opus-4-6',
-      max_tokens: 1024,
-      messages: [{ role: 'user', content: prompt }],
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env['GROQ_API_KEY']}`,
+      },
+      body: JSON.stringify({
+        model: 'llama-3.1-8b-instant',
+        max_tokens: 1024,
+        temperature: 0.7,
+        messages: [{ role: 'user', content: prompt }],
+      }),
     });
 
-    const text = message.content[0].type === 'text' ? message.content[0].text : '[]';
+    const json = await response.json() as { choices?: { message?: { content?: string } }[] };
+    const text = json.choices?.[0]?.message?.content?.trim() ?? '[]';
 
     try {
       const suggestions = JSON.parse(text);

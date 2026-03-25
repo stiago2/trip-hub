@@ -174,7 +174,12 @@ import { DestinationActivitiesStore } from '../store/destination-activities.stor
                             }
                           </button>
                           <span class="act-category-dot act-dot--{{ act.category | lowercase }}"></span>
-                          <span class="act-name">{{ act.name }}</span>
+                          <div class="act-info">
+                            <span class="act-name">{{ act.name }}</span>
+                            @if (act.notes) {
+                              <span class="act-notes">{{ act.notes }}</span>
+                            }
+                          </div>
                           <button class="act-delete" (click)="activitiesStore.deleteActivity(dest.id, act.id)" title="Remove">
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                           </button>
@@ -213,11 +218,6 @@ import { DestinationActivitiesStore } from '../store/destination-activities.stor
 
                     <!-- Add activity form -->
                     <div class="add-activity-form" role="presentation" (click)="$event.stopPropagation()">
-                      <select class="act-category-select" [value]="newActivityCategory()" (change)="newActivityCategory.set($any($event.target).value)">
-                        @for (cat of CATEGORIES; track cat.value) {
-                          <option [value]="cat.value">{{ cat.icon }} {{ cat.label }}</option>
-                        }
-                      </select>
                       <input
                         class="act-name-input"
                         type="text"
@@ -405,6 +405,7 @@ import { DestinationActivitiesStore } from '../store/destination-activities.stor
     }
     .activity-item.done { opacity: 0.55; }
     .activity-item.done .act-name { text-decoration: line-through; color: var(--color-text-subtle); }
+    .activity-item.done .act-notes { opacity: 0.6; }
 
     .act-check {
       width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0;
@@ -424,7 +425,9 @@ import { DestinationActivitiesStore } from '../store/destination-activities.stor
     .act-dot--shopping  { background: #ec4899; }
     .act-dot--other     { background: #94a3b8; }
 
-    .act-name { flex: 1; font-size: 0.85rem; color: var(--color-text); font-weight: var(--font-weight-medium); }
+    .act-info { flex: 1; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+    .act-name { font-size: 0.85rem; color: var(--color-text); font-weight: var(--font-weight-medium); }
+    .act-notes { font-size: 0.75rem; color: var(--color-text-subtle); line-height: 1.3; }
 
     .act-delete {
       background: none; border: none; color: var(--color-text-dim); cursor: pointer;
@@ -439,11 +442,6 @@ import { DestinationActivitiesStore } from '../store/destination-activities.stor
     /* Add activity form */
     .add-activity-form {
       display: flex; gap: var(--space-2); align-items: center;
-    }
-    .act-category-select {
-      padding: 7px var(--space-2); border: 1px solid var(--color-border);
-      border-radius: var(--radius-lg); font-size: 0.8rem; background: var(--color-surface);
-      color: var(--color-text); cursor: pointer; outline: none; flex-shrink: 0;
     }
     .act-name-input {
       flex: 1; padding: 7px var(--space-3); border: 1px solid var(--color-border);
@@ -633,8 +631,8 @@ export class DestinationsPageComponent implements OnInit {
     }
   }
 
-  addSuggestion(destinationId: string, suggestion: { name: string; category: string }): void {
-    this.activitiesStore.createActivity(destinationId, { name: suggestion.name, category: suggestion.category });
+  addSuggestion(destinationId: string, suggestion: { name: string; category: string; reason: string }): void {
+    this.activitiesStore.createActivity(destinationId, { name: suggestion.name, category: suggestion.category, notes: suggestion.reason });
   }
 
   addActivity(destinationId: string): void {

@@ -4,18 +4,11 @@ import { TransportType } from '@org/data-access-trips';
 import { AddTransportModalComponent } from '../components/add-transport-modal/add-transport-modal.component';
 import { TransportStore } from '../store/transport.store';
 
-const TYPE_GRADIENT: Record<TransportType, string> = {
-  FLIGHT: 'linear-gradient(145deg, #1e3a5f 0%, #2563eb 100%)',
-  TRAIN:  'linear-gradient(145deg, #064e3b 0%, #059669 100%)',
-  BUS:    'linear-gradient(145deg, #3b0764 0%, #7c3aed 100%)',
-  CAR:    'linear-gradient(145deg, #451a03 0%, #d97706 100%)',
-};
-
-const TYPE_SVG: Record<TransportType, string> = {
-  FLIGHT: `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linecap="round"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>`,
-  TRAIN:  `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="3" width="16" height="14" rx="2"/><path d="M4 11h16"/><path d="M8 3v8"/><path d="M16 3v8"/><circle cx="8" cy="19" r="2"/><circle cx="16" cy="19" r="2"/><path d="M8 17l-2 2"/><path d="M16 17l2 2"/></svg>`,
-  BUS:    `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="7" cy="19" r="1"/><circle cx="17" cy="19" r="1"/><path d="M7 5v5"/><path d="M17 5v5"/></svg>`,
-  CAR:    `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linecap="round"><path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h13l4 4v6a2 2 0 0 1-2 2h-2"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>`,
+const TYPE_ICON_BG: Record<TransportType, string> = {
+  FLIGHT: '#dbeafe',
+  TRAIN:  '#d1fae5',
+  BUS:    '#ede9fe',
+  CAR:    '#fef3c7',
 };
 
 @Component({
@@ -86,8 +79,34 @@ const TYPE_SVG: Record<TransportType, string> = {
             <div class="timeline-entry">
               <!-- Card (boarding-pass style) -->
               <div class="transport-card card">
-                <!-- Left gradient panel -->
-                <div class="card-panel" [style.background]="typeGradient(item.type)" [innerHTML]="typeIcon(item.type)"></div>
+                <!-- Left icon panel -->
+                <div class="card-panel" [style.background]="typeIconBg(item.type)">
+                  @switch (item.type) {
+                    @case ('FLIGHT') {
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="1.8" stroke-linecap="round">
+                        <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                      </svg>
+                    }
+                    @case ('TRAIN') {
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#065f46" stroke-width="1.8" stroke-linecap="round">
+                        <rect x="4" y="3" width="16" height="14" rx="2"/><path d="M4 11h16"/><path d="M8 3v8"/><path d="M16 3v8"/>
+                        <circle cx="8" cy="19" r="2"/><circle cx="16" cy="19" r="2"/><path d="M8 17l-2 2"/><path d="M16 17l2 2"/>
+                      </svg>
+                    }
+                    @case ('BUS') {
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5b21b6" stroke-width="1.8" stroke-linecap="round">
+                        <rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>
+                        <circle cx="7" cy="19" r="1"/><circle cx="17" cy="19" r="1"/><path d="M7 5v5"/><path d="M17 5v5"/>
+                      </svg>
+                    }
+                    @default {
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="1.8" stroke-linecap="round">
+                        <path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h13l4 4v6a2 2 0 0 1-2 2h-2"/>
+                        <circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>
+                      </svg>
+                    }
+                  }
+                </div>
 
                 <!-- Card body -->
                 <div class="card-body">
@@ -196,11 +215,12 @@ const TYPE_SVG: Record<TransportType, string> = {
       box-shadow: 0 8px 28px rgba(0,0,0,0.10);
     }
 
-    /* Left gradient panel */
+    /* Left icon panel */
     .card-panel {
       width: 82px; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center;
       border-radius: 15px 0 0 15px; overflow: hidden;
+      border-right: 1px solid rgba(0,0,0,0.06);
     }
 
     /* Card body */
@@ -339,11 +359,8 @@ export class TransportTabComponent {
     return Object.entries(counts).map(([type, count]) => ({ type, count }));
   });
 
-  typeGradient(type: TransportType): string {
-    return TYPE_GRADIENT[type] ?? TYPE_GRADIENT['CAR'];
+  typeIconBg(type: TransportType): string {
+    return TYPE_ICON_BG[type] ?? TYPE_ICON_BG['CAR'];
   }
 
-  typeIcon(type: TransportType): string {
-    return TYPE_SVG[type] ?? TYPE_SVG['CAR'];
-  }
 }
