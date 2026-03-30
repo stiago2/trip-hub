@@ -1,4 +1,6 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { TripStore } from '@org/data-access-trips';
 import { InventoryItem } from '@org/util-types';
 import { InventoryStore } from '../store/inventory.store';
 import { AddItemModalComponent } from '../components/add-item-modal/add-item-modal.component';
@@ -287,6 +289,14 @@ export class InventoryPageComponent {
   readonly store = inject(InventoryStore);
   readonly showModal = signal(false);
   readonly activeTab = signal<TabId>('ALL');
+  constructor() {
+    const title = inject(Title);
+    const tripStore = inject(TripStore);
+    effect(() => {
+      const name = tripStore.trip()?.title;
+      title.setTitle(name ? `Packing List · ${name} — TripHub` : 'Packing List — TripHub');
+    });
+  }
 
   readonly tabs = computed(() => {
     const groups = this.store.itemsByCategory();

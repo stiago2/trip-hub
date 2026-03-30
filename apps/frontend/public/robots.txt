@@ -1,0 +1,9 @@
+User-agent: *
+# Block authenticated/private routes
+Disallow: /trips/
+Disallow: /api/
+
+# Allow public pages
+Allow: /login
+Allow: /
+

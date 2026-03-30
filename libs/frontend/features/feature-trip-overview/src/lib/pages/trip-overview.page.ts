@@ -1,4 +1,5 @@
-import { computed, Component, inject, signal } from '@angular/core';
+import { computed, Component, effect, inject, signal } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { TripStore } from '@org/data-access-trips';
 import { BudgetStore } from '@org/feature-budget';
 import { DestinationsStore } from '@org/feature-destinations';
@@ -107,6 +108,13 @@ import { FlightSearchModalComponent } from '../components/flight-search-modal/fl
 })
 export class TripOverviewPage {
   private readonly tripStore = inject(TripStore);
+  constructor() {
+    const title = inject(Title);
+    effect(() => {
+      const name = this.tripStore.trip()?.title;
+      title.setTitle(name ? `${name} — TripHub` : 'TripHub');
+    });
+  }
   private readonly budgetStore = inject(BudgetStore);
   private readonly destinationsStore = inject(DestinationsStore);
   private readonly inventoryStore = inject(InventoryStore);

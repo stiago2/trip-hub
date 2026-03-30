@@ -1,5 +1,7 @@
 import { CurrencyPipe, DatePipe, DecimalPipe, SlicePipe, UpperCasePipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { TripStore } from '@org/data-access-trips';
 import { BudgetStore } from '../store/budget.store';
 import { AddExpenseModalComponent } from '../components/add-expense-modal/add-expense-modal.component';
 import { TripMembersStore } from '@org/feature-trip-members';
@@ -201,6 +203,14 @@ export class BudgetPageComponent {
   readonly store = inject(BudgetStore);
   private readonly membersStore = inject(TripMembersStore);
   readonly showModal = signal(false);
+  constructor() {
+    const title = inject(Title);
+    const tripStore = inject(TripStore);
+    effect(() => {
+      const name = tripStore.trip()?.title;
+      title.setTitle(name ? `Budget · ${name} — TripHub` : 'Budget — TripHub');
+    });
+  }
 
   memberName(userId: string): string {
     const member = this.membersStore.members().find((m) => m.userId === userId);

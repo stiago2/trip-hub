@@ -1,5 +1,7 @@
 import { SlicePipe, TitleCasePipe, UpperCasePipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { TripStore } from '@org/data-access-trips';
 import { TripMembersStore } from '../store/trip-members.store';
 import { InviteUserModalComponent } from '../components/invite-user-modal/invite-user-modal.component';
 
@@ -285,8 +287,15 @@ const AVATAR_COLORS: [string, string][] = [
 })
 export class MembersPageComponent {
   readonly store = inject(TripMembersStore);
-
   readonly showModal = signal(false);
+  constructor() {
+    const title = inject(Title);
+    const tripStore = inject(TripStore);
+    effect(() => {
+      const name = tripStore.trip()?.title;
+      title.setTitle(name ? `Team · ${name} — TripHub` : 'Team — TripHub');
+    });
+  }
   readonly searchQuery = signal('');
 
   readonly pendingInvitations = this.store.invitations;

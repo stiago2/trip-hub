@@ -1,0 +1,16 @@
+{
+  "name": "TripHub",
+  "short_name": "TripHub",
+  "description": "Plan trips, track budgets, manage packing lists, and collaborate with your travel companions.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}

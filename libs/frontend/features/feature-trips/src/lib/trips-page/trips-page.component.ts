@@ -1,5 +1,6 @@
 import { DatePipe, SlicePipe, TitleCasePipe, UpperCasePipe } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { AuthService, AuthStore } from '@org/feature-auth';
 import { PendingInvitation, Trip } from '@org/util-types';
@@ -786,6 +787,7 @@ export class TripsPageComponent implements OnInit {
   readonly store = inject(TripsStore);
   readonly authStore = inject(AuthStore);
   private readonly authService = inject(AuthService);
+  constructor() { inject(Title).setTitle('My Trips — TripHub'); }
   private readonly invitationsApi = inject(InvitationsApiService);
   private readonly toast = inject(ToastService);
 

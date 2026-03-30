@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -565,6 +566,7 @@ import { AuthService } from '../../services/auth.service';
 })
 export class LoginComponent {
   private readonly authService = inject(AuthService);
+  constructor() { inject(Title).setTitle('Sign In — TripHub'); }
 
   readonly previewTrips = signal([
     { name: 'Tokyo Summer 2026', meta: 'Jul 12 – Jul 22 · 4 members', status: 'upcoming', color: '#2563eb' },

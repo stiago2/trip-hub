@@ -1,8 +1,9 @@
 import { DatePipe, LowerCasePipe, SlicePipe, TitleCasePipe, UpperCasePipe } from '@angular/common';
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { destinationPhotoBg } from '@org/util';
 import { Destination } from '@org/util-types';
-import { CreateActivityPayload } from '@org/data-access-trips';
+import { CreateActivityPayload, TripStore } from '@org/data-access-trips';
 import { AddDestinationModalComponent } from '../components/add-destination-modal/add-destination-modal.component';
 import { DestinationsStore } from '../store/destinations.store';
 import { DestinationActivitiesStore } from '../store/destination-activities.store';
@@ -577,6 +578,14 @@ import { DestinationActivitiesStore } from '../store/destination-activities.stor
 export class DestinationsPageComponent implements OnInit {
   readonly store = inject(DestinationsStore);
   readonly activitiesStore = inject(DestinationActivitiesStore);
+  constructor() {
+    const title = inject(Title);
+    const tripStore = inject(TripStore);
+    effect(() => {
+      const name = tripStore.trip()?.title;
+      title.setTitle(name ? `Itinerary · ${name} — TripHub` : 'Itinerary — TripHub');
+    });
+  }
 
   readonly showModal = signal(false);
   readonly editingDest = signal<Destination | null>(null);
