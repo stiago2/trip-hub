@@ -13,6 +13,7 @@ import { AccommodationsPreviewComponent } from '../components/accommodations-pre
 import { InventoryPreviewComponent } from '../components/inventory-preview/inventory-preview.component';
 import { ActivityFeedComponent } from '../components/activity-feed/activity-feed.component';
 import { ImportDocumentModalComponent } from '../components/import-document-modal/import-document-modal.component';
+import { FlightSearchModalComponent } from '../components/flight-search-modal/flight-search-modal.component';
 
 @Component({
   selector: 'lib-trip-overview',
@@ -26,11 +27,12 @@ import { ImportDocumentModalComponent } from '../components/import-document-moda
     InventoryPreviewComponent,
     ActivityFeedComponent,
     ImportDocumentModalComponent,
+    FlightSearchModalComponent,
   ],
   template: `
     <div class="dashboard">
 
-      <lib-trip-dashboard-header [members]="members()" (importClicked)="showImportModal.set(true)" />
+      <lib-trip-dashboard-header [members]="members()" (importClicked)="showImportModal.set(true)" (searchFlightsClicked)="showFlightSearch.set(true)" />
 
       <lib-trip-stats-row
         [tripId]="tripId"
@@ -62,6 +64,13 @@ import { ImportDocumentModalComponent } from '../components/import-document-moda
         [tripId]="tripId"
         (closed)="showImportModal.set(false)"
         (imported)="showImportModal.set(false)"
+      />
+    }
+
+    @if (showFlightSearch()) {
+      <lib-flight-search-modal
+        [tripId]="tripId"
+        (closed)="showFlightSearch.set(false)"
       />
     }
   `,
@@ -106,6 +115,7 @@ export class TripOverviewPage {
   get tripId(): string { return this.tripStore.activeTripId() ?? ''; }
 
   readonly showImportModal = signal(false);
+  readonly showFlightSearch = signal(false);
 
   readonly members = computed((): TripMember[] => this.membersStore.members());
   readonly destinationCount = computed(() => this.destinationsStore.rawDestinations().length);

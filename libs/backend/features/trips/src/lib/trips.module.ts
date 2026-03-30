@@ -12,9 +12,10 @@ import { InvitationsModule } from './invitations/invitations.module';
 import { TransportModule } from './transport/transport.module';
 import { ActivityModule } from './activity/activity.module';
 import { DocumentImportModule } from './document-import/document-import.module';
+import { FlightSearchModule } from './flight-search/flight-search.module';
 
 @Module({
-  imports: [PrismaModule, DestinationsModule, AccommodationsModule, InventoryModule, BudgetModule, TripMembersModule, InvitationsModule, TransportModule, ActivityModule, DocumentImportModule],
+  imports: [PrismaModule, DestinationsModule, AccommodationsModule, InventoryModule, BudgetModule, TripMembersModule, InvitationsModule, TransportModule, ActivityModule, DocumentImportModule, FlightSearchModule],
   controllers: [TripsController],
   providers: [TripsService, TripRoleGuard],
 })

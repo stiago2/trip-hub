@@ -240,3 +240,31 @@ export interface AccommodationExtractionResult {
 }
 
 export type DocumentExtractionResult = TransportExtractionResult | AccommodationExtractionResult;
+
+// ─── Flight Search ────────────────────────────────────────────────────────────
+
+export interface FlightLocation {
+  id: string;
+  name: string;
+  code: string;
+  cityName: string;
+  countryName: string;
+}
+
+export interface FlightOffer {
+  token: string;
+  price: number;
+  currency: string;
+  airline: string;
+  airlineCode: string;
+  flightNumber: string;
+  fromCode: string;
+  fromCity: string;
+  toCode: string;
+  toCity: string;
+  departureTime: string;
+  arrivalTime: string;
+  durationMinutes: number;
+  stops: number;
+  cabinClass: string;
+}

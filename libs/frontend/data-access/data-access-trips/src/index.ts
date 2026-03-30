@@ -10,3 +10,4 @@ export * from "./lib/trip.store";
 export * from './lib/document-import-api.service';
 export * from './lib/destination-activities-api.service';
 export * from './lib/activity-utils';
+export * from './lib/flight-search-api.service';

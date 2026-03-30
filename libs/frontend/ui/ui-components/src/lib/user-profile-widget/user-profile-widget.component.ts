@@ -50,7 +50,7 @@ export interface UserProfileData {
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .user-plan {
-      font-size: 0.72rem; color: #94a3b8;
+      font-size: 0.72rem; font-weight: 400; color: #94a3b8;
     }
     .logout-icon-btn {
       background: none; border: none; cursor: pointer;
