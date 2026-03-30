@@ -28,6 +28,10 @@ export const TripStore = signalStore(
           patchState(store, { trip: { ...current, ...partial } });
         }
       },
+
+      clearActiveTrip(): void {
+        patchState(store, { activeTripId: null, trip: null, loading: false });
+      },
     };
   }),
 );

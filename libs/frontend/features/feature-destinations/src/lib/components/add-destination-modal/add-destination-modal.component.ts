@@ -186,8 +186,8 @@ interface CalDay { day: number | null; date: Date | null; }
     @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
 
     .field-group { display: flex; flex-direction: column; gap: 5px; }
-    .section-label { font-size: 0.88rem; font-weight: var(--font-weight-bold); color: var(--color-text); margin-bottom: -2px; margin-top: var(--space-4); }
-    .section-label:first-of-type { margin-top: 0; }
+    .section-label { font-size: 0.88rem; font-weight: var(--font-weight-bold); color: var(--color-text); margin-bottom: 8px; margin-top: var(--space-5); }
+    .section-label:first-of-type { margin-top: var(--space-2); }
 
     .input-wrap { position: relative; }
     .input-icon {
