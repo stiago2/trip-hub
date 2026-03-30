@@ -92,7 +92,7 @@ import { AuthService } from '../../services/auth.service';
     <section class="features">
       <div class="section-inner">
         <div class="section-label">Everything you need</div>
-        <h2 class="section-heading">One hub for every part of your trip</h2>
+        <h2 class="section-heading">One hub for every part of your adventure</h2>
         <div class="features-grid">
           @for (f of features(); track f.title) {
             <div class="feature-card">
@@ -579,37 +579,55 @@ export class LoginComponent {
       icon: '🗺️',
       iconBg: '#eff6ff',
       title: 'Destinations',
-      desc: 'Pin every place you want to visit. Add notes, links, and details to each stop on your journey.',
+      desc: 'Pin every stop on your itinerary. Add notes, activities, and dates to each destination.',
     },
     {
       icon: '💰',
       iconBg: '#f0fdf4',
       title: 'Shared Budget',
-      desc: 'Track expenses and split costs across your group. Always know exactly where the money is going.',
+      desc: 'Track expenses by category and split costs across your group. Always know where the money is going.',
     },
     {
       icon: '🏨',
       iconBg: '#faf5ff',
       title: 'Accommodations',
-      desc: 'Store hotels, Airbnbs, and hostels in one place. Never lose a confirmation number again.',
+      desc: 'Store hotels, Airbnbs, and hostels in one place. Check-in dates and addresses always at hand.',
     },
     {
       icon: '✈️',
       iconBg: '#fff7ed',
       title: 'Transport',
-      desc: 'Log flights, trains, and car rentals. Keep departure times and booking references at your fingertips.',
+      desc: 'Log flights, trains, and car rentals. Keep departure times and booking references organized.',
     },
     {
       icon: '🎒',
       iconBg: '#fef2f2',
       title: 'Packing Lists',
-      desc: 'Build collaborative packing lists so everyone knows what to bring and nothing gets forgotten.',
+      desc: 'Build collaborative packing lists by category so everyone knows what to bring and nothing gets left behind.',
     },
     {
       icon: '👥',
       iconBg: '#f0f9ff',
       title: 'Collaboration',
-      desc: 'Invite your travel crew and plan together in real time. Everyone stays in the loop.',
+      desc: 'Invite your travel crew with role-based access. Plan together in real time — everyone stays in the loop.',
+    },
+    {
+      icon: '🔍',
+      iconBg: '#fdf4ff',
+      title: 'Flight Search',
+      desc: 'Search live flights directly inside your trip. Compare prices and go straight to booking with one click.',
+    },
+    {
+      icon: '🤖',
+      iconBg: '#f0fdf4',
+      title: 'AI Document Import',
+      desc: 'Snap a photo of your booking confirmation. Our AI reads it and adds flights or hotels to your trip automatically.',
+    },
+    {
+      icon: '📋',
+      iconBg: '#fffbeb',
+      title: 'Activity Feed',
+      desc: 'See a live log of everything happening in your trip — who added what, when, and what changed.',
     },
   ]);
 
