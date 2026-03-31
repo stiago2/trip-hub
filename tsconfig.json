@@ -71,6 +71,9 @@
     },
     {
       "path": "./libs/frontend/ui/ui-layout"
+    },
+    {
+      "path": "./apps/mobile"
     }
   ]
 }
