@@ -5,6 +5,7 @@ import { provideIonicAngular } from '@ionic/angular/standalone';
 import { firstValueFrom } from 'rxjs';
 import { appRoutes } from './app.routes';
 import { AuthService, AuthStore, authInterceptor } from '@org/feature-auth';
+import { nativeApiInterceptor } from './interceptors/native-api.interceptor';
 
 function initAuth(authService: AuthService, authStore: InstanceType<typeof AuthStore>) {
   return async () => {
@@ -23,7 +24,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideIonicAngular({ mode: 'ios' }),
     provideRouter(appRoutes, withComponentInputBinding()),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([nativeApiInterceptor, authInterceptor])),
     {
       provide: APP_INITIALIZER,
       useFactory: initAuth,

@@ -17,6 +17,13 @@ export class AuthCallbackComponent implements OnInit {
   ngOnInit(): void {
     const token = this.route.snapshot.queryParamMap.get('token');
     if (token) {
+      // Si fue abierto como popup desde la mobile app, enviar token y cerrar
+      if (window.opener) {
+        window.opener.postMessage({ type: 'oauth-token', token }, '*');
+        window.close();
+        return;
+      }
+
       this.authService.setToken(token);
       this.authService.getCurrentUser().subscribe({
         next: (user) => {

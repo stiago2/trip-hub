@@ -5,6 +5,7 @@ import { JwtAuthGuard } from '@org/guards';
 import { CurrentUser } from './decorators/current-user.decorator';
 
 const FRONTEND_URL = process.env['FRONTEND_URL'] ?? 'http://localhost:4200';
+const MOBILE_FRONTEND_URL = process.env['MOBILE_FRONTEND_URL'] ?? 'http://localhost:4300';
 const MOBILE_SCHEME = process.env['MOBILE_SCHEME'] ?? 'triphub';
 
 interface AuthenticatedUser {
@@ -28,6 +29,20 @@ export class AuthController {
   googleCallback(@Req() req: { user: UserProfile }): { url: string } {
     const { accessToken } = this.authService.generateJwt(req.user);
     return { url: `${FRONTEND_URL}/auth/callback?token=${accessToken}` };
+  }
+
+  @UseGuards(AuthGuard('google-mobile-web'))
+  @Get('google/mobile-web')
+  googleMobileWebLogin(): void {
+    // Passport handles the redirect to Google
+  }
+
+  @UseGuards(AuthGuard('google-mobile-web'))
+  @Get('google/mobile-web/callback')
+  @Redirect()
+  googleMobileWebCallback(@Req() req: { user: UserProfile }): { url: string } {
+    const { accessToken } = this.authService.generateJwt(req.user);
+    return { url: `${MOBILE_FRONTEND_URL}/auth/callback?token=${accessToken}` };
   }
 
   @UseGuards(AuthGuard('google-mobile'))

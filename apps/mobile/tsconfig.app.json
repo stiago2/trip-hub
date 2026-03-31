@@ -6,8 +6,27 @@
     "lib": ["ES2022", "dom", "dom.iterable"],
     "emitDeclarationOnly": false,
     "composite": false,
-    "declarationMap": false
+    "declarationMap": false,
+    "module": "ES2022",
+    "moduleResolution": "bundler"
   },
   "files": ["src/main.ts"],
-  "include": ["src/**/*.d.ts"]
+  "include": ["src/**/*.d.ts"],
+  "references": [
+    {
+      "path": "../../libs/frontend/features/feature-trips/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/frontend/features/feature-trip-members/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/frontend/util/util-types/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/frontend/data-access/data-access-trips/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/frontend/features/feature-auth"
+    }
+  ]
 }

@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { GoogleMobileStrategy } from './strategies/google-mobile.strategy';
+import { GoogleMobileWebStrategy } from './strategies/google-mobile-web.strategy';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { GoogleMobileStrategy } from './strategies/google-mobile.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, GoogleStrategy, GoogleMobileStrategy],
+  providers: [AuthService, JwtStrategy, GoogleStrategy, GoogleMobileStrategy, GoogleMobileWebStrategy],
   exports: [JwtStrategy, PassportModule, JwtModule],
 })
 export class AuthModule {}
