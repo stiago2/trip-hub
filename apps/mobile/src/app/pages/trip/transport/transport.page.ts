@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { DatePipe, CurrencyPipe } from '@angular/common';
+import { DatePipe, CurrencyPipe, TitleCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton,
@@ -19,7 +19,7 @@ const TYPE_ICONS: Record<TransportType, string> = {
   selector: 'app-transport',
   standalone: true,
   imports: [
-    DatePipe, CurrencyPipe, FormsModule,
+    DatePipe, CurrencyPipe, TitleCasePipe, FormsModule,
     IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton,
     IonFab, IonFabButton, IonIcon, IonSpinner, IonSkeletonText,
     IonModal, IonButton, IonItem, IonLabel, IonInput, IonSelect, IonSelectOption,

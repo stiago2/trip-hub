@@ -1,6 +1,6 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
   IonMenuButton, IonCard, IonCardHeader, IonCardTitle,
@@ -112,14 +112,23 @@ const SECTIONS = [
     .section-label { font-size: 0.88rem; font-weight: 600; color: #0f172a; }
   `],
 })
-export class OverviewPage {
+export class OverviewPage implements OnInit {
   readonly store = inject(TripStore);
   readonly trip = computed(() => this.store.trip());
   readonly sections = SECTIONS;
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   constructor() {
     addIcons({ mapOutline, cashOutline, bagHandleOutline, airplaneOutline, bedOutline, peopleOutline, listOutline });
+  }
+
+  ngOnInit(): void {
+    // Ensure trip is loaded even on direct navigation / refresh
+    const tripId = this.route.snapshot.parent?.paramMap.get('tripId');
+    if (tripId && this.store.activeTripId() !== tripId) {
+      this.store.setActiveTrip(tripId);
+    }
   }
 
   navigate(path: string): void {
