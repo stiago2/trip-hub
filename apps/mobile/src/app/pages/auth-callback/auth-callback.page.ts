@@ -1,8 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { IonContent, IonSpinner } from '@ionic/angular/standalone';
-import { firstValueFrom } from 'rxjs';
-import { AuthService, AuthStore } from '@org/feature-auth';
+import { MobileAuthService } from '../../services/mobile-auth.service';
 
 @Component({
   selector: 'app-auth-callback',
@@ -25,24 +23,10 @@ import { AuthService, AuthStore } from '@org/feature-auth';
   `],
 })
 export class AuthCallbackPage implements OnInit {
-  private readonly authService = inject(AuthService);
-  private readonly authStore = inject(AuthStore);
-  private readonly router = inject(Router);
+  private readonly mobileAuth = inject(MobileAuthService);
 
   async ngOnInit(): Promise<void> {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
-    if (token) {
-      this.authService.setToken(token);
-      try {
-        const user = await firstValueFrom(this.authService.getCurrentUser());
-        this.authStore.setUser(user);
-        this.router.navigate(['/trips'], { replaceUrl: true });
-      } catch {
-        this.router.navigate(['/login'], { replaceUrl: true });
-      }
-    } else {
-      this.router.navigate(['/login'], { replaceUrl: true });
-    }
+    // Handles the web OAuth redirect: /auth/callback?token=xxx
+    await this.mobileAuth.handleDeepLink(window.location.href);
   }
 }

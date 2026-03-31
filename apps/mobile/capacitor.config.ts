@@ -7,6 +7,14 @@ const config: CapacitorConfig = {
   server: {
     androidScheme: 'https',
   },
+  plugins: {
+    // Deep link: triphub://auth/callback?token=xxx
+    // iOS: register in Info.plist via Capacitor (automatic when using cap sync)
+    // Android: register in AndroidManifest.xml via Capacitor (automatic)
+    App: {
+      // URL schemes handled by the app
+    },
+  },
 };
 
 export default config;

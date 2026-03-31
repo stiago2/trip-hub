@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import {
   IonContent, IonButton, IonSpinner,
 } from '@ionic/angular/standalone';
-import { AuthService } from '@org/feature-auth';
+import { MobileAuthService } from '../../services/mobile-auth.service';
 
 @Component({
   selector: 'app-login',
@@ -91,11 +91,15 @@ import { AuthService } from '@org/feature-auth';
   `],
 })
 export class LoginPage {
-  private readonly authService = inject(AuthService);
+  private readonly mobileAuth = inject(MobileAuthService);
   readonly loading = signal(false);
 
-  login(): void {
+  async login(): Promise<void> {
     this.loading.set(true);
-    this.authService.loginWithGoogle();
+    try {
+      await this.mobileAuth.loginWithGoogle();
+    } finally {
+      this.loading.set(false);
+    }
   }
 }
