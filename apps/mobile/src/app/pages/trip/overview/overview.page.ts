@@ -3,24 +3,27 @@ import { DatePipe } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
-  IonMenuButton, IonCard, IonCardHeader, IonCardTitle,
-  IonCardContent, IonIcon, IonSkeletonText,
+  IonMenuButton, IonIcon, IonSkeletonText, ModalController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   mapOutline, cashOutline, bagHandleOutline, airplaneOutline,
-  bedOutline, peopleOutline, listOutline,
+  bedOutline, peopleOutline, listOutline, searchOutline, documentOutline,
 } from 'ionicons/icons';
 import { TripStore } from '@org/data-access-trips';
+import { FlightSearchModalComponent } from './flight-search-modal.component';
+import { ImportDocumentModalComponent } from './import-document-modal.component';
 
 const SECTIONS = [
-  { label: 'Destinations',   icon: 'map-outline',        path: 'destinations'   },
-  { label: 'Budget',         icon: 'cash-outline',       path: 'budget'         },
-  { label: 'Packing List',   icon: 'bag-handle-outline', path: 'inventory'      },
-  { label: 'Transport',      icon: 'airplane-outline',   path: 'transport'      },
-  { label: 'Accommodations', icon: 'bed-outline',        path: 'accommodations' },
-  { label: 'Members',        icon: 'people-outline',     path: 'members'        },
-  { label: 'Activity',       icon: 'list-outline',       path: 'activity'       },
+  { label: 'Destinations',   icon: 'map-outline',        path: 'destinations',   action: 'navigate' },
+  { label: 'Budget',         icon: 'cash-outline',       path: 'budget',         action: 'navigate' },
+  { label: 'Packing List',   icon: 'bag-handle-outline', path: 'inventory',      action: 'navigate' },
+  { label: 'Transport',      icon: 'airplane-outline',   path: 'transport',      action: 'navigate' },
+  { label: 'Accommodations', icon: 'bed-outline',        path: 'accommodations', action: 'navigate' },
+  { label: 'Members',        icon: 'people-outline',     path: 'members',        action: 'navigate' },
+  { label: 'Activity',       icon: 'list-outline',       path: 'activity',       action: 'navigate' },
+  { label: 'Search Flights', icon: 'search-outline',     path: 'flights',        action: 'flights'  },
+  { label: 'Import Doc',     icon: 'document-outline',   path: 'import',         action: 'import'   },
 ];
 
 @Component({
@@ -29,8 +32,7 @@ const SECTIONS = [
   imports: [
     DatePipe,
     IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
-    IonMenuButton, IonCard, IonCardHeader, IonCardTitle,
-    IonCardContent, IonIcon, IonSkeletonText,
+    IonMenuButton, IonIcon, IonSkeletonText,
   ],
   template: `
     <ion-header>
@@ -46,16 +48,14 @@ const SECTIONS = [
       @if (store.loading()) {
         <div class="overview-wrap">
           @for (i of [1,2,3,4]; track i) {
-            <div class="section-card skeleton">
-              <ion-skeleton-text animated style="height:80px;border-radius:16px"></ion-skeleton-text>
-            </div>
+            <ion-skeleton-text animated style="height:80px;border-radius:16px;display:block"></ion-skeleton-text>
           }
         </div>
       }
 
       @if (!store.loading() && trip()) {
         <div class="overview-wrap">
-          <!-- Trip header card -->
+          <!-- Trip hero card -->
           <div class="hero-card">
             <div class="hero-dates">
               {{ trip()!.startDate | date:'MMM d' }} – {{ trip()!.endDate | date:'MMM d, y' }}
@@ -69,8 +69,12 @@ const SECTIONS = [
           <!-- Quick nav grid -->
           <div class="sections-grid">
             @for (s of sections; track s.path) {
-              <div class="section-card" (click)="navigate(s.path)">
-                <div class="section-icon">
+              <div
+                class="section-card"
+                [class.section-card--action]="s.action !== 'navigate'"
+                (click)="handleSection(s)"
+              >
+                <div class="section-icon" [class.section-icon--purple]="s.action === 'flights'" [class.section-icon--teal]="s.action === 'import'">
                   <ion-icon [name]="s.icon"></ion-icon>
                 </div>
                 <div class="section-label">{{ s.label }}</div>
@@ -93,8 +97,7 @@ const SECTIONS = [
     .hero-desc { font-size: 0.9rem; opacity: 0.8; margin: 0; line-height: 1.5; }
 
     .sections-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
     }
     .section-card {
       border-radius: 16px; background: #ffffff;
@@ -104,11 +107,16 @@ const SECTIONS = [
       transition: transform 0.15s;
     }
     .section-card:active { transform: scale(0.96); }
+    .section-card--action { background: #fafbff; border: 1.5px solid #e0e7ff; }
+
     .section-icon {
       width: 40px; height: 40px; border-radius: 12px; background: #eff6ff;
       display: flex; align-items: center; justify-content: center;
       font-size: 1.2rem; color: #2563eb;
     }
+    .section-icon--purple { background: #f5f3ff; color: #7c3aed; }
+    .section-icon--teal   { background: #f0fdfa; color: #0d9488; }
+
     .section-label { font-size: 0.88rem; font-weight: 600; color: #0f172a; }
   `],
 })
@@ -118,21 +126,29 @@ export class OverviewPage implements OnInit {
   readonly sections = SECTIONS;
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly modalCtrl = inject(ModalController);
 
   constructor() {
-    addIcons({ mapOutline, cashOutline, bagHandleOutline, airplaneOutline, bedOutline, peopleOutline, listOutline });
+    addIcons({ mapOutline, cashOutline, bagHandleOutline, airplaneOutline, bedOutline, peopleOutline, listOutline, searchOutline, documentOutline });
   }
 
   ngOnInit(): void {
-    // Ensure trip is loaded even on direct navigation / refresh
     const tripId = this.route.snapshot.parent?.paramMap.get('tripId');
     if (tripId && this.store.activeTripId() !== tripId) {
       this.store.setActiveTrip(tripId);
     }
   }
 
-  navigate(path: string): void {
-    const id = this.store.activeTripId();
-    if (id) this.router.navigate(['/trip', id, path]);
+  async handleSection(section: typeof SECTIONS[0]): Promise<void> {
+    if (section.action === 'navigate') {
+      const id = this.store.activeTripId();
+      if (id) this.router.navigate(['/trip', id, section.path]);
+    } else if (section.action === 'flights') {
+      const modal = await this.modalCtrl.create({ component: FlightSearchModalComponent });
+      await modal.present();
+    } else if (section.action === 'import') {
+      const modal = await this.modalCtrl.create({ component: ImportDocumentModalComponent });
+      await modal.present();
+    }
   }
 }
