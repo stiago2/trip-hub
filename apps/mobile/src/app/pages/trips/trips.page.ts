@@ -4,14 +4,15 @@ import { DatePipe } from '@angular/common';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonRefresher,
   IonRefresherContent, IonFab, IonFabButton, IonIcon,
-  IonMenuButton, IonButtons, IonSkeletonText, IonBadge,
-  IonSegment, IonSegmentButton, IonLabel,
+  IonMenuButton, IonButtons, IonSkeletonText,
+  IonSegment, IonSegmentButton, IonLabel, ModalController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { addOutline, airplaneOutline } from 'ionicons/icons';
 import { TripsStore } from '@org/feature-trips';
 import { TripStore } from '@org/data-access-trips';
 import { Trip } from '@org/util-types';
+import { CreateTripModalComponent } from './create-trip-modal.component';
 
 type Filter = 'all' | 'upcoming' | 'active' | 'past';
 
@@ -22,7 +23,7 @@ type Filter = 'all' | 'upcoming' | 'active' | 'past';
     DatePipe,
     IonHeader, IonToolbar, IonTitle, IonContent, IonRefresher,
     IonRefresherContent, IonFab, IonFabButton, IonIcon,
-    IonMenuButton, IonButtons, IonSkeletonText, IonBadge,
+    IonMenuButton, IonButtons, IonSkeletonText,
     IonSegment, IonSegmentButton, IonLabel,
   ],
   template: `
@@ -148,6 +149,7 @@ type Filter = 'all' | 'upcoming' | 'active' | 'past';
 })
 export class TripsPage {
   private readonly router = inject(Router);
+  private readonly modalCtrl = inject(ModalController);
   readonly store = inject(TripsStore);
   private readonly tripStore = inject(TripStore);
 
@@ -192,8 +194,13 @@ export class TripsPage {
     this.router.navigate(['/trip', trip.id, 'overview']);
   }
 
-  newTrip(): void {
-    // TODO: open create trip modal in Phase 2
+  async newTrip(): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: CreateTripModalComponent,
+      breakpoints: [0, 1],
+      initialBreakpoint: 1,
+    });
+    await modal.present();
   }
 
   refresh(event: CustomEvent): void {
